@@ -1,0 +1,36 @@
+@prefix ereg: <https://promsns.org/def/eregistry#> .
+@prefix reg: <http://purl.org/linked-data/registry#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://geofabricld.net/address/> a reg:Register ;
+    rdfs:label "Address Register"^^xsd:string ;
+    reg:containedItemClass <http://geofabricld.net/def/gnaf#Address> ;
+    rdfs:comment "Register of all GNAF Addresses"^^xsd:string ;
+    ereg:superregister <http://geofabricld.net/> .
+
+<http://geofabricld.net/addressSite/> a reg:Register ;
+    rdfs:label "Address Site Register"^^xsd:string ;
+    reg:containedItemClass <http://geofabricld.net/def/gnaf#AddressSite> ;
+    rdfs:comment "Register of all GNAF Address Sites"^^xsd:string ;
+    ereg:superregister <http://geofabricld.net/> .
+
+<http://geofabricld.net/locality/> a reg:Register ;
+    rdfs:label "Locality Register"^^xsd:string ;
+    reg:containedItemClass <http://geofabricld.net/def/gnaf#Locality> ;
+    rdfs:comment "Register of all GNAF Localities"^^xsd:string ;
+    ereg:superregister <http://geofabricld.net/> .
+
+<http://geofabricld.net/streetLocality/> a reg:Register ;
+    rdfs:label "Street Locality Register"^^xsd:string ;
+    reg:containedItemClass <http://geofabricld.net/def/gnaf#StreetLocality> ;
+    rdfs:comment "Register of all GNAF Street Localities"^^xsd:string ;
+    ereg:superregister <http://geofabricld.net/> .
+
+<http://geofabricld.net/> reg:subregister
+        <http://geofabricld.net/address/>,
+        <http://geofabricld.net/addressSite/>,
+        <http://geofabricld.net/locality/>,
+        <http://geofabricld.net/streetLocality/> .
