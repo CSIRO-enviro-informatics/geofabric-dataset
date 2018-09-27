@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>GeoFabric Linked Data API</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/geofabric_theme.css')}}" />
+</head>
+<body>
+    <div id="widther">
+        {% include 'template_header.html' %}
+        <div id="container-content">
+            {% block content %}{% endblock %}
+        </div>
+        {% include 'template_footer.html' %}
+    </div>
+</body>
+</html>

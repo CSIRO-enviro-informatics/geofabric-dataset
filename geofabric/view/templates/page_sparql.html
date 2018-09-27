@@ -1,0 +1,46 @@
+{% extends "template_layout.html" %}
+
+{% block content %}
+    <h1>G-NAF LDAPI</h1>
+    <h2>SPARQL endpoint</h2>
+    <p>See the documentation for this SPARQL service at <a href="https://github.com/nicholascar/gnaf-ldapi-test/blob/master/_docs/sparql.md">https://github.com/nicholascar/gnaf-ldapi-test/blob/master/_docs/sparql.md</a>.</p>
+    <h4>Enter your SPARQL query in the text box below:</h4>
+     <form action="{{ url_for('routes.sparql') }}" method="post">
+        <textarea name="query" id="query" style="width:955px; height:300px;">{% if query and query != '' %}{{query}}{% endif %}</textarea>
+        <br />
+        <input type="hidden" name="form" value="true" />
+            <label for="selectContentType">Content Type (Select)</label>
+            <select name="selectContentType">
+                <option value="application/sparql-results+json" selected>JSON</option>
+                <option value="application/sparql-results+xml">XML</option>
+                <option value="text/csv">CSV</option>
+                <option value="text/tab-separated-values">TSV</option>
+            </select>
+
+            <label for="graphContentType">Content Type (Graph)</label>
+            <select name="graphContentType">
+                <option value="text/turtle" selected>Turtle</option>
+                <option value="application/ld+json">JSON-LD</option>
+                <option value="application/n-triples">N-Triples</option>
+                <option value="application/rdf+xml">XML</option>
+            </select>
+        &nbsp;
+        <input type="submit" value="Query the GNAF LD" /><br />
+        <!--<button id="query-proms">Query PROMS</button><br />-->
+        <h4>Result</h4>
+        <textarea id="query-result" style="width:955px; height:300px;" readonly>
+                {%- if query_result != '' %}{{query_result}}{% endif %}
+        </textarea>
+    </form>
+    <script>
+        window.onload = function() {
+            prettyPrintJSON();
+        };
+        function prettyPrintJSON() {
+            var ugly = document.getElementById('query-result').value;
+            var obj = JSON.parse(ugly);
+            var pretty = JSON.stringify(obj, undefined, 4);
+            document.getElementById('query-result').value = pretty;
+        }
+    </script>
+{% endblock %}
