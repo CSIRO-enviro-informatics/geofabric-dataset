@@ -9,42 +9,23 @@
             <td style="width:50%; vertical-align:top;">
                 <h3>Instances</h3>
                 <ul>
-                {% if class_name == 'http://gnafld.net/def/gnaf#Address' %}
+                {% if class_name == 'http://geofabricld.net/def/geofabric#Catchment' %}
                 {% for instance in register_items %}
-                    <li><a href="{{ url_for('classes.address', address_id=instance[2]) }}">{{ instance_uri_base }}{{ instance[2] }}</a></li>
+                    <li><a href="{{ url_for('classes.catchment', catchment_id=instance[2]) }}">{{ uri }}{{ instance[2] }}</a></li>
                 {% endfor %}
-                {% elif class_name == 'http://gnafld.net/def/gnaf#Locality' %}
-                {% for instance in register_items %}
-                    <li><a href="{{ url_for('classes.locality', locality_id=instance[2]) }}">{{ instance_uri_base }}{{ instance[2] }}</a></li>
-                {% endfor %}
-                {% elif class_name == 'http://gnafld.net/def/gnaf#StreetLocality' %}
-                {% for instance in register_items %}
-                    <li><a href="{{ url_for('classes.streetLocality', street_locality_id=instance[2]) }}">{{ instance_uri_base }}{{ instance[2] }}</a></li>
-                {% endfor %}
-                {% elif class_name == 'http://gnafld.net/def/gnaf#AddressSite' %}
-                {% for instance in register_items %}
-                    <li><a href="{{ url_for('classes.addressSite', address_site_id=instance[2]) }}">{{ instance_uri_base }}{{ instance[2] }}</a></li>
-                {% endfor %}
+                {% else %}
+                    <li><a href="{{ uri }}/{{ instance[2] }}">{{ uri }}{{ instance[2] }}</a></li>
                 {% endif %}
                 </ul>
-                {% if prev_page is not none %}
-                <a href="{{ '{base_url}?per_page={per_page}&page={page}'.format(base_url=request.base_url, per_page=per_page, page=prev_page) }}">Previous page</a>
-                {% endif %}
-                {% if prev_page is not none or next_page is not none %}
-                ...
-                {%  endif %}
-                {% if next_page is not none %}
-                <a href="{{ '{base_url}?per_page={per_page}&page={page}'.format(base_url=request.base_url, per_page=per_page, page=next_page) }}">Next page</a>
-                {% endif %}
             </td>
             <td style="width:50%; vertical-align:top;">
                 <h3>Automated Pagination</h3>
-                <p>To paginate these Datasets, something you may wish a link following tool like a web crawler to do, use the query string arguments 'page' for the page number and 'per_page' for the number of Addresses per page. HTTP <code>Link</code> headers of <code>first</code>, <code>prev</code>, <code>next</code> &amp; <code>last</code> are given to indicate URIs to the first, a previous, a next and the last page.</p>
+                <p>To paginate these Datasets, something you may wish a link following tool like a web crawler to do, use the query string arguments 'page' for the page number and 'per_page' for the number of Catchments per page. HTTP <code>Link</code> headers of <code>first</code>, <code>prev</code>, <code>next</code> &amp; <code>last</code> are given to indicate URIs to the first, a previous, a next and the last page.</p>
                 <p>Example:</p>
                 <pre>
 {{  request.base_url }}?page=7&per_page=500
                 </pre>
-                <p>Assuming 500 Addresses, this request would result in a response with the following Link header:</p>
+                <p>Assuming 500 Catchments, this request would result in a response with the following Link header:</p>
                 <pre>
 Link:   &lt;{{ request.base_url }}?per_page=500&gt; rel="first",
         &lt;{{ request.base_url }}?per_page=500&page=6&gt; rel="prev",

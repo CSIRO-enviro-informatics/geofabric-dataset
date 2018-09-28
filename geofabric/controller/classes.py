@@ -3,12 +3,8 @@
 This file contains all the HTTP routes for classes from the Geofabric model, such as Catchment and the
 Catchment Register
 """
-from io import BytesIO
-import requests
 from flask import Blueprint, Response, request
-from lxml import etree
 import geofabric._config as config
-from geofabric.model.catchment import Catchment
 from geofabric.model.ldapi import GEOFRegisterRenderer
 from geofabric.model.ldapi.catchment import CatchmentRenderer
 
@@ -34,7 +30,7 @@ def catchment(catchment_id):
     :param catchment_id:
     :return: LDAPI views of a single Catchment
     """
-    r = CatchmentRenderer(request, catchment_id, None, 'geofabric')
+    r = CatchmentRenderer(request, catchment_id, None)
     return r.render()
 
 

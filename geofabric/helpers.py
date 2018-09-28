@@ -14,6 +14,8 @@ HYF_HY_HydroFeature = HYF.term('HY_HydroFeature')
 HYF_HY_Catchment = HYF.term('HY_Catchment')
 HYF_HY_CatchmentRealization = HYF.term('HY_CatchmentRealization')
 HYF_realizedCatchment = HYF.term('realizedCatchment')
+HYF_lowerCatchment = HYF.term('lowerCatchment')
+HYF_upperCatchment = HYF.term('upperCatchment')
 HYF_catchmentRealization = HYF.term('catchmentRealization')
 GEO_Geometry = GEO.term('Geometry')
 GEO_hasGeometry = GEO.term('hasGeometry')
@@ -113,15 +115,15 @@ def gml_extract_geom_to_geojson(node, recursion=0):
                         pos_list.extend(pos_members)
                 if dims == 2:
                     for x, y in chunks(pos_list, 2):
-                        coords.append([float(y), float(x)])
+                        coords.append((float(y), float(x)))
                         #coords.append({'x': x, 'y': y})
                 elif dims == 3:
                     for x, y, z in chunks(pos_list, 3):
-                        coords.append([float(y), float(x), float(z)])
+                        coords.append((float(y), float(x), float(z)))
                         #coords.append({'x': x, 'y': y, 'z': z})
                 elif dims == 4:
                     for x, y, z, w in chunks(pos_list, 4):
-                        coords.append([float(y), float(x), float(z), float(w)])
+                        coords.append((float(y), float(x), float(z), float(w)))
                         #coords.append({'x': x, 'y': y, 'z': z, 'w': w})
                 return coords
             else:
@@ -270,3 +272,78 @@ def wfs_extract_features_as_hyfeatures(tree, feature_type, class_converter=None)
     else:
         raise NotImplementedError("Need a class converter in order to get HY_Features from WFS.")
     return triples, feature_nodes
+
+def mymax(a, b):
+    if a is None: return b
+    if b is None: return a
+
+    if a > b: return a
+    return b
+
+
+def mymin(a, b):
+    if a is None: return b
+    if b is None: return a
+
+    if a < b: return a
+    return b
+
+
+def calculate_bboxes(g, bounds=None, pad=0):
+    if bounds is None:
+        bounds = [[None, None, None, None], [None, None, None, None]]
+    for i in g:
+        if isinstance(i, list):
+            bounds = calculate_bboxes(i, bounds=bounds)
+        else:
+            pBounds = bounds[0]
+            nBounds = bounds[1]
+
+            lon = i[0]
+            lat = i[1]
+
+            curBounds = pBounds
+            if (lon < 0):
+                curBounds = nBounds
+
+            n = curBounds[0]
+            s = curBounds[1]
+            e = curBounds[2]
+            w = curBounds[3]
+
+            n = mymax(lat, n)
+            s = mymin(lat, s)
+            e = mymax(lon, e)
+            w = mymin(lon, w)
+
+            if lon < 0:
+                bounds = (pBounds, [n, s, e, w])
+            else:
+                bounds = ([n, s, e, w], nBounds)
+    return bounds
+
+def calculate_bbox(g, pad=0):
+    twin_bounds = ([None, None, None, None], [None, None, None, None])
+    (nbounds, pbounds) = calculate_bboxes(g, bounds=twin_bounds, pad=pad)
+    if pbounds[0] is None:
+        b = nbounds
+    elif nbounds[0] is None:
+        b = pbounds
+    else:
+        #combine nbounds and pbounds
+        n = mymax(nbounds[0], pbounds[0])
+        s = mymin(nbounds[1], pbounds[1])
+        mod_e = (360.0 + nbounds[2])
+        w = pbounds[3]
+        b = [n, s, mod_e, w]
+    if pad is not None and pad > 0:
+        pad = float(pad)
+        y_stretch = b[0] - b[1]
+        x_stretch = b[2] - b[3]
+        y_extra = (y_stretch/100.0) * pad
+        x_extra = (x_stretch / 100.0) * pad
+        b[0] = mymin(b[0] + (y_extra / 2.0), 90.0)
+        b[1] = mymax(b[1] - (y_extra / 2.0), -90.0)
+        b[2] = mymin(b[2] + (x_extra / 2.0), 360.0)
+        b[3] = mymax(b[3] - (x_extra / 2.0), -180.0)
+    return b

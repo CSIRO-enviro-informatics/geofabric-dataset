@@ -57,11 +57,13 @@ def render_error(request, e):
 class GEOFClassRenderer(pyldapi.Renderer):
     GEOF_CLASS = None
 
-    def __init__(self, request, uri, views, default_view_token, *args,
-                 geof_template=None, hyf_template=None, **kwargs):
+    def __init__(self, request, uri, views, *args,
+                 default_view_token=None, geof_template=None, hyf_template=None, **kwargs):
         kwargs.setdefault('alternates_template', 'alternates_view.html')
         _views = views or {}
         self._add_default_geof_views(_views)
+        if default_view_token is None:
+            default_view_token = 'geofabric'
         super(GEOFClassRenderer, self).__init__(request, uri, _views, default_view_token, *args, **kwargs)
         try:
             vf_error = self.vf_error
