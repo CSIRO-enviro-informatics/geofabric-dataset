@@ -16,4 +16,4 @@ if __name__ == '__main__':
                         datefmt='%Y-%m-%d %H:%M:%S',
                         format='%(asctime)s %(levelname)s %(filename)s:%(lineno)s %(message)s')
     pyldapi.setup(app, config.APP_DIR, str(config.URI_BASE).rstrip('/'))
-app.run(debug=config.DEBUG, threaded=True, use_reloader=False)
+    app.run(debug=config.DEBUG, threaded=True, use_reloader=False)
