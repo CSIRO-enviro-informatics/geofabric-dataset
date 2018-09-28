@@ -7,14 +7,16 @@
     <table>
         <tr>
             <td style="width:50%; vertical-align:top;">
-                <h3>Instances</h3>
+                <h3>Instances {{ class_name }}</h3>
                 <ul>
-                {% if class_name == 'http://geofabricld.net/def/geofabric#Catchment' %}
-                {% for instance in register_items %}
-                    <li><a href="{{ url_for('classes.catchment', catchment_id=instance[2]) }}">{{ uri }}{{ instance[2] }}</a></li>
-                {% endfor %}
+                {% if class_name == 'https://www.opengis.net/def/hy_features/ontology/hyf/HY_Catchment' %}
+                    {% for instance in register_items %}
+                      <li><a href="{{ url_for('classes.catchment', catchment_id=instance[2]) }}">{{ uri }}{{ instance[2] }}</a></li>
+                    {% endfor %}
                 {% else %}
-                    <li><a href="{{ uri }}/{{ instance[2] }}">{{ uri }}{{ instance[2] }}</a></li>
+                    {% for instance in register_items %}
+                      <li><a href="{{ uri }}{{ instance[2] }}">{{ uri }}{{ instance[2] }}</a></li>
+                    {% endfor %}
                 {% endif %}
                 </ul>
             </td>
