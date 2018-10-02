@@ -204,7 +204,7 @@ class GEOFRegisterRenderer(pyldapi.RegisterRenderer):
             # TODO: cannot get the next page!
             r = requests.get(catchments_wfs_uri)
             tree = etree.parse(BytesIO(r.content))
-            items = tree.xpath('//x:hydroid/text()', namespaces={'x': 'http://ahgf_shcatch'})
+            items = tree.xpath('//x:hydroid/text()', namespaces={'x': 'http://linked.data.gov.au/dataset/geof/v2/ahgf_shcatch'})
             label_prefix = 'Catchment'
         else:
             raise NotImplementedError("Register Renderer for CIC {} is not implemented.".format(cic))

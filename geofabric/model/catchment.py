@@ -45,7 +45,7 @@ def retrieve_catchment(identifier):
 retrieve_catchment.session = None
 
 ns = {
-    'x': 'http://ahgf_shcatch',
+    'x': 'http://linked.data.gov.au/dataset/geof/v2/ahgf_shcatch',
     'wfs': 'http://www.opengis.net/wfs/2.0',
     'gml': "http://www.opengis.net/gml/3.2"
 }
@@ -71,6 +71,7 @@ catchment_tag_map = {
     "{{{}}}albersarea".format(ns['x']): 'albersarea',
     "{{{}}}shape_length".format(ns['x']): 'shape_length',
     "{{{}}}shape_area".format(ns['x']): 'shape_area',
+    "{{{}}}shape".format(ns['x']): 'shape',
 }
 
 def catchment_hyfeatures_converter(wfs_features):
@@ -78,12 +79,13 @@ def catchment_hyfeatures_converter(wfs_features):
         return None
     to_converter = {
         'wkb_geometry': gml_extract_geom_to_geosparql,
+        'shape': gml_extract_geom_to_geosparql,
         'nextdownid': lambda x: (set(), URIRef("{}/catchment/{}".format(config.URI_BASE, x))),
     }
     to_float = ('shape_length', 'shape_area', 'albersarea')
     to_int = ('hydroid', 'ahgfftype', 'netnodeid', 'ncb_id', 'segmentno', 'sourceid')
     to_datetime = ('attrrel', 'featrel')
-    is_geom = ('wkb_geometry',)
+    is_geom = ('wkb_geometry', 'shape')
     predicate_map = {
         'nextdownid': HYF_lowerCatchment
     }
@@ -146,12 +148,15 @@ def catchment_hyfeatures_converter(wfs_features):
 def catchment_features_geojson_converter(wfs_features):
     if len(wfs_features) < 1:
         return None
-    to_converter = {'wkb_geometry': gml_extract_geom_to_geojson}
+    to_converter = {
+        'wkb_geometry': gml_extract_geom_to_geojson,
+        'shape': gml_extract_geom_to_geojson,
+    }
     to_float = ('shape_length', 'shape_area', 'albersarea')
     to_int = ('hydroid', 'ahgfftype', 'netnodeid', 'ncb_id', 'segmentno', 'nextdownid', 'sourceid')
     # to_datetime = ('attrrel', 'featrel')
     to_datetime = []
-    is_geom = ('wkb_geometry',)
+    is_geom = ('wkb_geometry', 'shape')
     features_list = []
     if isinstance(wfs_features, (dict,)):
         features_source = wfs_features.items()
@@ -229,20 +234,22 @@ class Catchment(GFModel):
 
     def export_html(self, view='geofabric'):
         bbox_string = ",".join(str(i) for i in self.get_bbox(pad=12))
+        hydroid = self.hydroid
         wms_url = config.GF_OWS_ENDPOINT +\
                   "?service=wms&version=2.0.0&request=GetMap" \
                   "&width=800&height=600" \
                   "&format=text/html;+subtype=openlayers" \
                   "&CRS=EPSG:4326" \
-                  "&layers=ahgf_shcatch:Surface_Catchment" \
+                  "&layers=osm_au,ahgf_shcatch:AHGFCatchment" \
                   "&style=ahgfcatchment" \
-                  "&bbox=" + bbox_string
+                  "&bbox=" + bbox_string +\
+                  "&CQL_FILTER=INCLUDE;hydroid="+str(hydroid)
 
         if view == 'geofabric':
             view_html = render_template(
                 'class_catchment_geof.html',
                 wms_url=wms_url,
-                hydroid=self.hydroid,
+                hydroid=hydroid,
                 nextdownid=self.nextdownid,
                 shape_length=self.shape_length,
                 shape_area=self.shape_area,
@@ -252,7 +259,7 @@ class Catchment(GFModel):
             view_html = render_template(
                 'class_catchment_hyf.html',
                 wms_url=wms_url,
-                hydroid=self.hydroid,
+                hydroid=hydroid,
                 nextdownid=self.nextdownid,
                 shape_length=self.shape_length,
                 shape_area=self.shape_area,

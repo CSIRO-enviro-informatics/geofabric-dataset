@@ -35,7 +35,7 @@ def chunks(source, length):
 
 
 ns = {
-    'x': 'http://ahgf_shcatch',
+    'x': 'http://linked.data.gov.au/dataset/geof/v2/ahgf_shcatch',
     'wfs': 'http://www.opengis.net/wfs/2.0',
     'gml': "http://www.opengis.net/gml/3.2"
 }
