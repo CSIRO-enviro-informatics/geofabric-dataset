@@ -22,47 +22,43 @@ from datetime import datetime
 
 # TODO: look into using cachetools.LFUCache or TTLCache
 @lru_cache(maxsize=128)
-def retrieve_catchment(identifier):
+def retrieve_river_region(identifier):
     assert isinstance(identifier, int)
-    catchment_wfs_uri = config.GF_OWS_ENDPOINT + \
+    rr_wfs_uri = config.GF_OWS_ENDPOINT + \
                         '?request=GetFeature' \
                         '&service=WFS' \
                         '&version=2.0.0' \
-                        '&typeName=ahgf_shcatch:AHGFCatchment' \
+                        '&typeName=ahgf_hrr:RiverRegion' \
                         '&Filter=<Filter><PropertyIsEqualTo>' \
-                        '<PropertyName>ahgf_shcatch:hydroid</PropertyName>' \
+                        '<PropertyName>ahgf_hrr:hydroid</PropertyName>' \
                         '<Literal>{:d}</Literal>' \
                         '</PropertyIsEqualTo></Filter>'.format(identifier)
-    session = retrieve_catchment.session
+    session = retrieve_river_region.session
     if session is None:
-        session = retrieve_catchment.session = Session()
+        session = retrieve_river_region.session = Session()
     try:
-        r = session.get(catchment_wfs_uri)
+        r = session.get(rr_wfs_uri)
     except Exception as e:
         raise e
     tree = etree.parse(BytesIO(r.content))
     return tree
-retrieve_catchment.session = None
+retrieve_river_region.session = None
 
 ns = {
-    'x': 'http://linked.data.gov.au/dataset/geof/v2/ahgf_shcatch',
+    'x': 'http://linked.data.gov.au/dataset/geof/v2/ahgf_hrr',
     'wfs': 'http://www.opengis.net/wfs/2.0',
     'gml': "http://www.opengis.net/gml/3.2"
 }
-catchment_tag_map = {
+# NOTE, RiverRegion has no sourceid!
+rr_tag_map = {
     "{{{}}}hydroid".format(ns['x']): 'hydroid',
     "{{{}}}wkb_geometry".format(ns['x']): 'wkb_geometry',
     "{{{}}}ahgfftype".format(ns['x']): 'ahgfftype',
-    "{{{}}}netnodeid".format(ns['x']): 'netnodeid',
-    "{{{}}}ncb_id".format(ns['x']): 'ncb_id',
-    "{{{}}}segmentno".format(ns['x']): 'segmentno',
-    "{{{}}}streamname".format(ns['x']): 'streamname',
-    "{{{}}}hassegment".format(ns['x']): 'hassegment',
-    "{{{}}}extrnlbasn".format(ns['x']): 'extrnlbasn',
-    "{{{}}}nextdownid".format(ns['x']): 'nextdownid',
+    "{{{}}}division".format(ns['x']): 'division',
+    "{{{}}}rivregnum".format(ns['x']): 'rivregnum',
+    "{{{}}}rivregname".format(ns['x']): 'rivregname',
     "{{{}}}srcfcname".format(ns['x']): 'srcfcname',
     "{{{}}}srcfctype".format(ns['x']): 'srcfctype',
-    "{{{}}}sourceid".format(ns['x']): 'sourceid',
     "{{{}}}featrel".format(ns['x']): 'featrel',
     "{{{}}}fsource".format(ns['x']): 'fsource',
     "{{{}}}attrrel".format(ns['x']): 'attrrel',
@@ -74,20 +70,19 @@ catchment_tag_map = {
     "{{{}}}shape".format(ns['x']): 'shape',
 }
 
-def catchment_hyfeatures_converter(wfs_features):
+def river_region_hyfeatures_converter(wfs_features):
     if len(wfs_features) < 1:
         return None
     to_converter = {
         'wkb_geometry': gml_extract_geom_to_geosparql,
-        'shape': gml_extract_geom_to_geosparql,
-        'nextdownid': lambda x: (set(), URIRef("{}/catchment/{}".format(config.URI_BASE, x))),
+        'shape': gml_extract_geom_to_geosparql
     }
     to_float = ('shape_length', 'shape_area', 'albersarea')
-    to_int = ('hydroid', 'ahgfftype', 'netnodeid', 'ncb_id', 'segmentno', 'sourceid')
+    to_int = ('hydroid', 'ahgfftype')
     to_datetime = ('attrrel', 'featrel')
     is_geom = ('wkb_geometry', 'shape')
     predicate_map = {
-        'nextdownid': HYF_lowerCatchment
+        #'nextdownid': HYF_lowerCatchment
     }
     features_list = []
     if isinstance(wfs_features, (dict,)):
@@ -98,13 +93,13 @@ def catchment_hyfeatures_converter(wfs_features):
         features_source = [wfs_features]
     triples = set()
     feature_nodes = []
-    for hydroid, catchment_element in features_source:  # type: int, etree._Element
-        feature_uri = URIRef("{}/catchment/{}".format(config.URI_BASE, str(hydroid)))
+    for hydroid, rr_element in features_source:  # type: int, etree._Element
+        feature_uri = URIRef("{}/riverregion/{}".format(config.URI_BASE, str(hydroid)))
         triples.add((feature_uri, RDF_a, HYF_HY_HydroFeature))
         triples.add((feature_uri, RDF_a, HYF_HY_Catchment))
-        for c in catchment_element.iterchildren():  # type: etree._Element
+        for c in rr_element.iterchildren():  # type: etree._Element
             try:
-                var = catchment_tag_map[c.tag]
+                var = rr_tag_map[c.tag]
             except KeyError:
                 continue
             try:
@@ -145,7 +140,7 @@ def catchment_hyfeatures_converter(wfs_features):
         features_list.append(feature_uri)
     return triples, feature_nodes
 
-def catchment_features_geojson_converter(wfs_features):
+def river_region_features_geojson_converter(wfs_features):
     if len(wfs_features) < 1:
         return None
     to_converter = {
@@ -153,7 +148,7 @@ def catchment_features_geojson_converter(wfs_features):
         'shape': gml_extract_geom_to_geojson,
     }
     to_float = ('shape_length', 'shape_area', 'albersarea')
-    to_int = ('hydroid', 'ahgfftype', 'netnodeid', 'ncb_id', 'segmentno', 'nextdownid', 'sourceid')
+    to_int = ('hydroid', 'ahgfftype')
     # to_datetime = ('attrrel', 'featrel')
     to_datetime = []
     is_geom = ('wkb_geometry', 'shape')
@@ -165,19 +160,19 @@ def catchment_features_geojson_converter(wfs_features):
     else:
         features_source = [wfs_features]
 
-    for hydroid, catchment_element in features_source:  # type: int, etree._Element
-        catchment_dict = {"type": "Feature", "id": hydroid, "geometry": {}, "properties": {}}
+    for hydroid, rr_element in features_source:  # type: int, etree._Element
+        rr_dict = {"type": "Feature", "id": hydroid, "geometry": {}, "properties": {}}
 
-        for c in catchment_element.iterchildren():  # type: etree._Element
+        for r in rr_element.iterchildren():  # type: etree._Element
             try:
-                var = catchment_tag_map[c.tag]
+                var = rr_tag_map[r.tag]
             except KeyError:
                 continue
             try:
                 conv_func = to_converter[var]
-                val = conv_func(c)
+                val = conv_func(r)
             except KeyError:
-                val = c.text
+                val = r.text
             if var in to_datetime:
                 if val.endswith('Z'):
                     val = val[:-1]
@@ -190,37 +185,35 @@ def catchment_features_geojson_converter(wfs_features):
             elif var in to_int:
                 val = int(val)
             if var in is_geom:
-                catchment_dict['geometry'] = val
+                rr_dict['geometry'] = val
             else:
-                catchment_dict['properties'][var] = val
-        features_list.append(catchment_dict)
+                rr_dict['properties'][var] = val
+        features_list.append(rr_dict)
     return features_list
 
-def extract_catchments_as_geojson(tree):
-    geojson_features = wfs_extract_features_as_geojson(tree, ns['x'], "AHGFCatchment", catchment_features_geojson_converter)
+def extract_river_regions_as_geojson(tree):
+    geojson_features = wfs_extract_features_as_geojson(tree, ns['x'], "RiverRegion", river_region_features_geojson_converter)
     return geojson_features
 
-def extract_catchments_as_hyfeatures(tree):
+def extract_river_regions_as_hyfeatures(tree):
     g = rdflib.Graph()
-    triples, features = wfs_extract_features_as_hyfeatures(tree, ns['x'], "AHGFCatchment", catchment_hyfeatures_converter)
+    triples, features = wfs_extract_features_as_hyfeatures(tree, ns['x'], "RiverRegion", river_region_hyfeatures_converter)
     for (s, p, o) in iter(triples):
         g.add((s, p, o))
     return g
 
 
-class Catchment(GFModel):
+class RiverRegion(GFModel):
     def __init__(self, identifier):
-        super(Catchment, self).__init__()
+        super(RiverRegion, self).__init__()
         identifier = int(identifier)
-        catchment_xml_tree = retrieve_catchment(identifier)
-        self.xml_tree = catchment_xml_tree
-        catchments = extract_catchments_as_geojson(catchment_xml_tree)
-        catchment = catchments['features'][0]
-        self.geometry = catchment['geometry']
-        for k, v in catchment['properties'].items():
+        rr_xml_tree = retrieve_river_region(identifier)
+        self.xml_tree = rr_xml_tree
+        rregions = extract_river_regions_as_geojson(rr_xml_tree)
+        rregion = rregions['features'][0]
+        self.geometry = rregion['geometry']
+        for k, v in rregion['properties'].items():
             setattr(self, k, v)
-        #bbox = self.get_bbox(pad=12)
-        #print(bbox)
 
     def get_bbox(self, pad=0):
         coords = self.geometry['coordinates']
@@ -229,7 +222,7 @@ class Catchment(GFModel):
         return (w,s,e,n) # (minx, miny, maxx, maxy)
 
     def to_hyfeatures_graph(self):
-        g = extract_catchments_as_hyfeatures(self.xml_tree)
+        g = extract_river_regions_as_hyfeatures(self.xml_tree)
         return g
 
     def export_html(self, view='geofabric'):
@@ -240,27 +233,29 @@ class Catchment(GFModel):
                   "&width=800&height=600" \
                   "&format=text/html;+subtype=openlayers" \
                   "&CRS=EPSG:4326" \
-                  "&layers=osm_au,ahgf_shcatch:AHGFCatchment" \
+                  "&layers=osm_au,ahgf_hrr:RiverRegion" \
                   "&style=ahgfcatchment" \
                   "&bbox=" + bbox_string +\
                   "&CQL_FILTER=INCLUDE;hydroid="+str(hydroid)
 
         if view == 'geofabric':
             view_html = render_template(
-                'class_catchment_geof.html',
+                'class_riverregion_geof.html',
                 wms_url=wms_url,
                 hydroid=hydroid,
-                nextdownid=self.nextdownid,
+                division=self.division,
+                river_reg_name=self.rivregname,
                 shape_length=self.shape_length,
                 shape_area=self.shape_area,
                 albers_area=self.albersarea,
             )
         elif view == "hyfeatures":
             view_html = render_template(
-                'class_catchment_hyf.html',
+                'class_riverregion_hyf.html',
                 wms_url=wms_url,
                 hydroid=hydroid,
-                nextdownid=self.nextdownid,
+                division=self.division,
+                river_reg_name=self.rivregname,
                 shape_length=self.shape_length,
                 shape_area=self.shape_area,
                 albers_area=self.albersarea,

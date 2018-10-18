@@ -11,7 +11,7 @@ import geofabric._config as config
 HYFView = pyldapi.View('hyfeatures',
                        "Features modelled using the HY_Features ontology",
                        ["text/html", "text/turtle", "application/rdf+xml", "application/ld+json", "application/n-triples"],
-                       "text/turtle", namespace="https://www.opengis.net/def/hy_features/ontology/hyf/")
+                       "text/turtle", namespace="https://www.opengis.net/def/appschema/hy_features/hyf/")
 GEOFView = pyldapi.View('geofabric',
                         "A customised geofabric view based on HY_Features",
                         ["text/html", "text/turtle", "application/rdf+xml", "application/ld+json", "application/n-triples", "application/gml+xml"],
@@ -205,6 +205,20 @@ class GEOFRegisterRenderer(pyldapi.RegisterRenderer):
             r = requests.get(catchments_wfs_uri)
             tree = etree.parse(BytesIO(r.content))
             items = tree.xpath('//x:hydroid/text()', namespaces={'x': 'http://linked.data.gov.au/dataset/geof/v2/ahgf_shcatch'})
+            label_prefix = 'Catchment'
+        elif cic == config.URI_RIVER_REGION_CLASS:
+            rr_wfs_uri = config.GF_OWS_ENDPOINT + \
+                                 '?service=wfs' \
+                                 '&version=2.0.0' \
+                                 '&request=GetFeature' \
+                                 '&typeName=ahgf_hrr:RiverRegion' \
+                                 '&propertyName=hydroid' \
+                                 '&sortBy=hydroid' \
+                                 '&count={}'.format(per_page)
+            # TODO: cannot get the next page!
+            r = requests.get(rr_wfs_uri)
+            tree = etree.parse(BytesIO(r.content))
+            items = tree.xpath('//x:hydroid/text()', namespaces={'x': 'http://linked.data.gov.au/dataset/geof/v2/ahgf_hrr'})
             label_prefix = 'Catchment'
         else:
             raise NotImplementedError("Register Renderer for CIC {} is not implemented.".format(cic))

@@ -6,7 +6,7 @@ from rdflib import Namespace
 from rdflib.namespace import RDF, RDFS, OWL, XSD
 from lxml import etree
 
-HYF = Namespace("https://www.opengis.net/def/hy_features/ontology/hyf/")
+HYF = Namespace("https://www.opengis.net/def/appschema/hy_features/hyf/")
 GEO = Namespace("http://www.opengis.net/ont/geosparql#")
 GML = Namespace("http://www.opengis.net/ont/gml#")
 OGC = Namespace("http://www.opengis.net/")
@@ -35,7 +35,6 @@ def chunks(source, length):
 
 
 ns = {
-    'x': 'http://linked.data.gov.au/dataset/geof/v2/ahgf_shcatch',
     'wfs': 'http://www.opengis.net/wfs/2.0',
     'gml': "http://www.opengis.net/gml/3.2"
 }
@@ -177,7 +176,7 @@ def gml_extract_geom_to_geosparql(node, recursion=0):
     return triples, geometry_node
 
 
-def wfs_find_features(tree, feature_type):
+def wfs_find_features(tree, feature_ns, feature_type):
     """
 
     :param tree:
@@ -190,8 +189,8 @@ def wfs_find_features(tree, feature_type):
 
     FeatureCollection = "{{{}}}FeatureCollection".format(ns['wfs'])
     member_tag = "{{{}}}member".format(ns['wfs'])
-    SearchClass = "{{{}}}{}".format(ns['x'], feature_type)
-    hydroid_tag = "{{{}}}hydroid".format(ns['x'])
+    SearchClass = "{{{}}}{}".format(feature_ns, feature_type)
+    hydroid_tag = "{{{}}}hydroid".format(feature_ns)
 
     if isinstance(tree, etree._ElementTree):
         root = tree.getroot()  # type: etree._Element
@@ -232,7 +231,7 @@ def wfs_find_features(tree, feature_type):
         features[key] = member_object
     return features
 
-def wfs_extract_features_as_geojson(tree, feature_type, class_converter=None):
+def wfs_extract_features_as_geojson(tree, feature_ns, feature_type, class_converter=None):
     """
 
     :param tree:
@@ -241,7 +240,7 @@ def wfs_extract_features_as_geojson(tree, feature_type, class_converter=None):
     :type feature_type: str
     :return:
     """
-    features = wfs_find_features(tree, feature_type)
+    features = wfs_find_features(tree, feature_ns, feature_type)
 
     geojson_feature_collection = {
         "type": "FeatureCollection",
@@ -257,7 +256,7 @@ def wfs_extract_features_as_geojson(tree, feature_type, class_converter=None):
     return geojson_feature_collection
 
 
-def wfs_extract_features_as_hyfeatures(tree, feature_type, class_converter=None):
+def wfs_extract_features_as_hyfeatures(tree, feature_ns, feature_type, class_converter=None):
     """
 
     :param tree:
@@ -266,7 +265,7 @@ def wfs_extract_features_as_hyfeatures(tree, feature_type, class_converter=None)
     :type feature_type: str
     :return:
     """
-    features = wfs_find_features(tree, feature_type)
+    features = wfs_find_features(tree, feature_ns, feature_type)
     if class_converter:
         triples, feature_nodes = class_converter(features)
     else:

@@ -1,5 +1,5 @@
 @prefix sc:    <http://shapechange.net/resources/ont/base#> .
-@prefix hyf:   <https://www.opengis.net/def/hy_features/ontology/hyf/> .
+@prefix hyf:   <https://www.opengis.net/def/appschema/hy_features/hyf/> .
 @prefix gsp:   <http://www.opengis.net/ont/geosparql#> .
 @prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix owl:   <http://www.w3.org/2002/07/owl#> .

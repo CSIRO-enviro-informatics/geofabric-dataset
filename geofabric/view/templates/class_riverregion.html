@@ -1,0 +1,16 @@
+{% extends "template_layout.html" %}
+
+{% block content %}
+    <h1>River Region {{ instance_id }}</h1>
+    {{ view_html|safe }}
+
+    <h2>Other views</h2>
+    <p>Other model views of a River Region are listed in the <a href="{{ url_for('classes.river_region', rr_id=instance_id) }}?_view=alternates">Alternates View</a>.</p>
+
+    <h2>Citation</h2>
+    <p>If you wish to cite this River Region as you would a publication, please use the following format:</p>
+    <code style="display:block; margin: 0 5em 0 5em;">
+        TODO: Update this text: River Region {{ instance_id }}. Catchment object from the GeoFabric Database. {{ instance_uri }}
+    </code>
+
+{% endblock %}

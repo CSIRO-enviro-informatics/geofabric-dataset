@@ -9,9 +9,13 @@
             <td style="width:50%; vertical-align:top;">
                 <h3>Instances {{ class_name }}</h3>
                 <ul>
-                {% if class_name == 'https://www.opengis.net/def/hy_features/ontology/hyf/HY_Catchment' %}
+                {% if class_name == 'https://www.opengis.net/def/appschema/hy_features/hyf/HY_Catchment' %}
                     {% for instance in register_items %}
                       <li><a href="{{ url_for('classes.catchment', catchment_id=instance[2]) }}">{{ uri }}{{ instance[2] }}</a></li>
+                    {% endfor %}
+                {% elif class_name == 'https://www.opengis.net/def/appschema/hy_features/hyf/HY_CatchmentAggregate' %}
+                    {% for instance in register_items %}
+                      <li><a href="{{ url_for('classes.river_region', rr_id=instance[2]) }}">{{ uri }}{{ instance[2] }}</a></li>
                     {% endfor %}
                 {% else %}
                     {% for instance in register_items %}
