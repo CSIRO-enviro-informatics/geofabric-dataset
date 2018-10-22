@@ -23,43 +23,42 @@ from datetime import datetime
 
 # TODO: look into using cachetools.LFUCache or TTLCache
 @lru_cache(maxsize=128)
-def retrieve_river_region(identifier):
+def retrieve_drainage_division(identifier):
     assert isinstance(identifier, int)
-    rr_wfs_uri = config.GF_OWS_ENDPOINT + \
+    dd_wfs_uri = config.GF_OWS_ENDPOINT + \
                         '?request=GetFeature' \
                         '&service=WFS' \
                         '&version=2.0.0' \
-                        '&typeName=ahgf_hrr:RiverRegion' \
+                        '&typeName=ahgf_hrr:AWRADrainageDivision' \
                         '&Filter=<Filter><PropertyIsEqualTo>' \
                         '<PropertyName>ahgf_hrr:hydroid</PropertyName>' \
                         '<Literal>{:d}</Literal>' \
                         '</PropertyIsEqualTo></Filter>'.format(identifier)
-    session = retrieve_river_region.session
+    session = retrieve_drainage_division.session
     if session is None:
-        session = retrieve_river_region.session = Session()
+        session = retrieve_drainage_division.session = Session()
     try:
-        r = session.get(rr_wfs_uri)
+        r = session.get(dd_wfs_uri)
     except Exception as e:
         raise e
     tree = etree.parse(BytesIO(r.content))
     return tree
-retrieve_river_region.session = None
+retrieve_drainage_division.session = None
 
 ns = {
     'x': 'http://linked.data.gov.au/dataset/geof/v2/ahgf_hrr',
     'wfs': 'http://www.opengis.net/wfs/2.0',
     'gml': "http://www.opengis.net/gml/3.2"
 }
-# NOTE, RiverRegion has no sourceid!
-rr_tag_map = {
+dd_tag_map = {
     "{{{}}}hydroid".format(ns['x']): 'hydroid',
     "{{{}}}wkb_geometry".format(ns['x']): 'wkb_geometry',
     "{{{}}}ahgfftype".format(ns['x']): 'ahgfftype',
+    "{{{}}}divnumber".format(ns['x']): 'divnumber',
     "{{{}}}division".format(ns['x']): 'division',
-    "{{{}}}rivregnum".format(ns['x']): 'rivregnum',
-    "{{{}}}rivregname".format(ns['x']): 'rivregname',
     "{{{}}}srcfcname".format(ns['x']): 'srcfcname',
     "{{{}}}srcfctype".format(ns['x']): 'srcfctype',
+    "{{{}}}sourceid".format(ns['x']): 'sourceid',
     "{{{}}}featrel".format(ns['x']): 'featrel',
     "{{{}}}fsource".format(ns['x']): 'fsource',
     "{{{}}}attrrel".format(ns['x']): 'attrrel',
@@ -71,7 +70,8 @@ rr_tag_map = {
     "{{{}}}shape".format(ns['x']): 'shape',
 }
 
-def river_region_hyfeatures_converter(wfs_features):
+
+def drainage_division_hyfeatures_converter(wfs_features):
     if len(wfs_features) < 1:
         return None
     to_converter = {
@@ -79,7 +79,7 @@ def river_region_hyfeatures_converter(wfs_features):
         'shape': gml_extract_geom_to_geosparql
     }
     to_float = ('shape_length', 'shape_area', 'albersarea')
-    to_int = ('hydroid', 'ahgfftype')
+    to_int = ('hydroid', 'divnumber', 'ahgfftype', 'sourceid')
     to_datetime = ('attrrel', 'featrel')
     is_geom = ('wkb_geometry', 'shape')
     predicate_map = {
@@ -94,15 +94,15 @@ def river_region_hyfeatures_converter(wfs_features):
         features_source = [wfs_features]
     triples = set()
     feature_nodes = []
-    for hydroid, rr_element in features_source:  # type: int, etree._Element
+    for hydroid, dd_element in features_source:  # type: int, etree._Element
         feature_uri = rdflib.URIRef(
-            "".join([config.URI_RIVER_REGION_INSTANCE_BASE,
+            "".join([config.URI_AWRA_DRAINAGE_DIVISION_INSTANCE_BASE,
             str(hydroid)]))
         triples.add((feature_uri, RDF_a, HYF_HY_HydroFeature))
         triples.add((feature_uri, RDF_a, HYF_HY_CatchmentAggregate))
-        for c in rr_element.iterchildren():  # type: etree._Element
+        for c in dd_element.iterchildren():  # type: etree._Element
             try:
-                var = rr_tag_map[c.tag]
+                var = dd_tag_map[c.tag]
             except KeyError:
                 continue
             try:
@@ -143,7 +143,7 @@ def river_region_hyfeatures_converter(wfs_features):
         features_list.append(feature_uri)
     return triples, feature_nodes
 
-def river_region_features_geojson_converter(wfs_features):
+def drainage_division_features_geojson_converter(wfs_features):
     if len(wfs_features) < 1:
         return None
     to_converter = {
@@ -151,7 +151,7 @@ def river_region_features_geojson_converter(wfs_features):
         'shape': gml_extract_geom_to_geojson,
     }
     to_float = ('shape_length', 'shape_area', 'albersarea')
-    to_int = ('hydroid', 'ahgfftype')
+    to_int = ('hydroid', 'divnumber', 'ahgfftype', 'sourceid')
     # to_datetime = ('attrrel', 'featrel')
     to_datetime = []
     is_geom = ('wkb_geometry', 'shape')
@@ -163,12 +163,12 @@ def river_region_features_geojson_converter(wfs_features):
     else:
         features_source = [wfs_features]
 
-    for hydroid, rr_element in features_source:  # type: int, etree._Element
-        rr_dict = {"type": "Feature", "id": hydroid, "geometry": {}, "properties": {}}
+    for hydroid, dd_element in features_source:  # type: int, etree._Element
+        dd_dict = {"type": "Feature", "id": hydroid, "geometry": {}, "properties": {}}
 
-        for r in rr_element.iterchildren():  # type: etree._Element
+        for r in dd_element.iterchildren():  # type: etree._Element
             try:
-                var = rr_tag_map[r.tag]
+                var = dd_tag_map[r.tag]
             except KeyError:
                 continue
             try:
@@ -188,63 +188,68 @@ def river_region_features_geojson_converter(wfs_features):
             elif var in to_int:
                 val = int(val)
             if var in is_geom:
-                rr_dict['geometry'] = val
+                dd_dict['geometry'] = val
             else:
-                rr_dict['properties'][var] = val
-        features_list.append(rr_dict)
+                dd_dict['properties'][var] = val
+        features_list.append(dd_dict)
     return features_list
 
-def extract_river_regions_as_geojson(tree):
-    geojson_features = wfs_extract_features_as_geojson(tree, ns['x'], "RiverRegion", river_region_features_geojson_converter)
+def extract_drainage_divisions_as_geojson(tree):
+    geojson_features = wfs_extract_features_as_geojson(
+        tree, ns['x'], "AWRADrainageDivision",
+        drainage_division_features_geojson_converter)
     return geojson_features
 
-def extract_river_regions_as_hyfeatures(tree):
+def extract_drainage_divisions_as_hyfeatures(tree):
     g = rdflib.Graph()
-    triples, features = wfs_extract_features_as_hyfeatures(tree, ns['x'], "RiverRegion", river_region_hyfeatures_converter)
+    triples, features = wfs_extract_features_as_hyfeatures(
+        tree, ns['x'], "AWRADrainageDivision",
+        drainage_division_hyfeatures_converter)
     for (s, p, o) in iter(triples):
         g.add((s, p, o))
     return g
 
 
-class RiverRegion(GFModel):
+class AWRADrainageDivision(GFModel):
     @classmethod
     def make_instance_label(cls, instance_id):
-        return "River Region ID: {}".format(str(instance_id))
+        return "AWRA Drainage Division ID: {}".format(str(instance_id))
 
     @classmethod
     def make_canonical_uri(cls, instance_id):
-        return "".join([config.URI_RIVER_REGION_INSTANCE_BASE, instance_id])
+        return "".join([config.URI_AWRA_DRAINAGE_DIVISION_INSTANCE_BASE,
+                        instance_id])
 
     @classmethod
     def make_local_url(cls, instance_id):
-        return url_for('classes.river_region', rr_id=instance_id)
+        return url_for('classes.drainage_division', dd_id=instance_id)
 
     @classmethod
     def get_index(cls, page, per_page):
-        rr_wfs_uri = config.GF_OWS_ENDPOINT + \
+        dd_wfs_uri = config.GF_OWS_ENDPOINT + \
                      '?service=wfs' \
                      '&version=2.0.0' \
                      '&request=GetFeature' \
-                     '&typeName=ahgf_hrr:RiverRegion' \
+                     '&typeName=ahgf_hrr:AWRADrainageDivision' \
                      '&propertyName=hydroid' \
                      '&sortBy=hydroid' \
                      '&count={}'.format(per_page)
         # TODO: cannot get the next page!
-        r = requests.get(rr_wfs_uri)
+        r = requests.get(dd_wfs_uri)
         tree = etree.parse(BytesIO(r.content))
         items = tree.xpath('//x:hydroid/text()', namespaces={
             'x': 'http://linked.data.gov.au/dataset/geof/v2/ahgf_hrr'})
         return items
 
     def __init__(self, identifier):
-        super(RiverRegion, self).__init__()
+        super(AWRADrainageDivision, self).__init__()
         identifier = int(identifier)
-        rr_xml_tree = retrieve_river_region(identifier)
+        rr_xml_tree = retrieve_drainage_division(identifier)
         self.xml_tree = rr_xml_tree
-        rregions = extract_river_regions_as_geojson(rr_xml_tree)
-        rregion = rregions['features'][0]
-        self.geometry = rregion['geometry']
-        for k, v in rregion['properties'].items():
+        ddivisions = extract_drainage_divisions_as_geojson(rr_xml_tree)
+        ddivision = ddivisions['features'][0]
+        self.geometry = ddivision['geometry']
+        for k, v in ddivision['properties'].items():
             setattr(self, k, v)
 
     def get_bbox(self, pad=0):
@@ -254,7 +259,7 @@ class RiverRegion(GFModel):
         return (w,s,e,n) # (minx, miny, maxx, maxy)
 
     def to_hyfeatures_graph(self):
-        g = extract_river_regions_as_hyfeatures(self.xml_tree)
+        g = extract_drainage_divisions_as_hyfeatures(self.xml_tree)
         return g
 
     def export_html(self, view='geofabric'):
@@ -265,29 +270,29 @@ class RiverRegion(GFModel):
                   "&width=800&height=600" \
                   "&format=text/html;+subtype=openlayers" \
                   "&CRS=EPSG:4326" \
-                  "&layers=osm_au,ahgf_hrr:RiverRegion" \
+                  "&layers=osm_au,ahgf_hrr:AWRADrainageDivision" \
                   "&style=ahgfcatchment" \
                   "&bbox=" + bbox_string +\
                   "&CQL_FILTER=INCLUDE;hydroid="+str(hydroid)
 
         if view == 'geofabric':
             view_html = render_template(
-                'class_riverregion_geof.html',
+                'class_awradrainagedivision_geof.html',
                 wms_url=wms_url,
                 hydroid=hydroid,
                 division=self.division,
-                river_reg_name=self.rivregname,
+                divnumber=self.divnumber,
                 shape_length=self.shape_length,
                 shape_area=self.shape_area,
                 albers_area=self.albersarea,
             )
         elif view == "hyfeatures":
             view_html = render_template(
-                'class_riverregion_hyf.html',
+                'class_awradrainagedivision_hyf.html',
                 wms_url=wms_url,
                 hydroid=hydroid,
                 division=self.division,
-                river_reg_name=self.rivregname,
+                divnumber=self.divnumber,
                 shape_length=self.shape_length,
                 shape_area=self.shape_area,
                 albers_area=self.albersarea,

@@ -1,27 +1,17 @@
 {% extends "template_layout.html" %}
 
 {% block content %}
-    {%  set class_name = contained_item_classes[0] or None %}
+    {%  set c_i_c = contained_item_classes[0] or None %}
     <h1>Register</h1>
-    <h2>Of <em><a href="{{ class_name }}">{{ class_name }}</a></em> class items</h2>
+    <h2>Of <em><a href="{{ c_i_c }}">{{ c_i_c }}</a></em> class items</h2>
     <table>
         <tr>
             <td style="width:50%; vertical-align:top;">
-                <h3>Instances {{ class_name }}</h3>
+                <h3>Instances</h3>
                 <ul>
-                {% if class_name == 'https://www.opengis.net/def/appschema/hy_features/hyf/HY_Catchment' %}
-                    {% for instance in register_items %}
-                      <li><a href="{{ url_for('classes.catchment', catchment_id=instance[2]) }}">{{ uri }}{{ instance[2] }}</a></li>
-                    {% endfor %}
-                {% elif class_name == 'https://www.opengis.net/def/appschema/hy_features/hyf/HY_CatchmentAggregate' %}
-                    {% for instance in register_items %}
-                      <li><a href="{{ url_for('classes.river_region', rr_id=instance[2]) }}">{{ uri }}{{ instance[2] }}</a></li>
-                    {% endfor %}
-                {% else %}
-                    {% for instance in register_items %}
-                      <li><a href="{{ uri }}{{ instance[2] }}">{{ uri }}{{ instance[2] }}</a></li>
-                    {% endfor %}
-                {% endif %}
+                {% for instance in register_items %}
+                  <li><a href="{{ model.make_local_url(instance[2]) }}">{{ uri }}{{ instance[2] }}</a></li>
+                {% endfor %}
                 </ul>
             </td>
             <td style="width:50%; vertical-align:top;">

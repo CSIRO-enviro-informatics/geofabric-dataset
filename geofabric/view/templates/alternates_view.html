@@ -1,8 +1,12 @@
 {% extends "template_layout.html" %}
 
 {% block content %}
-    <h1>Address API</h1>
-    <h2>Alternates view of a <a href="{{ class_uri }}">{{ class_uri }}</a></h2>
+    <h1>GeoFabric Linked Data API</h1>
+    {% if class_uri %}
+        <h2>Alternates view of a <a href="{{ class_uri }}">{{ class_uri }}</a></h2>
+    {% else %}
+        <h2>Alternates view</h2>
+    {% endif %}
     {% if instance_uri %}
         <h3>Instance <a href="{{ instance_uri }}">{{ instance_uri }}</a></h3>
     {% endif %}

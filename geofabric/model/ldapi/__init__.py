@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
-from io import BytesIO
 
-import requests
 from flask import render_template, Response
 import pyldapi
-from lxml import etree
+from flask_paginate import Pagination
 
 import geofabric._config as config
+from geofabric.model import GFModel
 
 HYFView = pyldapi.View('hyfeatures',
                        "Features modelled using the HY_Features ontology",
@@ -190,47 +189,9 @@ class GEOFClassRenderer(pyldapi.Renderer):
 
 
 class GEOFRegisterRenderer(pyldapi.RegisterRenderer):
-    def _get_contained_items_from_wfs(self, page, per_page):
-        cic = self.contained_item_classes[0]
-        if cic == config.URI_CATCHMENT_CLASS:
-            catchments_wfs_uri = config.GF_OWS_ENDPOINT + \
-                                 '?service=wfs' \
-                                 '&version=2.0.0' \
-                                 '&request=GetFeature' \
-                                 '&typeName=ahgf_shcatch:AHGFCatchment' \
-                                 '&propertyName=hydroid' \
-                                 '&sortBy=hydroid' \
-                                 '&count={}'.format(per_page)
-            # TODO: cannot get the next page!
-            r = requests.get(catchments_wfs_uri)
-            tree = etree.parse(BytesIO(r.content))
-            items = tree.xpath('//x:hydroid/text()', namespaces={'x': 'http://linked.data.gov.au/dataset/geof/v2/ahgf_shcatch'})
-            label_prefix = 'Catchment'
-        elif cic == config.URI_RIVER_REGION_CLASS:
-            rr_wfs_uri = config.GF_OWS_ENDPOINT + \
-                                 '?service=wfs' \
-                                 '&version=2.0.0' \
-                                 '&request=GetFeature' \
-                                 '&typeName=ahgf_hrr:RiverRegion' \
-                                 '&propertyName=hydroid' \
-                                 '&sortBy=hydroid' \
-                                 '&count={}'.format(per_page)
-            # TODO: cannot get the next page!
-            r = requests.get(rr_wfs_uri)
-            tree = etree.parse(BytesIO(r.content))
-            items = tree.xpath('//x:hydroid/text()', namespaces={'x': 'http://linked.data.gov.au/dataset/geof/v2/ahgf_hrr'})
-            label_prefix = 'Catchment'
-        else:
-            raise NotImplementedError("Register Renderer for CIC {} is not implemented.".format(cic))
-
-        for item_id in items:
-            item_id = str(item_id)
-            uri = ''.join([self.uri, item_id])
-            label = ' '.join([label_prefix, 'ID:', item_id])
-            self.register_items.append((uri, label, item_id))
 
     def __init__(self, _request, uri, label, comment, contained_item_classes,
-                 register_total_count, *args, views=None,
+                 register_total_count, gf_model_class, *args, views=None,
                  default_view_token=None, **kwargs):
         kwargs.setdefault('alternates_template', 'alternates_view.html')
         kwargs.setdefault('register_template', 'register.html')
@@ -238,6 +199,8 @@ class GEOFRegisterRenderer(pyldapi.RegisterRenderer):
             _request, uri, label, comment, None, contained_item_classes,
             register_total_count, *args, views=views,
             default_view_token=default_view_token, **kwargs)
+        assert issubclass(gf_model_class, GFModel)
+        self.gf_model_class = gf_model_class
         try:
             vf_error = self.vf_error
             if vf_error:
@@ -247,7 +210,13 @@ class GEOFRegisterRenderer(pyldapi.RegisterRenderer):
                     self.format = 'text/html'
         except AttributeError:
             pass
-        self._get_contained_items_from_wfs(self.page, self.per_page)
+        items = self.gf_model_class.get_index(self.page, self.per_page)
+        for item_id in items:
+            item_id = str(item_id)
+            uri = ''.join([self.uri, item_id])
+            label = self.gf_model_class.make_instance_label(item_id)
+            self.register_items.append((uri, label, item_id))
+
 
     def render(self):
         try:
@@ -270,6 +239,46 @@ class GEOFRegisterRenderer(pyldapi.RegisterRenderer):
             headers=self.headers
         )
 
+    def _render_reg_view_html(self):
+        pagination = Pagination(
+            page=self.page, per_page=self.per_page,
+            total=self.register_total_count)
+
+        return Response(
+            render_template(
+                self.register_template or 'register.html',
+                uri=self.uri,
+                label=self.label,
+                model=self.gf_model_class,
+                contained_item_classes=self.contained_item_classes,
+                register_items=self.register_items,
+                page=self.page,
+                per_page=self.per_page,
+                first_page=self.first_page,
+                prev_page=self.prev_page,
+                next_page=self.next_page,
+                last_page=self.last_page,
+                super_register=self.super_register,
+                pagination=pagination
+            ),
+            headers=self.headers
+        )
+
+
+class GEOFRegisterOfRegistersRenderer(pyldapi.RegisterOfRegistersRenderer):
+    def _render_alternates_view_html(self):
+        views_formats = {k: v for k, v in self.views.items()}
+        views_formats['default'] = self.default_view_token
+        return Response(
+            render_template(
+                self.alternates_template or 'alternates_view.html',
+                class_uri=None,
+                instance_uri=None,
+                default_view_token=self.default_view_token,
+                views_formats=views_formats
+            ),
+            headers=self.headers
+        )
 
 class SchemaOrgRendererMixin(object):
 

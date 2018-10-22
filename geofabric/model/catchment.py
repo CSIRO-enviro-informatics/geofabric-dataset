@@ -3,7 +3,8 @@
 from io import BytesIO
 
 import rdflib
-from flask import render_template
+import requests
+from flask import render_template, url_for
 from rdflib import URIRef, Literal, BNode
 from requests import Session
 from lxml import etree
@@ -99,7 +100,9 @@ def catchment_hyfeatures_converter(wfs_features):
     triples = set()
     feature_nodes = []
     for hydroid, catchment_element in features_source:  # type: int, etree._Element
-        feature_uri = URIRef("{}/catchment/{}".format(config.URI_BASE, str(hydroid)))
+        feature_uri = rdflib.URIRef(
+            "".join([config.URI_CATCHMENT_INSTANCE_BASE,
+                     str(hydroid)]))
         triples.add((feature_uri, RDF_a, HYF_HY_HydroFeature))
         triples.add((feature_uri, RDF_a, HYF_HY_Catchment))
         for c in catchment_element.iterchildren():  # type: etree._Element
@@ -209,6 +212,36 @@ def extract_catchments_as_hyfeatures(tree):
 
 
 class Catchment(GFModel):
+
+    @classmethod
+    def make_instance_label(cls, instance_id):
+        return "Catchment ID: {}".format(str(instance_id))
+
+    @classmethod
+    def make_canonical_uri(cls, instance_id):
+        return "".join([config.URI_CATCHMENT_INSTANCE_BASE, instance_id])
+
+    @classmethod
+    def make_local_url(cls, instance_id):
+        return url_for('classes.catchment', catchment_id=instance_id)
+
+    @classmethod
+    def get_index(cls, page, per_page):
+        catchments_wfs_uri = config.GF_OWS_ENDPOINT + \
+                             '?service=wfs' \
+                             '&version=2.0.0' \
+                             '&request=GetFeature' \
+                             '&typeName=ahgf_shcatch:AHGFCatchment' \
+                             '&propertyName=hydroid' \
+                             '&sortBy=hydroid' \
+                             '&count={}'.format(per_page)
+        # TODO: cannot get the next page!
+        r = requests.get(catchments_wfs_uri)
+        tree = etree.parse(BytesIO(r.content))
+        items = tree.xpath('//x:hydroid/text()', namespaces={
+            'x': 'http://linked.data.gov.au/dataset/geof/v2/ahgf_shcatch'})
+        return items
+
     def __init__(self, identifier):
         super(Catchment, self).__init__()
         identifier = int(identifier)
@@ -219,8 +252,6 @@ class Catchment(GFModel):
         self.geometry = catchment['geometry']
         for k, v in catchment['properties'].items():
             setattr(self, k, v)
-        #bbox = self.get_bbox(pad=12)
-        #print(bbox)
 
     def get_bbox(self, pad=0):
         coords = self.geometry['coordinates']

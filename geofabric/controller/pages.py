@@ -9,6 +9,7 @@ from rdflib import Graph, Literal
 import io
 import requests
 import geofabric._config as config
+from geofabric.model.ldapi import GEOFRegisterOfRegistersRenderer
 
 pages = Blueprint('routes', __name__)
 
@@ -26,9 +27,10 @@ The base content of the G-NAF is available freely online at <https://data.gov.au
 The main ontology used to deliver the information in this dataset is the GNAF Ontology, online at <http://linked.data.gov.au/def/gnaf>. It draws heavily from the OWL ontology version of the ISO19160-1:2015 \"Addressing -- Part 1: Conceptual model\" standard (<https://www.iso.org/standard/61710.html>) which has been created by the ISO TC211, Group for Ontology Management (GOM) and published online by the Australian Government Linked Data Working Group at <http://reference.data.gov.au/def/ont/iso19160-1-address>."""
     rofr_comment = Literal(rofr_comment, lang='en')
     rofr_ttl_path = '/'.join([config.APP_DIR, 'rofr.ttl'])
-    rofr_renderer = pyldapi.RegisterOfRegistersRenderer(
+    rofr_renderer = GEOFRegisterOfRegistersRenderer(
         request, request.base_url, "GeoFabric Register or Registers", rofr_comment,
-        rofr_ttl_path, register_template='page_index.html')
+        rofr_ttl_path, register_template='page_index.html',
+        alternates_template="alternates_view.html")
     return rofr_renderer.render()
 
 
