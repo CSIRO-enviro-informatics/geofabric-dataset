@@ -1,41 +1,14 @@
 {% extends "template_layout.html" %}
 
 {% block content %}
-    <h1>GeoFabric LDAPI</h1>
+    <h1>Geofabric Linked Data API</h1>
     <h2>About</h2>
-    <p>TODO: Change this to Geofabirc About Page.</p>
-    <p>This is a <strong>test</strong> Linked Data API delivering data from the <a href="https://www.psma.com.au/products/g-naf">G-NAF, the Geocoded National Address File</a>.</p>
-    <p>It is being developed through a joint initiative between <a href="http://www.psma.com.au">PSMA Australia</a> &amp; <a href="http://www.ga.gov.au">Geoscience Australia</a> to test the application of <a href="https://en.wikipedia.org/wiki/Linked_data">Linked Data</a> technologies to large spatial datasets. The hope is that Linked Data will allow new applications of data presentation, access, mining and sharing that improve Australia've value from the G-NAF.</p>
-    <h3>The Linked Data API</h3>
-    <p>This API is a minimal implementation of a <a href="https://en.wikipedia.org/wiki/Representational_state_transfer">RESTful</a> <a href="https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol">HTTP</a> <a href="https://en.wikipedia.org/wiki/Application_programming_interface">API</a> that allows portions of the G-NAF dataset to be delivered as human- or machine-readable web resources (web pages and code files). It essentially presents endpoints (<a href="https://en.wikipedia.org/wiki/Uniform_Resource_Identifier">URI</a>s- web addresses) for address-related items according to various conceptual models. Conceptual models such as the <a href="https://www.iso.org/standard/61710.html">ISO's 19160-1:2015 -- Addressing</a> are related to the elements in the G-NAF through deliberate mappings which are made in the <em>Model</em> portion of this API codebase. The API then extracts data for its various models from the G-NAF database using <a href="https://en.wikipedia.org/wiki/SQL">SQL</a> queries that this API applied to a local copy of the G-NAF. It then uses HTML templates or in-memory graphs to generate <em>Views</em> for human or machine reading.</p>
-    <p>The following programming languages and tools are used by this API:</p>
-    <ul>
-        <li>Python Linked Data - a tiny Python module implementing Linked Data API restrictions on Flask</li>
-        <li><a href="http://flask.pocoo.org/">Python Flask framework</a> - the lower-level HTTP framework used by this API</li>
-        <li><a href="https://en.wikipedia.org/wiki/Apache_HTTP_Server">Apache web server</a> - the web server that allows communication with Flask over the Internet</li>
-        <li><a href="https://en.wikipedia.org/wiki/PostgreSQL">Postgres database</a> - an open source relational database containing the data of the G-NAF</li>
-    </ul>
-    <h3>License</h3>
-    <p>The code for this API is licensed under <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons 4.0</a>.</p>
-    <p>This essentially means you can copy and redistribute the code in any medium or format and remix, transform, and build upon the material
-for any purpose, even commercially, as long as you give appropriate credit, provide a link to the license, and indicate if changes were made.</p>
-    <p>The source code for this API is available on <a href="https://github.com/nicholascar/gnaf-ldapi-test">GitHub</a>.</p>
-    <h3>Further documentation</h3>
-    <p>Further documentation for this API is contained within its code repository at:</p>
-    <ul>
-        <li><a href="https://github.com/nicholascar/gnaf-ldapi-test">https://github.com/nicholascar/gnaf-ldapi-test</a></li>
-    </ul>
+    <p>This is an <a href="https://en.wikipedia.org/wiki/Application_programming_interface">Application Programming Interface (API)</a> that delivers a <a href="https://en.wikipedia.org/wiki/Linked_data">Linked Data</a> version of the <a href="http://www.bom.gov.au/water/geofabric/">Australian Hydrological Geospatial Fabric (the Geofabric)</a>
+    <p>It is being developed through a project involving <a href="https://www.csiro.au">CSIRO</a> &amp; <a href="http://www.ga.gov.au">Geoscience Australia</a> to implement a series of national spatial <a href="https://en.wikipedia.org/wiki/Linked_data">Linked Data</a> datasets for Australia. the project is called LOC-I: the Location Identifiers.</p>
+    <p>Much more information will be available here shortly as we continue to develop this tool!</a>
     <h3>Contacts</h3>
-        <p>This API is developed by:</p>
-    <p>
-        <strong>Joseph Abhayaratna</strong><br />
-        CTO, PSMA Australia Ltd.<br />
-        <a href="mailto:Joseph.Abhayaratna@psma.com.au">Joseph.Abhayaratna@psma.com.au</a>
-    </p>
-    <p>
-        <strong>Nicholas Car</strong><br />
-        Data Architect, Geoscience Australia<br />
-        <a href="mailto:nicholas.car@ga.gov.au">nicholas.car@ga.gov.au</a><br />
-        <a href="http://orcid.org/0000-0002-8742-7730">ORCID:0000-0002-8742-7730</a>
-    </p>
+    <p>This API is developed by:</p>
+    <p><a href="http://research.csiro.au/ei">CSIRO's Environmental Informatics Group</a> within <a href="https://www.csiro.au/en/Research/LWF">CSIRO Land &amp; Water</a>.</p>
+    <p>Please see this tool's code repository for contact details:</p>
+    <ul><li><a href="https://github.com/CSIRO-enviro-informatics/geofabric-dataset/">https://github.com/CSIRO-enviro-informatics/geofabric-dataset/</a></li></ul>
 {% endblock %}
