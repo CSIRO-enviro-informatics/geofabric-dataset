@@ -2,8 +2,7 @@
     <div id="header-logo" style="float:left;">
         <div id="header-logo-content">
             <div>
-                <a href="https://bom.gov.au/">Bureau of Meteorology Australia <br>
-                GeoFabric Dataset.</a>
+                <a href="http://www.bom.gov.au/water/geofabric/">The Geofabric Product</a>
             </div>
         </div>
     </div>
@@ -18,9 +17,10 @@
         </div>
         <div id="header-bottom">
             <div style="float:right; text-decoration: underline dotted;">
-                <a class="header-link-bottom" href="{{ url_for('classes.catchments') }}">Catchment Register</a>
-                <a class="header-link-bottom" href="{{ url_for('routes.sparql' ) }}">SPARQL endpoint</a>
-                <a href="/def/geofabric">GeoFabric ontology</a>
+                <a class="header-link-bottom" href="{{ url_for('classes.catchments') }}">Catchments</a>
+                <a class="header-link-bottom" href="{{ url_for('classes.river_regions') }}">River Regions</a>
+                <a class="header-link-bottom" href="{{ url_for('classes.drainage_divisions') }}">Drainage Divisions</a>
+                <!--<a href="/def/geofabric">HY_Features</a>-->
             </div>
         </div>
     </div>
