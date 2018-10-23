@@ -1,14 +1,29 @@
 <div id="header">
-    <div style="float:left;">
-        <a href="https://bom.gov.au/">Bureau of Meteorology Australia - GeoFabric Dataset.</a>
+    <div id="header-logo" style="float:left;">
+        <div id="header-logo-content">
+            <div>
+                <a href="https://bom.gov.au/">Bureau of Meteorology Australia <br>
+                GeoFabric Dataset.</a>
+            </div>
+        </div>
     </div>
-    <div style="float:right;">
-        <a href="{{ url_for('routes.index') }}">Home</a>
-        <a href="{{ url_for('routes.api') }}">API</a>
-        <a href="{{ url_for('classes.catchments') }}">Catchment Register</a>
-        <a href="{{ url_for('routes.sparql' ) }}">SPARQL endpoint</a>
-        <a href="/def/geofabric">GeoFabric ontology</a>
-        <a href="{{ url_for('routes.about') }}">About</a>
+
+    <div id="header-main">
+        <div id="header-top">
+            <div style="float:right;">
+                <a class="header-link-top" href="{{ url_for('routes.index') }}">Home</a>
+                <a class="header-link-top" href="{{ url_for('routes.api') }}">API</a>
+                <a href="{{ url_for('routes.about') }}">About</a>
+            </div>
+        </div>
+        <div id="header-bottom">
+            <div style="float:right; text-decoration: underline dotted;">
+                <a class="header-link-bottom" href="{{ url_for('classes.catchments') }}">Catchment Register</a>
+                <a class="header-link-bottom" href="{{ url_for('routes.sparql' ) }}">SPARQL endpoint</a>
+                <a href="/def/geofabric">GeoFabric ontology</a>
+            </div>
+        </div>
     </div>
+
     <div style="clear:both;"></div>
 </div>

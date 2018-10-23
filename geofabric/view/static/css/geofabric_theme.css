@@ -8,32 +8,45 @@ table, th, td {
 }
 
 h1 {
-    color: rgb(0, 92, 132);
-    text-align: center;
-    font-family: Helvetica,Arial,sans-serif;
-    font-size: 45.6px;
+    color: #575a5d;
+    font-family: 'FontSiteSans Light', Verdana, Arial, Helvetica, sans-serif;
+    font-size: 3em;
+    letter-spacing: -0.045em;
+    font-weight: 100;
 }
 
 h2 {
-    color: rgb(0, 92, 132);
-    font-family: Helvetica,Arial,sans-serif;
+    font-family: 'FontSiteSans Light', Verdana, Arial, Helvetica, sans-serif;
+    color: #069;
+    font-size: 2em;
+    letter-spacing: -0.045em;
+    margin: 0;
+    padding: 0;
+    font-weight: 100;
 }
 
 h3 {
-    color: rgb(0, 92, 132);
-    font-family: Helvetica,Arial,sans-serif;
+    font-family: 'FontSiteSans Light', Verdana, Arial, Helvetica, sans-serif;
+    color: #069;
+    font-size: 1em;
+    letter-spacing: -0.045em;
+    margin: 0;
+    padding: 0;
+    font-weight: 100;
 }
 
 p, a, li {
-    font-family: Arial,sans-serif;
+    font-size: 100%;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
 }
 a {
-    color: rgb(0, 92, 132);
+    color: rgb(0, 122, 204);
     text-decoration: none;
 }
 
 a:hover {
     text-decoration: underline;
+    color: rgb(179, 0, 0);
 }
 
 body {
@@ -46,26 +59,96 @@ body {
     padding: 20px;
 }
 #header {
-    padding: 20px 0 40px 0;
+    background-color: #003366;
 }
-#header > div > a {
-    color: rgb(0, 92, 132);
-    font-family: Helvetica,Arial,sans-serif;
+
+#header-logo {
+    margin: 0;
+    position: relative;
+    clear: left;
+    height: 70px;
+    width: 30%;
+}
+
+#header-logo-content {
+    padding: 10px;
+}
+
+#header-top {
+    height: 31px;
+    width: 100%;
+    line-height: 2;
+}
+
+.header-link-top {
+    border-right: 1px solid #999;
+    padding-right: 25px;
+}
+
+.header-link-bottom {
+    border-right: 1px solid #003366;
+    padding-right: 25px;
+}
+
+#header-bottom {
+    height: 39px;
+    background-image: url('http://www.bom.gov.au/images/ui/hdr-blend.gif');
+    background-repeat: repeat-y;
+    background-color: #1964AA;
+    width: 100%;
+    line-height: 2.5;
+}
+
+#header-main {
+    float: right;
+    clear: none;
+    margin: 0;
+    width: 70%;
+    height: 31px;
+    font-size: 10px;
+    text-transform: uppercase;
+    font-family: Verdana, sans-serif;
+}
+
+#header > div > div > div > a {
+    color: rgb(255, 255, 255);
+    font-family: Verdana,sans-serif;
     font-size: 14.4px;
-    font-weight: 700;
+    font-weight: 400;
     text-decoration: none;
     margin-right: 20px;
 }
 
-#footer {
-    background-color: rgb(0, 92, 132);
+#header > div > div > div > a:hover {
+    text-decoration: underline;
+}
+
+#footer-container {
+    background-color: #F0EEEB;
+    min-height: 50px;
+    border-top: 2px solid #ccc;
+    overflow: auto;
+    padding: 20px
+}
+
+#footer-content {
     min-height: 50px;
 }
 
-#container-content {
-    background-color: rgb(241, 241, 242);
-    padding: 20px;
+#footer-bottom {
+    float: left;
+    clear: both;
+    width: 100%;
+    font-size: 10px;
+    color: #666;
+    border-top: 1px dotted #999;
+    padding-top: 1.4em;
+    text-align: center;
+}
 
+#container-content {
+    /*background-color: rgb(241, 241, 242);*/
+    padding: 20px;
 }
 
 #container-content > table,
@@ -82,4 +165,11 @@ table.alternates td {
 
 table.content td {
     padding: 5px;
+}
+
+#box {
+    margin: 0 auto;
+    max-width: 1000px;
+    text-align: left;
+    box-shadow: 0px 10px 10px 10px rgba(0,0,0,0.34);
 }
