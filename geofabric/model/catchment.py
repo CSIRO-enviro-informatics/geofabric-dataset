@@ -227,6 +227,8 @@ class Catchment(GFModel):
 
     @classmethod
     def get_index(cls, page, per_page):
+        per_page = max(int(per_page), 1)
+        offset = (max(int(page), 1)-1)*per_page
         catchments_wfs_uri = config.GF_OWS_ENDPOINT + \
                              '?service=wfs' \
                              '&version=2.0.0' \
@@ -234,8 +236,7 @@ class Catchment(GFModel):
                              '&typeName=ahgf_shcatch:AHGFCatchment' \
                              '&propertyName=hydroid' \
                              '&sortBy=hydroid' \
-                             '&count={}'.format(per_page)
-        # TODO: cannot get the next page!
+                             '&count={}&startIndex={}'.format(per_page, offset)
         r = requests.get(catchments_wfs_uri)
         tree = etree.parse(BytesIO(r.content))
         items = tree.xpath('//x:hydroid/text()', namespaces={

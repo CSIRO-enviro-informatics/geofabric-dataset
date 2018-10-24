@@ -221,6 +221,8 @@ class RiverRegion(GFModel):
 
     @classmethod
     def get_index(cls, page, per_page):
+        per_page = max(int(per_page), 1)
+        offset = (max(int(page), 1)-1)*per_page
         rr_wfs_uri = config.GF_OWS_ENDPOINT + \
                      '?service=wfs' \
                      '&version=2.0.0' \
@@ -228,8 +230,7 @@ class RiverRegion(GFModel):
                      '&typeName=ahgf_hrr:RiverRegion' \
                      '&propertyName=hydroid' \
                      '&sortBy=hydroid' \
-                     '&count={}'.format(per_page)
-        # TODO: cannot get the next page!
+                     '&count={}&startIndex={}'.format(per_page, offset)
         r = requests.get(rr_wfs_uri)
         tree = etree.parse(BytesIO(r.content))
         items = tree.xpath('//x:hydroid/text()', namespaces={

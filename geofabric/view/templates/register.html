@@ -13,6 +13,15 @@
                   <li><a href="{{ model.make_local_url(instance[2]) }}">{{ uri }}{{ instance[2] }}</a></li>
                 {% endfor %}
                 </ul>
+                {% if prev_page is not none %}
+                <a href="{{ '{base_url}?per_page={per_page}&page={page}'.format(base_url=request.base_url, per_page=per_page, page=prev_page) }}">Previous page</a>
+                {% endif %}
+                {% if prev_page is not none or next_page is not none %}
+                ...
+                {%  endif %}
+                {% if next_page is not none %}
+                <a href="{{ '{base_url}?per_page={per_page}&page={page}'.format(base_url=request.base_url, per_page=per_page, page=next_page) }}">Next page</a>
+                {% endif %}
             </td>
             <td style="width:50%; vertical-align:top;">
                 <h3>Automated Pagination</h3>
