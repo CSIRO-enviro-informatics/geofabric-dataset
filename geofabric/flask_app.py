@@ -1,3 +1,10 @@
+import os
+import geofabric._config as config
+if __name__ == '__main__':
+    import sys
+    sys.path.insert(0, config.APP_DIR)
+    sys.path.insert(0, os.path.join(config.APP_DIR, 'geofabric'))
+
 import logging
 import geofabric._config as config
 from flask import Flask

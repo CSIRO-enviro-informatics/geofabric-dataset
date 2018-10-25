@@ -21,7 +21,7 @@ classes = Blueprint('classes', __name__)
 def catchments():
     renderer = GEOFRegisterRenderer(request, config.URI_CATCHMENT_INSTANCE_BASE,
                                     "Catchment Register",
-                                    "Register of all GeoFabric Catchments",
+                                    "Register of all Geofabric Catchments",
                                     [config.URI_CATCHMENT_CLASS],
                                     config.CATCHMENT_COUNT,
                                     Catchment,

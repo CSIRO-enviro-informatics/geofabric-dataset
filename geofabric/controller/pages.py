@@ -16,8 +16,8 @@ pages = Blueprint('routes', __name__)
 @pages.route('/', strict_slashes=True)
 def index():
     rofr_comment =\
-"""A Linked Data version of the GeoFabric.
-TODO: Change this for GeoFabric
+"""A Linked Data version of the Geofabric.
+TODO: Change this for Geofabric
 The G-NAF is Australia’s authoritative, geocoded address file. It contains more than 13 million Australian physical address records. The records include geocodes which are latitude and longitude map coordinates with coordinate reference system details and other information necessary to precisely locate addresses on the earth's surface.
 
 The G-NAF does not contain any names or personal information.
@@ -247,7 +247,7 @@ def get_sparql_service_description(mimetype):
 
 def sparql_query(sparql_query, format_mimetype='application/sparql-results+json'):
     """ Make a SPARQL query"""
-    return "The SPARQL Query feature for GeoFabric is not available."
+    return "The SPARQL Query feature for Geofabric is not available."
     auth = (config.SPARQL_AUTH_USR, config.SPARQL_AUTH_PWD)
     data = {'query': sparql_query}
     headers = {
