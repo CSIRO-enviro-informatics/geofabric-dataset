@@ -7,7 +7,36 @@
 </head>
 <body>
     <div id="box">
-        {% include 'template_header.html' %}
+        <div id="header">
+            <div id="header-logo" style="float:left;">
+                <div id="header-logo-content">
+                    <div>
+                        <a href="http://www.bom.gov.au/water/geofabric/">The Geofabric</a>
+                    </div>
+                </div>
+            </div>
+
+            <div id="header-main">
+                <div id="header-top">
+                    <div style="float:right;">
+                        <a class="header-link-top" href="{{ url_for('routes.index') }}">Home</a>
+                        <a class="header-link-top" href="{{ url_for('routes.api') }}">API</a>
+                        <a href="{{ url_for('routes.about') }}">About</a>
+                    </div>
+                </div>
+                <div id="header-bottom">
+                    <div style="float:right; text-decoration: underline dotted;">
+                        <a class="header-link-bottom" href="{{ url_for('classes.catchments') }}">Catchments</a>
+                        <a class="header-link-bottom" href="{{ url_for('classes.river_regions') }}">River Regions</a>
+                        <a class="header-link-bottom" href="{{ url_for('classes.drainage_divisions') }}">Drainage Divisions</a>
+                        <!--<a href="/def/geofabric">HY_Features</a>-->
+                    </div>
+                </div>
+            </div>
+
+            <div style="clear:both;"></div>
+        </div>
+
 
         <div id="widther">
             <div id="container-content">
@@ -15,7 +44,14 @@
             </div>
         </div>
 
-        {% include 'template_footer.html' %}
+        <div id="footer-container">
+            <div id="footer-content">
+
+            </div>
+            <div id="footer-bottom">
+                This API, &copy; <a href="https://www.csiro.au/">CSIRO</a>, 2018. For the Geofabric data itself, see <a href="http://www.bom.gov.au/water/geofabric/">the Geofabric homepage</a>
+            </div>
+        </div>
     </div>
 </body>
 </html>

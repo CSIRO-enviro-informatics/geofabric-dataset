@@ -1,13 +1,22 @@
 {% extends "template_layout.html" %}
 
 {% block content %}
-    <h1>Geofabric Linked Data API</h1>
-    <h2>About</h2>
-    <p></p>
+    <h1>Geofabric - distributed as Linked Data</h1>
+    <p>
+        This is a <a href="https://en.wikipedia.org/wiki/Linked_data">Linked Data</a> distribution of the
+        <a href="http://www.bom.gov.au/water/geofabric/">Geofabric</a>. For more information, see the
+        <a href="{{ url_for('routes.about') }}">About Page</a>
+    </p>
     <h2>Starting points</h2>
     <ul>
-        <li><a href="{{ url_for('classes.catchments') }}">Catchments Register</a> - the list of all Geofabric Catchments, paged</li>
-        <li><a href="{{ url_for('routes.sparql' ) }}">SPARQL endpoint</a></li>
+        <li><a href="{{ url_for('classes.catchments') }}">Catchments Register</a> - the list of all Catchments, paged</li>
+        <li><a href="{{ url_for('classes.river_regions') }}">River Regions Register</a></li>
+        <li><a href="{{ url_for('classes.drainage_divisions') }}">Drainage Divisions Register</a></li>
+    </ul>
+    <ul>
+        <li><a href="{{ url_for('classes.catchment', catchment_id=6600522) }}">Catchment #6600522</a> - a specific catchment</li>
+        <li><a href="{{ url_for('classes.river_region', rr_id=9400222) }}">River Region #9400222</a></li>
+        <li><a href="{{ url_for('classes.drainage_division', dd_id=9400209) }}">Drainage Division #9400209</a></li>
     </ul>
     <h2>More information</h2>
     <ul>

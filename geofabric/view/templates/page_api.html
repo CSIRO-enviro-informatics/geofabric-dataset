@@ -3,8 +3,83 @@
 {% block content %}
     <h1>Geofabric LDAPI</h1>
     <h2>Application Programming Interface</h2>
-    <p>The API endpoints for this Linked Data API are:</p>
+    <p>
+        This distribution of the Geofabric is presented as a Linked Data API which presents
+        <a href="https://en.wikipedia.org/wiki/Representational_state_transfer">RESTful</a> URI endpoints for each
+        Register (list) of types of item and each individual item, such as a Catchment.
+    </p>
+    <p>
+        Different <em>views</em> and <em>formats</em> for each Register and individual item are accessible via either
+        <a href="https://en.wikipedia.org/wiki/Content_negotiation">HTTP Content Negotiation</a> or via the use of
+        query string arguments (QSAs).
+    </p>
+    <h3>API URI patterns</h3>
+    <p>
+        This API uses the following patterns:
+    </p>
+    <p>
+        <code>DATASET_URI/CLASS_TOKEN/(OBJECT_ID){0,1}?(_view=VIEW_TOKEN){0,1}(&_format=FORMAT_TOKEN){0,1}</code>
+    </p>
+    <p>
+        In words: the dataset URI with an additional class token may be followed by an object ID and then the QSAs
+        <code>_view</code> and <code>_format</code> may be appended with a VIEW_TOKEN or FORMAT_TOKEN respectively.
+    </p>
+    <h3>Example endpoints</h3>
     <ul>
-        <li><a href="{{ url_for('classes.catchments') }}">{{ url_for('classes.catchments') }}</a> - register of Catchment objects</li>
+        <li>
+            <a href="http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.catchments') }}">
+            http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.catchments') }}</a>
+            <ul><li>register of catchments, in the default format (HTML)</li></ul>
+        </li>
+        <li>
+            <a href="http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.catchments') }}?_format=application/ld+json">
+                http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.catchments') }}?_format=application/ld+json</a>
+            <ul>
+                <li>
+                    register of catchments, in the <a href="http://json-ld.org">JSON-LD</a>
+                    format of <a href="https://www.w3.org/2001/sw/wiki/RDF">RDF</a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.catchment', catchment_id=6600522) }}">
+            http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.catchment', catchment_id=6600522) }}</a>
+            <ul><li>a specific catchment, #6600522</li></ul>
+        </li>
+        <li>
+            <a href="http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.catchment', catchment_id=6600522) }}?_format=text/turtle">
+            http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.catchment', catchment_id=6600522) }}?_format=text/turtle</a>
+            <ul>
+                <li>
+                    a specific catchment, #6600522, in the <a href="https://www.w3.org/TR/turtle/">Turtle</a> format
+                    of RDF
+                </li>
+            </ul>
+        </li>
+    </ul>
+    <p><em><strong>Views</strong></em> deliver information according to specification so:</p>
+    <ul>
+        <li>
+            <a href="http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.catchment', catchment_id=6600522) }}?_view=hyfeatures">
+            http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.catchment', catchment_id=6600522) }}?_view=hyfeatures</a>
+            <ul><li>a specific catchment, #6600522, delivered according to the HY Features specifications</li></ul>
+        </li>
+        <li>
+            <a href="http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.catchment', catchment_id=6600522) }}?_view=hyfeatures&_format=application/n-triples">
+            http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.catchment', catchment_id=6600522) }}?_view=hyfeatures&_format=application/n-triples</a>
+            <ul><li>a specific catchment, #6600522, delivered according to the HY Features specifications, in the N-Triples format</li></ul>
+        </li>
+    </ul>
+    <p>
+        To understand what <em>views</em> and <em>formats</em> are available for any API endpoint, use the specialised
+        view for that purpose, the <em>Alternates View</em>, so <code>URI?_view=alternats</code> e.g.:
+    </p>
+    <ul>
+        <li>
+            <a href="http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.catchment', catchment_id=6600522) }}?_view=alternates">
+                http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.catchment', catchment_id=6600522) }}?_view=alternates
+            </a>
+            <ul><li>the listing of all the views and formats available for a a specific catchment, #6600522</li></ul>
+        </li>
     </ul>
 {% endblock %}
