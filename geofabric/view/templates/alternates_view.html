@@ -3,9 +3,9 @@
 {% block content %}
     <h1>Geofabric Linked Data API</h1>
     {% if class_uri %}
-        <h2>Alternates view of a <a href="{{ class_uri }}">{{ class_uri }}</a></h2>
+        <h3>Alternates view of a <a href="{{ class_uri }}">{{ class_uri }}</a></h3>
     {% else %}
-        <h2>Alternates view</h2>
+        <h3>Alternates view</h3>
     {% endif %}
     {% if instance_uri %}
         <h3>Instance <a href="{{ instance_uri }}">{{ instance_uri }}</a></h3>
