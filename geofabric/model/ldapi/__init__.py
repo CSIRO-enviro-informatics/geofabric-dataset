@@ -242,7 +242,8 @@ class GEOFRegisterRenderer(pyldapi.RegisterRenderer):
     def _render_reg_view_html(self):
         pagination = Pagination(
             page=self.page, per_page=self.per_page,
-            total=self.register_total_count)
+            total=self.register_total_count,
+            page_parameter='page', per_page_parameter='per_page')
 
         return Response(
             render_template(

@@ -18,17 +18,11 @@ def index():
     rofr_comment =\
 """A Linked Data version of the Geofabric.
 TODO: Change this for Geofabric
-The G-NAF is Australia’s authoritative, geocoded address file. It contains more than 13 million Australian physical address records. The records include geocodes which are latitude and longitude map coordinates with coordinate reference system details and other information necessary to precisely locate addresses on the earth's surface.
-
-The G-NAF does not contain any names or personal information.
-
-The base content of the G-NAF is available freely online at <https://data.gov.au/dataset/geocoded-national-address-file-g-naf>.
-
-The main ontology used to deliver the information in this dataset is the GNAF Ontology, online at <http://linked.data.gov.au/def/gnaf>. It draws heavily from the OWL ontology version of the ISO19160-1:2015 \"Addressing -- Part 1: Conceptual model\" standard (<https://www.iso.org/standard/61710.html>) which has been created by the ISO TC211, Group for Ontology Management (GOM) and published online by the Australian Government Linked Data Working Group at <http://reference.data.gov.au/def/ont/iso19160-1-address>."""
+"""
     rofr_comment = Literal(rofr_comment, lang='en')
     rofr_ttl_path = '/'.join([config.APP_DIR, 'rofr.ttl'])
     rofr_renderer = GEOFRegisterOfRegistersRenderer(
-        request, request.base_url, "GeoFabric Register or Registers", rofr_comment,
+        request, config.URI_BASE, "GeoFabric Register or Registers", rofr_comment,
         rofr_ttl_path, register_template='page_index.html',
         alternates_template="alternates_view.html")
     return rofr_renderer.render()

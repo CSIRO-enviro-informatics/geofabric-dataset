@@ -1,5 +1,5 @@
 flask
 flask_paginate
-pyldapi>=2.0.11
+pyldapi>=2.0.13
 requests
 lxml
