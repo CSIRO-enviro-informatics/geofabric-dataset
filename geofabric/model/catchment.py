@@ -81,7 +81,7 @@ def catchment_hyfeatures_converter(wfs_features):
     to_converter = {
         'wkb_geometry': gml_extract_geom_to_geosparql,
         'shape': gml_extract_geom_to_geosparql,
-        'nextdownid': lambda x: (set(), URIRef("".join([config.URI_CATCHMENT_INSTANCE_BASE, x]))),
+        'nextdownid': lambda x: (set(), URIRef("".join([config.URI_CATCHMENT_INSTANCE_BASE, x.text]))),
     }
     to_float = ('shape_length', 'shape_area', 'albersarea')
     to_int = ('hydroid', 'ahgfftype', 'netnodeid', 'ncb_id', 'segmentno', 'sourceid')
