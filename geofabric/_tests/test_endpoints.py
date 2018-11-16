@@ -55,7 +55,7 @@ def test_geofabric_landing_page_alternates_view_html():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/?_view=alternates&_format=text/html',
         None,
-        r'<td><a href="http:\/\/geofabricld\.net\/\?_view=reg">reg<\/a><\/td>'
+        rf'<td>.*<a href="{SYSTEM_URI}\/\?_view=reg">reg<\/a>.*<\/td>'
     ), 'Geofabric alternates view html failed'
 
 
@@ -420,7 +420,7 @@ def test_geofabric_riverregion_9400216_alternates_view_html():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/riverregion/9400216?_view=alternates&_format=html',
         None,
-        r'<td><a href="http:\/\/geofabricld\.net\/riverregion\/9400216\?_view=geofabric">geofabric<\/a><\/td>'
+        rf'<td>.*<a href="{SYSTEM_URI}\/riverregion\/9400216\?_view=geofabric">geofabric<\/a>.*<\/td>'
     ), 'Geofabric River Region instance 9400216 alternates view html failed'
 
 
