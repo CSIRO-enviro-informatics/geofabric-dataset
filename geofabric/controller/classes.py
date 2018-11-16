@@ -3,15 +3,15 @@
 This file contains all the HTTP routes for classes from the Geofabric model, such as Catchment and the
 Catchment Register
 """
-from flask import Blueprint, Response, request
+from flask import Blueprint, request
 import geofabric._config as config
 from geofabric.model.awradrainagedivision import AWRADrainageDivision
 from geofabric.model.catchment import Catchment
-from geofabric.model.ldapi import GEOFRegisterRenderer
-from geofabric.model.ldapi.awradrainagedivision import \
+from geofabric.view.ldapi import GEOFRegisterRenderer
+from geofabric.view.ldapi.awradrainagedivision import \
     AWRADrainageDivisionRenderer
-from geofabric.model.ldapi.catchment import CatchmentRenderer
-from geofabric.model.ldapi.riverregion import RiverRegionRenderer
+from geofabric.view.ldapi.catchment import CatchmentRenderer
+from geofabric.view.ldapi.riverregion import RiverRegionRenderer
 from geofabric.model.riverregion import RiverRegion
 
 classes = Blueprint('classes', __name__)

@@ -154,6 +154,7 @@ body {
 
 #container-content > table,
 #container-content > table > tbody > tr > td,
+#container-content > table > tfoot > tr > td,
 #container-content > table > tbody > tr > th {
     border-collapse: collapse;
     border: none;

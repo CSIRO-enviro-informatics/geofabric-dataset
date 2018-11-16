@@ -9,7 +9,7 @@ from rdflib import Graph, Literal
 import io
 import requests
 import geofabric._config as config
-from geofabric.model.ldapi import GEOFRegisterOfRegistersRenderer
+from geofabric.view.ldapi import GEOFRegisterOfRegistersRenderer
 
 pages = Blueprint('routes', __name__)
 

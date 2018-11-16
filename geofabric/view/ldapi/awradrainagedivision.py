@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from geofabric.model.awradrainagedivision import AWRADrainageDivision
-from geofabric.model.ldapi import GEOFClassRenderer, SchemaOrgRendererMixin
+from geofabric.view.ldapi import GEOFClassRenderer, SchemaOrgRendererMixin
 import geofabric._config as config
 
 
@@ -18,6 +18,8 @@ class AWRADrainageDivisionRenderer(SchemaOrgRendererMixin, GEOFClassRenderer):
             request, _uri, _views, *args,
             default_view_token=default_view_token, **kwargs)
         self.identifier = identifier
-        self.instance = AWRADrainageDivision(self.identifier)
-
+        if self.view == "alternates":
+            self.instance = None
+        else:
+            self.instance = AWRADrainageDivision(self.identifier)
 

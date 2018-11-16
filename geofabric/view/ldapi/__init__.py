@@ -79,10 +79,11 @@ class GEOFClassRenderer(pyldapi.Renderer):
         self.instance = None  # inheriting classes will need to add the Instance themselves.
 
     def render(self):
+        response = super(GEOFClassRenderer, self).render()
+        if response is not None:
+            return response
         try:
-            if self.view == 'alternates':
-                return self._render_alternates_view()
-            elif self.view == 'geofabric':
+            if self.view == 'geofabric':
                 return self._render_geof_view()
             elif self.view == 'hyfeatures':
                 return self._render_hyf_view()
@@ -96,19 +97,17 @@ class GEOFClassRenderer(pyldapi.Renderer):
             from flask import request
             return render_error(request, e)
 
-    def _render_alternates_view_html(self):
-        views_formats = {k: v for k, v in self.views.items()}
-        views_formats['default'] = self.default_view_token
-        return Response(
-            render_template(
-                self.alternates_template or 'alternates_view.html',
-                class_uri=self.GEOF_CLASS,
-                instance_uri=self.uri,
-                default_view_token=self.default_view_token,
-                views_formats=views_formats
-            ),
-            headers=self.headers
-        )
+    def _render_alternates_view_html(self, template_context=None):
+        if template_context is None:
+            template_context = {}
+        # views_formats = {k: v for k, v in self.views.items()}
+        # views_formats['default'] = self.default_view_token
+        _template_context = {'class_uri': self.GEOF_CLASS,
+                             'instance_uri': self.uri}
+        #_template_context['views_formats'] = views_formats
+        _template_context.update(template_context)
+        return super(GEOFClassRenderer, self).\
+            _render_alternates_view_html(template_context=_template_context)
 
     def _render_geof_view(self):
         if self.format == 'text/html':
@@ -210,13 +209,15 @@ class GEOFRegisterRenderer(pyldapi.RegisterRenderer):
                     self.format = 'text/html'
         except AttributeError:
             pass
-        items = self.gf_model_class.get_index(self.page, self.per_page)
-        for item_id in items:
-            item_id = str(item_id)
-            uri = ''.join([self.uri, item_id])
-            label = self.gf_model_class.make_instance_label(item_id)
-            self.register_items.append((uri, label, item_id))
-
+        if self.view == "alternates":
+            pass
+        else:
+            items = self.gf_model_class.get_index(self.page, self.per_page)
+            for item_id in items:
+                item_id = str(item_id)
+                uri = ''.join([self.uri, item_id])
+                label = self.gf_model_class.make_instance_label(item_id)
+                self.register_items.append((uri, label, item_id))
 
     def render(self):
         try:
@@ -225,61 +226,63 @@ class GEOFRegisterRenderer(pyldapi.RegisterRenderer):
             from flask import request
             return render_error(request, e)
 
-    def _render_alternates_view_html(self):
-        views_formats = {k: v for k, v in self.views.items()}
-        views_formats['default'] = self.default_view_token
-        return Response(
-            render_template(
-                self.alternates_template or 'alternates_view.html',
-                class_uri="http://purl.org/linked-data/registry#Register",
-                instance_uri=None,
-                default_view_token=self.default_view_token,
-                views_formats=views_formats
-            ),
-            headers=self.headers
-        )
+    def _render_alternates_view_html(self, template_context=None):
+        if template_context is None:
+            template_context = {}
 
-    def _render_reg_view_html(self):
-        pagination = Pagination(
-            page=self.page, per_page=self.per_page,
-            total=self.register_total_count,
-            page_parameter='page', per_page_parameter='per_page')
+        # views_formats = {k: v for k, v in self.views.items()}
+        # views_formats['default'] = self.default_view_token
+        _template_context = {
+            'class_uri': "http://purl.org/linked-data/registry#Register",
+            'instance_uri': None
+        }
+        #_template_context['views_formats'] = views_formats
+        _template_context.update(template_context)
 
-        return Response(
-            render_template(
-                self.register_template or 'register.html',
-                uri=self.uri,
-                label=self.label,
-                model=self.gf_model_class,
-                contained_item_classes=self.contained_item_classes,
-                register_items=self.register_items,
-                page=self.page,
-                per_page=self.per_page,
-                first_page=self.first_page,
-                prev_page=self.prev_page,
-                next_page=self.next_page,
-                last_page=self.last_page,
-                super_register=self.super_register,
-                pagination=pagination
-            ),
-            headers=self.headers
-        )
+        return super(GEOFRegisterRenderer, self).\
+            _render_alternates_view_html(template_context=_template_context)
+
+    def _render_reg_view_html(self, template_context=None):
+        if template_context is None:
+            template_context = {}
+        _template_context = {'model': self.gf_model_class}
+        _template_context.update(template_context)
+        return super(GEOFRegisterRenderer, self). \
+            _render_reg_view_html(template_context=_template_context)
+        # return Response(
+        #     render_template(
+        #         self.register_template or 'register.html',
+        #         uri=self.uri,
+        #         label=self.label,
+        #
+        #         contained_item_classes=self.contained_item_classes,
+        #         register_items=self.register_items,
+        #         page=self.page,
+        #         per_page=self.per_page,
+        #         first_page=self.first_page,
+        #         prev_page=self.prev_page,
+        #         next_page=self.next_page,
+        #         last_page=self.last_page,
+        #         super_register=self.super_register,
+        #         pagination=pagination
+        #     ),
+        #     headers=self.headers
+        # )
 
 
 class GEOFRegisterOfRegistersRenderer(pyldapi.RegisterOfRegistersRenderer):
-    def _render_alternates_view_html(self):
-        views_formats = {k: v for k, v in self.views.items()}
-        views_formats['default'] = self.default_view_token
-        return Response(
-            render_template(
-                self.alternates_template or 'alternates_view.html',
-                class_uri=None,
-                instance_uri=None,
-                default_view_token=self.default_view_token,
-                views_formats=views_formats
-            ),
-            headers=self.headers
-        )
+    def _render_alternates_view_html(self, template_context=None):
+        if template_context is None:
+            template_context = {}
+
+        # views_formats = {k: v for k, v in self.views.items()}
+        # views_formats['default'] = self.default_view_token
+        _template_context = {'class_uri': None, 'instance_uri': None}
+        #_template_context['views_formats'] = views_formats
+        _template_context.update(template_context)
+
+        return super(GEOFRegisterOfRegistersRenderer, self).\
+            _render_alternates_view_html(template_context=_template_context)
 
 class SchemaOrgRendererMixin(object):
 
