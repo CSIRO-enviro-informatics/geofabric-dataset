@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 #
-from io import BytesIO
-
 import rdflib
 import requests
 from flask import render_template, url_for
+from lxml.etree import ParseError
+from io import BytesIO
 from rdflib import URIRef, Literal, BNode
 from requests import Session
 from lxml import etree
@@ -238,7 +238,12 @@ class Catchment(GFModel):
                              '&sortBy=hydroid' \
                              '&count={}&startIndex={}'.format(per_page, offset)
         r = requests.get(catchments_wfs_uri)
-        tree = etree.parse(BytesIO(r.content))
+        try:
+            tree = etree.parse(BytesIO(r.content))
+        except ParseError as e:
+            print(e)
+            print(r.text)
+            return []
         items = tree.xpath('//x:hydroid/text()', namespaces={
             'x': 'http://linked.data.gov.au/dataset/geof/v2/ahgf_shcatch'})
         return items
@@ -276,13 +281,13 @@ class Catchment(GFModel):
                   "&style=ahgfcatchment" \
                   "&bbox=" + bbox_string +\
                   "&CQL_FILTER=INCLUDE;hydroid="+str(hydroid)
-
+        nextdownid = getattr(self, 'nextdownid', None)
         if view == 'geofabric':
             view_html = render_template(
                 'class_catchment_geof.html',
                 wms_url=wms_url,
                 hydroid=hydroid,
-                nextdownid=self.nextdownid,
+                nextdownid=nextdownid,
                 shape_length=self.shape_length,
                 shape_area=self.shape_area,
                 albers_area=self.albersarea,
@@ -292,7 +297,7 @@ class Catchment(GFModel):
                 'class_catchment_hyf.html',
                 wms_url=wms_url,
                 hydroid=hydroid,
-                nextdownid=self.nextdownid,
+                nextdownid=nextdownid,
                 shape_length=self.shape_length,
                 shape_area=self.shape_area,
                 albers_area=self.albersarea,

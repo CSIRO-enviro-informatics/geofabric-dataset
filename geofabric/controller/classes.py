@@ -16,6 +16,10 @@ from geofabric.model.riverregion import RiverRegion
 
 classes = Blueprint('classes', __name__)
 
+CATCHMENT_COUNT = 14500797
+RIVER_REGION_COUNT = 218
+DRAINAGE_DIVISION_COUNT = 13
+
 
 @classes.route('/catchment/')
 def catchments():
@@ -23,7 +27,7 @@ def catchments():
                                     "Catchment Register",
                                     "Register of all Geofabric Catchments",
                                     [config.URI_CATCHMENT_CLASS],
-                                    config.CATCHMENT_COUNT,
+                                    CATCHMENT_COUNT,
                                     Catchment,
                                     super_register=config.URI_BASE)
     return renderer.render()
@@ -36,7 +40,7 @@ def river_regions():
         "River Region Register",
         "Register of all GeoFabric River Regions",
         [config.URI_RIVER_REGION_CLASS],
-        config.CATCHMENT_COUNT,
+        RIVER_REGION_COUNT,
         RiverRegion,
         super_register=config.URI_BASE)
     return renderer.render()
@@ -49,7 +53,7 @@ def drainage_divisions():
         "AWRA Drainage Division Register",
         "Register of all AWRA Drainage Divisions",
         [config.URI_AWRA_DRAINAGE_DIVISION_CLASS],
-        config.CATCHMENT_COUNT,
+        DRAINAGE_DIVISION_COUNT,
         AWRADrainageDivision,
         super_register=config.URI_BASE)
     return renderer.render()

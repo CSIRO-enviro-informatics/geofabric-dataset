@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 #
+from _elementtree import ParseError
 from io import BytesIO
 
 import rdflib
@@ -232,7 +233,12 @@ class RiverRegion(GFModel):
                      '&sortBy=hydroid' \
                      '&count={}&startIndex={}'.format(per_page, offset)
         r = requests.get(rr_wfs_uri)
-        tree = etree.parse(BytesIO(r.content))
+        try:
+            tree = etree.parse(BytesIO(r.content))
+        except ParseError as e:
+            print(e)
+            print(r.text)
+            return []
         items = tree.xpath('//x:hydroid/text()', namespaces={
             'x': 'http://linked.data.gov.au/dataset/geof/v2/ahgf_hrr'})
         return items
