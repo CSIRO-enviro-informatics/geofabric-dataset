@@ -10,7 +10,7 @@
         <tr><td>River Region</td><td><a href="{{ url_for("classes.river_region", rr_id=rrid) }}">{{ rrid }}</a></td></tr>
     {% endif %}
     {% if awraddid %}
-        <tr><td>AWRA Drainage Division</td><td><a href="{{ url_for("classes.drainage_division", dd_id=awraddid) }}">{{ rrid }}</a></td></tr>
+        <tr><td>AWRA Drainage Division</td><td><a href="{{ url_for("classes.drainage_division", dd_id=awraddid) }}">{{ awraddid }}</a></td></tr>
     {% endif %}
     <tr><td>Shape Area</td><td><code>{{ shape_area }}</code></td></tr>
     <tr><td>Shape Length</td><td><code>{{ shape_length }}</code></td></tr>
