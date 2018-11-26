@@ -7,29 +7,43 @@ from flask import Blueprint, request
 import geofabric._config as config
 from geofabric.model.awradrainagedivision import AWRADrainageDivision
 from geofabric.model.catchment import Catchment
+from geofabric.model.contractedcatchment import ContractedCatchment
 from geofabric.view.ldapi import GEOFRegisterRenderer
 from geofabric.view.ldapi.awradrainagedivision import \
     AWRADrainageDivisionRenderer
 from geofabric.view.ldapi.catchment import CatchmentRenderer
+from geofabric.view.ldapi.contractedcatchment import ContractedCatchmentRenderer
 from geofabric.view.ldapi.riverregion import RiverRegionRenderer
 from geofabric.model.riverregion import RiverRegion
 
 classes = Blueprint('classes', __name__)
 
-CATCHMENT_COUNT = 14500797
+CONTRACTED_CATCHMENT_COUNT = 30461
+CATCHMENT_COUNT = 1474286
 RIVER_REGION_COUNT = 218
 DRAINAGE_DIVISION_COUNT = 13
+
+USE_CONTRACTED_CATCHMENTS = True
 
 
 @classes.route('/catchment/')
 def catchments():
-    renderer = GEOFRegisterRenderer(request, config.URI_CATCHMENT_INSTANCE_BASE,
-                                    "Catchment Register",
-                                    "Register of all Geofabric Catchments",
-                                    [config.URI_CATCHMENT_CLASS],
-                                    CATCHMENT_COUNT,
-                                    Catchment,
-                                    super_register=config.URI_BASE)
+    if USE_CONTRACTED_CATCHMENTS:
+        renderer = GEOFRegisterRenderer(request, config.URI_CATCHMENT_INSTANCE_BASE,
+                                        "Catchment Register",
+                                        "Register of all Geofabric Contracted Catchments",
+                                        [config.URI_CATCHMENT_CLASS],
+                                        CONTRACTED_CATCHMENT_COUNT,
+                                        ContractedCatchment,
+                                        super_register=config.URI_BASE)
+    else:
+        renderer = GEOFRegisterRenderer(request, config.URI_CATCHMENT_INSTANCE_BASE,
+                                        "Catchment Register",
+                                        "Register of all Geofabric Catchments",
+                                        [config.URI_CATCHMENT_CLASS],
+                                        CATCHMENT_COUNT,
+                                        Catchment,
+                                        super_register=config.URI_BASE)
     return renderer.render()
 
 
@@ -67,7 +81,10 @@ def catchment(catchment_id):
     :param catchment_id:
     :return: LDAPI views of a single Catchment
     """
-    r = CatchmentRenderer(request, catchment_id, None)
+    if USE_CONTRACTED_CATCHMENTS:
+        r = ContractedCatchmentRenderer(request, catchment_id, None)
+    else:
+        r = CatchmentRenderer(request, catchment_id, None)
     return r.render()
 
 

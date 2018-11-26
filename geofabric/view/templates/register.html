@@ -14,18 +14,6 @@
                   <li><a href="{{ model.make_local_url(instance[2]) }}">{{ instance[2] }}</a></li>
                 {% endfor %}
                 </ul>
-                <p>
-                    Pages:
-                    {% if prev_page is not none %}
-                    <a href="{{ '{base_url}?per_page={per_page}&page={page}'.format(base_url=request.base_url, per_page=per_page, page=prev_page) }}">Previous</a>
-                    {% endif %}
-                    {% if prev_page is not none or next_page is not none %}
-                    ...
-                    {%  endif %}
-                    {% if next_page is not none %}
-                    <a href="{{ '{base_url}?per_page={per_page}&page={page}'.format(base_url=request.base_url, per_page=per_page, page=next_page) }}">Next</a>
-                    {% endif %}
-                </p>
             </td>
             <td style="width:50%; vertical-align:top;">
                 <h3>Alternate views</h3>
@@ -46,5 +34,11 @@ Link:   &lt;{{ request.base_url }}?per_page=500&gt; rel="first",
                 </pre>
             </td>
         </tr>
+        {%  if pagination.links %}
+        <tr><td colspan="2">
+            <h5>Paging</h5>
+            {{ pagination.links }}
+        </td></tr>
+        {%  endif %}
     </table>
 {% endblock %}

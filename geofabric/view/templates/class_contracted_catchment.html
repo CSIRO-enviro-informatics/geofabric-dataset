@@ -1,0 +1,17 @@
+{% extends "template_layout.html" %}
+
+{% block content %}
+    <h1>Contracted Catchment {{ instance_id }}</h1>
+    <h3>A Hydrology Reporting Catchment instance</h3>
+    {{ view_html|safe }}
+
+    <h2>Other views</h2>
+    <p>Other model views of a Contracted Catchment are listed in the <a href="{{ url_for('classes.catchment', catchment_id=instance_id) }}?_view=alternates">Alternates View</a>.</p>
+
+    <h2>Citation</h2>
+    <p>If you wish to cite this Catchment as you would a publication, please use the following format:</p>
+    <code style="display:block; margin: 0 5em 0 5em;">
+        Contracted Catchment {{ instance_id }}. Contracted Catchment object from the Geofabric Database. {{ instance_uri }}
+    </code>
+
+{% endblock %}

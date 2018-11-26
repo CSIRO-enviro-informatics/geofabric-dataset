@@ -62,7 +62,7 @@ class GEOFClassRenderer(pyldapi.Renderer):
         _views = views or {}
         self._add_default_geof_views(_views)
         if default_view_token is None:
-            default_view_token = 'geofabric'
+            default_view_token = 'hyfeatures'
         super(GEOFClassRenderer, self).__init__(request, uri, _views, default_view_token, *args, **kwargs)
         try:
             vf_error = self.vf_error
