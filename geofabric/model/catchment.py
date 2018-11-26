@@ -15,7 +15,7 @@ from geofabric.helpers import gml_extract_geom_to_geojson, \
     GEO_hasGeometry, GEO_hasDefaultGeometry, RDF_a, \
     HYF_HY_CatchmentRealization, HYF_realizedCatchment, HYF_lowerCatchment, \
     HYF_catchmentRealization, HYF_HY_Catchment, HYF_HY_HydroFeature, \
-    calculate_bbox
+    calculate_bbox, NotFoundError
 from geofabric.model import GFModel
 from functools import lru_cache
 from datetime import datetime
@@ -170,7 +170,6 @@ def catchment_features_geojson_converter(wfs_features):
 
     for hydroid, catchment_element in features_source:  # type: int, etree._Element
         catchment_dict = {"type": "Feature", "id": hydroid, "geometry": {}, "properties": {}}
-
         for c in catchment_element.iterchildren():  # type: etree._Element
             try:
                 var = catchment_tag_map[c.tag]
@@ -254,6 +253,8 @@ class Catchment(GFModel):
         catchment_xml_tree = retrieve_catchment(identifier)
         self.xml_tree = catchment_xml_tree
         catchments = extract_catchments_as_geojson(catchment_xml_tree)
+        if catchments['features'] is None or len(catchments['features']) < 1:
+            raise NotFoundError()
         catchment = catchments['features'][0]
         self.geometry = catchment['geometry']
         for k, v in catchment['properties'].items():

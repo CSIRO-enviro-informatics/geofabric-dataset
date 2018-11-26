@@ -15,7 +15,7 @@ from geofabric.helpers import gml_extract_geom_to_geojson, \
     GEO_hasGeometry, GEO_hasDefaultGeometry, RDF_a, \
     HYF_HY_CatchmentRealization, HYF_realizedCatchment, HYF_lowerCatchment, \
     HYF_catchmentRealization, HYF_HY_Catchment, HYF_HY_HydroFeature, \
-    calculate_bbox, HYF_HY_CatchmentAggregate
+    calculate_bbox, HYF_HY_CatchmentAggregate, NotFoundError
 from geofabric.model import GFModel
 from functools import lru_cache
 from datetime import datetime
@@ -257,6 +257,8 @@ class AWRADrainageDivision(GFModel):
         rr_xml_tree = retrieve_drainage_division(identifier)
         self.xml_tree = rr_xml_tree
         ddivisions = extract_drainage_divisions_as_geojson(rr_xml_tree)
+        if ddivisions['features'] is None or len(ddivisions['features']) < 1:
+            raise NotFoundError()
         ddivision = ddivisions['features'][0]
         self.geometry = ddivision['geometry']
         for k, v in ddivision['properties'].items():

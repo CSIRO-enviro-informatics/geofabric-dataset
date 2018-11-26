@@ -26,7 +26,14 @@ GEO_spatialDimension = GEO.term('spatialDimension')  # overrides coordinateDimen
 GEO_isEmpty = GEO.term('isEmpty')
 GEO_isSimple = GEO.term('isSimple')
 GEO_hasDefaultGeometry = GEO.term('hasDefaultGeometry')
+GEO_sfWithin = GEO.term('sfWithin')
 RDF_a = RDF.term('type')
+
+
+class NotFoundError(Exception):
+    def __init__(self, *args):
+        super(NotFoundError, self).__init__(*args)
+
 
 
 def chunks(source, length):

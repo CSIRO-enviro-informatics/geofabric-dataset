@@ -3,7 +3,7 @@
 This file contains all the HTTP routes for classes from the Geofabric model, such as Catchment and the
 Catchment Register
 """
-from flask import Blueprint, request
+from flask import Blueprint, request, abort
 import geofabric._config as config
 from geofabric.model.awradrainagedivision import AWRADrainageDivision
 from geofabric.model.catchment import Catchment
@@ -15,6 +15,7 @@ from geofabric.view.ldapi.catchment import CatchmentRenderer
 from geofabric.view.ldapi.contractedcatchment import ContractedCatchmentRenderer
 from geofabric.view.ldapi.riverregion import RiverRegionRenderer
 from geofabric.model.riverregion import RiverRegion
+from geofabric.helpers import NotFoundError
 
 classes = Blueprint('classes', __name__)
 
@@ -81,10 +82,13 @@ def catchment(catchment_id):
     :param catchment_id:
     :return: LDAPI views of a single Catchment
     """
-    if USE_CONTRACTED_CATCHMENTS:
-        r = ContractedCatchmentRenderer(request, catchment_id, None)
-    else:
-        r = CatchmentRenderer(request, catchment_id, None)
+    try:
+        if USE_CONTRACTED_CATCHMENTS:
+            r = ContractedCatchmentRenderer(request, catchment_id, None)
+        else:
+            r = CatchmentRenderer(request, catchment_id, None)
+    except NotFoundError:
+        return abort(404)
     return r.render()
 
 
@@ -96,7 +100,10 @@ def river_region(rr_id):
     :param rr_id:
     :return: LDAPI views of a single River Region
     """
-    r = RiverRegionRenderer(request, rr_id, None)
+    try:
+        r = RiverRegionRenderer(request, rr_id, None)
+    except NotFoundError:
+        return abort(404)
     return r.render()
 
 
@@ -108,5 +115,8 @@ def drainage_division(dd_id):
     :param dd_id:
     :return: LDAPI views of a single AWRA Drainage Division
     """
-    r = AWRADrainageDivisionRenderer(request, dd_id, None)
+    try:
+        r = AWRADrainageDivisionRenderer(request, dd_id, None)
+    except NotFoundError:
+        return abort(404)
     return r.render()

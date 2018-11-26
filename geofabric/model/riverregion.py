@@ -16,7 +16,7 @@ from geofabric.helpers import gml_extract_geom_to_geojson, \
     GEO_hasGeometry, GEO_hasDefaultGeometry, RDF_a, \
     HYF_HY_CatchmentRealization, HYF_realizedCatchment, HYF_lowerCatchment, \
     HYF_catchmentRealization, HYF_HY_Catchment, HYF_HY_HydroFeature, \
-    calculate_bbox, HYF_HY_CatchmentAggregate
+    calculate_bbox, HYF_HY_CatchmentAggregate, NotFoundError
 from geofabric.model import GFModel
 from functools import lru_cache
 from datetime import datetime
@@ -249,6 +249,8 @@ class RiverRegion(GFModel):
         rr_xml_tree = retrieve_river_region(identifier)
         self.xml_tree = rr_xml_tree
         rregions = extract_river_regions_as_geojson(rr_xml_tree)
+        if rregions['features'] is None or len(rregions['features']) < 1:
+            raise NotFoundError()
         rregion = rregions['features'][0]
         self.geometry = rregion['geometry']
         for k, v in rregion['properties'].items():
