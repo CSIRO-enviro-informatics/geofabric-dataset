@@ -5,6 +5,7 @@ from io import BytesIO
 import rdflib
 import requests
 from flask import render_template, url_for
+from lxml.etree import ParseError
 from rdflib import URIRef, Literal, BNode
 from requests import Session
 from lxml import etree
@@ -195,6 +196,7 @@ def drainage_division_features_geojson_converter(wfs_features):
                     val = int(val)
                 except ValueError:
                     # divnumber can be a string sometimes!
+
                     val = str(val)
             if var in is_geom:
                 dd_dict['geometry'] = val
@@ -246,7 +248,13 @@ class AWRADrainageDivision(GFModel):
                      '&sortBy=hydroid' \
                      '&count={}&startIndex={}'.format(per_page, offset)
         r = requests.get(dd_wfs_uri)
-        tree = etree.parse(BytesIO(r.content))
+        if r.status_code == 503:
+            raise RuntimeError("503 Service Unavailable")
+        try:
+            tree = etree.parse(BytesIO(r.content))
+        except ParseError as e:
+            print("Parse error with text:\n{}".format(r.text))
+            raise e
         items = tree.xpath('//x:hydroid/text()', namespaces={
             'x': 'http://linked.data.gov.au/dataset/geof/v2/ahgf_hrr'})
         return items
