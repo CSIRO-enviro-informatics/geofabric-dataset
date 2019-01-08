@@ -22,7 +22,7 @@ TODO: Change this for Geofabric
     rofr_comment = Literal(rofr_comment, lang='en')
     rofr_ttl_path = '/'.join([config.APP_DIR, 'rofr.ttl'])
     rofr_renderer = GEOFRegisterOfRegistersRenderer(
-        request, config.URI_BASE, "GeoFabric Register or Registers", rofr_comment,
+        request, config.DATA_URI_PREFIX, "GeoFabric Register or Registers", rofr_comment,
         rofr_ttl_path, register_template='page_index.html',
         alternates_template="alternates_view.html")
     return rofr_renderer.render()

@@ -36,7 +36,7 @@ def catchments():
                                         [config.URI_CATCHMENT_CLASS],
                                         CONTRACTED_CATCHMENT_COUNT,
                                         ContractedCatchment,
-                                        super_register=config.URI_BASE)
+                                        super_register=config.DATA_URI_PREFIX)
     else:
         renderer = GEOFRegisterRenderer(request, config.URI_CATCHMENT_INSTANCE_BASE,
                                         "Catchment Register",
@@ -44,7 +44,7 @@ def catchments():
                                         [config.URI_CATCHMENT_CLASS],
                                         CATCHMENT_COUNT,
                                         Catchment,
-                                        super_register=config.URI_BASE)
+                                        super_register=config.DATA_URI_PREFIX)
     return renderer.render()
 
 
@@ -57,7 +57,7 @@ def river_regions():
         [config.URI_RIVER_REGION_CLASS],
         RIVER_REGION_COUNT,
         RiverRegion,
-        super_register=config.URI_BASE)
+        super_register=config.DATA_URI_PREFIX)
     return renderer.render()
 
 
@@ -70,7 +70,7 @@ def drainage_divisions():
         [config.URI_AWRA_DRAINAGE_DIVISION_CLASS],
         DRAINAGE_DIVISION_COUNT,
         AWRADrainageDivision,
-        super_register=config.URI_BASE)
+        super_register=config.DATA_URI_PREFIX)
     return renderer.render()
 
 
