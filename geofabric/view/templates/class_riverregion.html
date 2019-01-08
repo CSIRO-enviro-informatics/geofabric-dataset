@@ -2,6 +2,8 @@
 
 {% block content %}
     <h1>River Region {{ instance_id }}</h1>
+    <h3>A River Region instance with uri:<br/>
+    &lt;<a href="{{ instance_uri }}">{{ instance_uri }}</a>&gt;</h3>
     {{ view_html|safe }}
 
     <h2>Other views</h2>

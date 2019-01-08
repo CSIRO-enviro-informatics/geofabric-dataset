@@ -2,7 +2,8 @@
 
 {% block content %}
     <h1>Contracted Catchment {{ instance_id }}</h1>
-    <h3>A Hydrology Reporting Catchment instance</h3>
+    <h3>A Hydrology Reporting Catchment instance with uri:<br/>
+    &lt;<a href="{{ instance_uri }}">{{ instance_uri }}</a>&gt;</h3>
     {{ view_html|safe }}
 
     <h2>Other views</h2>
