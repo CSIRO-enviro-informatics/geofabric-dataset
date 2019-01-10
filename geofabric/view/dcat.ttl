@@ -1,0 +1,41 @@
+@prefix : <http://linked.data.gov.au/dataset/asgs2016/> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix geof: <http://linked.data.gov.au/def/geof#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://linked.data.gov.au/dataset/geofabric> a dcat:DataDistributionService ;
+    dc:contributor "Ashley Sommer" ;
+    dc:creator "Nicholas Car"@en ;
+    dct:creator <http://orcid.org/0000-0002-8742-7730> ;
+    dct:description "A Linked Data API accessing all of the content of the Geofabric in RDF & HTML" ;
+    dct:license <https://www.apache.org/licenses/LICENSE-2.0> ;
+    dct:title "Geofabric - distributed as Linked Data" ;
+    dcat:contactPoint _:ncar ;
+    dcat:endpointDescription <http://linked.data.gov.au/dataset/geofabric.ttl> ;
+    dcat:endpointURL <http://linked.data.govl.au/dataset/geofabric> ;
+    dcat:servesDataset <https://data.gov.au/dataset/australian-hydrological-geospatial-fabric-geofabric> .
+
+# a SPARQL service distribution will be added shortly
+
+<https://data.gov.au/dataset/australian-hydrological-geospatial-fabric-geofabric> a dcat:Dataset ;
+    dct:description """The Australian Hydrological Geospatial Fabric (Geofabric) is a specialised Geographic
+    Information System (GIS). It registers the spatial relationships between important hydrological features such as
+    rivers, water bodies, aquifers and monitoring points.""" ;
+    dct:issued "2013-05-12"^^xsd:date ;
+    dct:landingPage <https://data.gov.au/dataset/12937333-1f11-4167-a39b-6327794d4e83> ;
+    dct:title "Australian Hydrological Geospatial Fabric (Geofabric)" ;
+    dct:updated "2015-04-08"^^xsd:date ;
+    dcat:contactPoint [ a vcard:Organization ;
+        vcard:fn "Bureau of Meteorology"
+        vcard:hasEmail <http://linked.data.gov.au/dataset/AHGF@bom.gov.au> ] .
+
+_:ncar a vcard:Individual ;
+    vcard:fn "Nicholas Car" ;
+    vcard:hasEmail <http://linked.data.gov.au/dataset/nicholas.car@csiro.au> ;
+    vcard:hasTelephone [ vcard:hasValue <tel:+61738335632> ] .
