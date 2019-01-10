@@ -32,7 +32,7 @@
     dct:title "Australian Hydrological Geospatial Fabric (Geofabric)" ;
     dct:updated "2015-04-08"^^xsd:date ;
     dcat:contactPoint [ a vcard:Organization ;
-        vcard:fn "Bureau of Meteorology"
+        vcard:fn "Bureau of Meteorology" ;
         vcard:hasEmail <http://linked.data.gov.au/dataset/AHGF@bom.gov.au> ] .
 
 _:ncar a vcard:Individual ;

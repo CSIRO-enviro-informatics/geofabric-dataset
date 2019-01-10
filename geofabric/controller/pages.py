@@ -10,23 +10,30 @@ import io
 import requests
 import geofabric._config as config
 from geofabric.view.ldapi import GEOFRegisterOfRegistersRenderer
+from geofabric.controller.LOCIDatasetRenderer import LOCIDatasetRenderer
 
 pages = Blueprint('routes', __name__)
 
 @pages.route('/', strict_slashes=True)
 def index():
-    rofr_comment =\
-"""A Linked Data version of the Geofabric.
-TODO: Change this for Geofabric
-"""
-    rofr_comment = Literal(rofr_comment, lang='en')
-    rofr_ttl_path = '/'.join([config.APP_DIR, 'rofr.ttl'])
-    rofr_renderer = GEOFRegisterOfRegistersRenderer(
-        request, config.DATA_URI_PREFIX, "GeoFabric Register or Registers", rofr_comment,
-        rofr_ttl_path, register_template='page_index.html',
-        alternates_template="alternates_view.html")
-    return rofr_renderer.render()
+    if request.values.get('_view') == 'reg':
+        rofr_comment =\
+    """A Linked Data version of the Geofabric.
+    TODO: Change this for Geofabric
+    """
+        rofr_comment = Literal(rofr_comment, lang='en')
+        rofr_ttl_path = '/'.join([config.APP_DIR, 'rofr.ttl'])
+        rofr_renderer = GEOFRegisterOfRegistersRenderer(
+            request, config.DATA_URI_PREFIX, "GeoFabric Register or Registers", rofr_comment,
+            rofr_ttl_path, register_template='page_index.html',
+            alternates_template="alternates_view.html")
+        return rofr_renderer.render()
+    else:
+        return LOCIDatasetRenderer(request, url=config.URI_BASE).render()
 
+@pages.route('/index.ttl')
+def home_ttl():
+    return LOCIDatasetRenderer(request, view='dcat', format='text/turtle').render()
 
 @pages.route('/api')
 def api():
