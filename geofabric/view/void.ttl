@@ -1,0 +1,28 @@
+@prefix : <http://linked.data.gov.au/def/geofabric#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@base <http://linked.data.gov.au/dataset/geofabric> .
+
+<http://linked.data.gov.au/dataset/geofabric> a void:Dataset ;
+    dc:contributor "Ashely Sommer" ;
+    dc:creator "Nicholas Car" ;
+    dct:creator <http://orcid.org/0000-0002-8742-7730> ;
+    dct:description "A Linked Data API accessing all of the content of the Geofabric in RDF & HTML" ;
+    dct:license <https://creativecommons.org/licenses/by/3.0/au/> ;
+    dct:title "Australian Hydrological Geospatial Fabric (Geofabric) "
+    dcat:contactPoint _:ncar ;
+    dcat:endpointDescription <http://linked.data.gov.au/dataset/geofabric.ttl> ;
+    dcat:endpointURL <http://linked.data.gov.au/dataset/geofabric> ;
+    dct:source <https://data.gov.au/data/dataset/australian-hydrological-geospatial-fabric-geofabric> ;
+    void:sparqlEndpoint <http://linked.data.gov.au/dataset/geofabric/sparql> ;
+    void:dataDump <http://linked.data.gov.au/dataset/geofabric/data> ;
+    void:uriSpace "http://linked.data.gov.au/dataset/geofabric/" ;
+    void:vocabulary <http://linked.data.gov.au/dataset/geofabric> ;
+.
+
+:turtle a void:Dataset ;
+    void:uriRegexPattern "^http:\/\/linked\.data\.gov\.au\/dataset\/geofabric\.ttl$" ;
+    void:feature <http://www.w3.org/ns/formats/Turtle> ;
+.
