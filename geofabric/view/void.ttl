@@ -12,7 +12,7 @@
     dct:publisher <http://catalogue.linked.data.gov.au/org/O-000886> ;
     dct:description "A Linked Data API accessing all of the content of the Geofabric in RDF & HTML" ;
     dct:license <https://creativecommons.org/licenses/by/3.0/au/> ;
-    dct:title "Australian Hydrological Geospatial Fabric (Geofabric) "
+    dct:title "Australian Hydrological Geospatial Fabric (Geofabric) " ;
     dcat:contactPoint _:ncar ;
     dcat:endpointDescription <http://linked.data.gov.au/dataset/geofabric.ttl> ;
     dcat:endpointURL <http://linked.data.gov.au/dataset/geofabric> ;
