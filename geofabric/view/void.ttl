@@ -24,6 +24,6 @@
 .
 
 :turtle a void:Dataset ;
-    void:uriRegexPattern "^http:\/\/linked\.data\.gov\.au\/dataset\/geofabric\.ttl$" ;
+    void:uriRegexPattern "^http:\\/\\/linked\\.data\\.gov\\.au\\/dataset\\/geofabric\\.ttl$" ;
     void:feature <http://www.w3.org/ns/formats/Turtle> ;
 .
