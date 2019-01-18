@@ -13,6 +13,7 @@
     dc:contributor "Ashley Sommer" ;
     dc:creator "Nicholas Car"@en ;
     dct:creator <http://orcid.org/0000-0002-8742-7730> ;
+    dct:publisher <http://catalogue.linked.data.gov.au/org/O-000886> ;
     dct:description "A Linked Data API accessing all of the content of the Geofabric in RDF & HTML" ;
     dct:license <https://www.apache.org/licenses/LICENSE-2.0> ;
     dct:title "Geofabric - distributed as Linked Data" ;
@@ -31,6 +32,7 @@
     dct:landingPage <https://data.gov.au/dataset/12937333-1f11-4167-a39b-6327794d4e83> ;
     dct:title "Australian Hydrological Geospatial Fabric (Geofabric)" ;
     dct:updated "2015-04-08"^^xsd:date ;
+    dct:publisher <http://catalogue.linked.data.gov.au/org/O-000843> ;
     dcat:contactPoint [ a vcard:Organization ;
         vcard:fn "Bureau of Meteorology" ;
         vcard:hasEmail <http://linked.data.gov.au/dataset/AHGF@bom.gov.au> ] .
