@@ -193,6 +193,7 @@ def _harvest_register_worker_fn(worker_index, reg_uri, instances, serial_chunk_s
                 info_message = "{} Inst: {}/{}, ".format(info_message_pref, iiig+1, total_in_group)
                 est_sfx = " First group - No est remaining." if first_group else " Wkr est {}".format(seconds_to_human_string(est_secs))
                 info(info_message+local_instance_url+est_sfx)
+                total_instances_done += 1
                 m = endpoint_rule.match("|" + local_instance_url)
                 dummy_request_uri = "http://localhost:5000" + local_instance_url + \
                                     "?_view={:s}&_format=application/n-triples".format(HARVESTABLE_INSTANCE_VIEW)
