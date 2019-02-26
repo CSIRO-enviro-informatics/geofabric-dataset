@@ -1,0 +1,35 @@
+version: "3"
+services:
+  geof_uwsgi_app:
+    image: geof_uwsgi_app
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    volumes:
+      - uwsgi-run:/var/run/uwsgi/:rw
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+    command: ["uwsgi", "--ini", "/etc/uwsgi/uwsgi.ini", "--master", "--workers", "2", "--protocol", "uwsgi", "--enable-threads", "--chmod-socket=666", "--socket", "/var/run/uwsgi/uwsgi.sock"]
+
+  nginx:
+    image: nginx:alpine
+    expose:
+      - "80"
+      - "443"
+    ports:
+      - "8089:80"
+      - "48089:443"
+    volumes:
+      - uwsgi-run:/var/run/uwsgi/:rw
+      - "./nginx_conf_app.conf:/etc/nginx/conf.d/default.conf:ro"
+      - "./ssl-params.conf:/etc/nginx/snippets/ssl-params.conf:ro"
+      - "./nginx-selfsigned.crt:/etc/ssl/certs/nginx-selfsigned.crt:ro"
+      - "./nginx-selfsigned.key:/etc/ssl/private/nginx-selfsigned.key:ro"
+      - "./dhparam.pem:/etc/ssl/certs/dhparam.pem:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+    depends_on:
+      - geof_uwsgi_app
+
+volumes:
+  uwsgi-run:
