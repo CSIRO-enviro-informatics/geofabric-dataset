@@ -8,43 +8,4 @@
     <tr><td>Shape Area</td><td><code>{{ shape_area }}</code></td></tr>
     <tr><td>Shape Length</td><td><code>{{ shape_length }}</code></td></tr>
     <tr><td>Albers Area</td><td><code>{{ albers_area }}</code>&nbsp;m<sup>2</sup></td></tr>
-{#    <tr>#}
-{#        <td><a href="http://gnafld.net/def/gnaf#hasName">Street Name</a></td>#}
-{#        <td><code>{{ street_name }}</code></td>#}
-{#    </tr>#}
-{#    {% if street_type is not none %}#}
-{#    <tr>#}
-{#        <td><a href="http://gnafld.net/def/gnaf">Street Type</a></td>#}
-{#        <td><a href="{{ street_type_uri }}">{{ street_type_label }}</a></td>#}
-{#    </tr>#}
-{#    {% endif %}#}
-{#    {% if street_suffix is not none %}#}
-{#    <tr>#}
-{#        <td><a href="http://gnafld.net/def/gnaf#hasStreetSuffix">Street Suffix</a></td>#}
-{#        <td><a href="{{ street_suffix_uri }}">{{ street_suffix_label }}</a></td>#}
-{#    </tr>#}
-{#    {% endif %}#}
-{#    {% if locality_name is not none %}#}
-{#    <tr>#}
-{#        <td><a href="http://gnafld.net/def/gnaf#hasLocality">Locality</a></td>#}
-{#        <td><a href="{{ url_for('classes.locality', locality_id=locality_pid) }}">{{ locality_name }}</a></td>#}
-{#    </tr>#}
-{#    {% endif %}#}
-{#    {% if geometry_wkt is not none %}#}
-{#    <tr>#}
-{#        <td><a href="http://www.opengis.net/ont/geosparql#hasGeometry">Geometry</a></td>#}
-{#        <td><code><a href="http://gnafld.net/def/gnaf/code/GeocodeTypes#StreetLocality">{{ geocode_label }}</a> &rarr;<br />{{ geometry_wkt }}</code></td>#}
-{#    </tr>#}
-{#    {% endif %}#}
-{#    {% if street_locality_aliases.items()|length > 0 %}#}
-{#    <tr>#}
-{#        <td>Street Locality Aliases</td><td>#}
-{#            <ul>#}
-{#                {% for street_locality_alias_id, street_locality_alias_string in street_locality_aliases.items() %}#}
-{#                    <li><code><a href="{{ url_for('classes.streets', street_locality_alias_id=street_locality_alias_id) }}">{{ street_locality_alias_string }}</a></code></li>#}
-{#                {% endfor %}#}
-{#            </ul>#}
-{#        </td>#}
-{#    </tr>#}
-{#    {% endif %}#}
 </table>

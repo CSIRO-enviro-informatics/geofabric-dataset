@@ -93,7 +93,7 @@ body {
 
 #header-bottom {
     height: 39px;
-    background-image: url('http://www.bom.gov.au/images/ui/hdr-blend.gif');
+    background-image: url('/static/img/hdr-blend.gif');
     background-repeat: repeat-y;
     background-color: #1964AA;
     width: 100%;

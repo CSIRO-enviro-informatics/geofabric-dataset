@@ -3,7 +3,7 @@ import requests
 import re
 import pytest
 
-SYSTEM_URI = 'http://geofabricld.net'
+SYSTEM_URI = 'https://geofabricld.net'
 HEADERS_TTL = {'Accept': 'text/turtle'}
 
 
@@ -39,7 +39,7 @@ def test_geofabric_landing_page_rdf_turtle_qsa():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/?_format=text/turtle',
         None,
-        r'<http:\/\/geofabricld\.net\/catchment\/> a reg:Register ;'
+        r'<https:\/\/geofabricld\.net\/catchment\/> a reg:Register ;'
     ), 'Geofabric landing page rdf turtle qsa failed'
 
 
@@ -47,7 +47,7 @@ def test_geofabric_landing_page_rdf_turtle_accept_header():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/',
         HEADERS_TTL,
-        r'<http:\/\/geofabricld\.net\/catchment\/> a reg:Register ;'
+        r'<https:\/\/geofabricld\.net\/catchment\/> a reg:Register ;'
     ), 'Geofabric landing page rdf turtle accept header failed'
 
 
@@ -87,7 +87,7 @@ def test_geofabric_landing_page_reg_view_rdf_turtle_qsa():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/?_view=reg&_format=text/turtle',
         None,
-        r'<http:\/\/geofabricld\.net\/catchment\/> a reg:Register ;'
+        r'<https:\/\/geofabricld\.net\/catchment\/> a reg:Register ;'
     ), 'Geofabric reg view rdf turtle qsa failed'
 
 
@@ -95,7 +95,7 @@ def test_geofabric_landing_page_reg_view_rdf_turtle_accept_header():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/?_view=reg',
         HEADERS_TTL,
-        r'<http:\/\/geofabricld\.net\/catchment\/> a reg:Register ;'
+        r'<https:\/\/geofabricld\.net\/catchment\/> a reg:Register ;'
     ), 'Geofabric reg view rdf turtle accept header failed'
 
 
@@ -112,7 +112,7 @@ def test_geofabric_catchment_register_turtle_file_extension():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/catchment/index.ttl',
         None,
-        r'<http:\/\/geofabricld\.net\/catchment\/6600519> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_Catchment> ;'
+        r'<https:\/\/geofabricld\.net\/catchment\/6600519> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_Catchment> ;'
     ), 'Geofabric Catchment Register text turtle file extension failed'
 
 
@@ -120,7 +120,7 @@ def test_geofabric_catchment_register_rdf_turtle_qsa():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/catchment/?_format=text/turtle',
         None,
-        r'<http:\/\/geofabricld\.net\/catchment\/6600519> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_Catchment> ;'
+        r'<https:\/\/geofabricld\.net\/catchment\/6600519> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_Catchment> ;'
     ), 'Geofabric Catchment Register text turtle qsa failed'
 
 
@@ -128,7 +128,7 @@ def test_geofabric_catchment_register_rdf_turtle_accept_header():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/catchment/',
         HEADERS_TTL,
-        r'<http:\/\/geofabricld\.net\/catchment\/6600519> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_Catchment> ;'
+        r'<https:\/\/geofabricld\.net\/catchment\/6600519> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_Catchment> ;'
     ), 'Geofabric Catchment Register text turtle accept header failed'
 
 
@@ -168,7 +168,7 @@ def test_geofabric_catchment_register_reg_view_rdf_turtle_qsa():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/catchment/?_view=reg&_format=text/turtle',
         None,
-        r'<http:\/\/geofabricld\.net\/catchment\/6600519> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_Catchment> ;'
+        r'<https:\/\/geofabricld\.net\/catchment\/6600519> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_Catchment> ;'
     ), 'Geofabric Catchment Register reg view text turtle qsa failed'
 
 
@@ -176,7 +176,7 @@ def test_geofabric_catchment_register_reg_view_rdf_turtle_accept_header():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/catchment/?_view=reg',
         HEADERS_TTL,
-        r'<http:\/\/geofabricld\.net\/catchment\/6600519> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_Catchment> ;'
+        r'<https:\/\/geofabricld\.net\/catchment\/6600519> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_Catchment> ;'
     ), 'Geofabric Catchment Register reg view text turtle accept header failed'
 
 
@@ -229,7 +229,7 @@ def test_geofabric_catchment_660519_alternates_view_rdf_turtle_qsa():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/catchment/6600519?_view=alternates&_format=text/turtle',
         None,
-        r'<http:\/\/geofabricld.net\/catchment\/6600519>'
+        r'<https:\/\/geofabricld.net\/catchment\/6600519>'
     ), 'Geofabric Catchment instance 660519 alternates view rdf turtle qsa failed'
 
 
@@ -237,7 +237,7 @@ def test_geofabric_catchment_660519_alternates_view_rdf_turtle_accept_header():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/catchment/6600519?_view=alternates',
         HEADERS_TTL,
-        r'<http:\/\/geofabricld.net\/catchment\/6600519>'
+        r'<https:\/\/geofabricld.net\/catchment\/6600519>'
     ), 'Geofabric Catchment instance 660519 alternates view rdf turtle accept header failed'
 
 
@@ -314,7 +314,7 @@ def test_geofabric_riverregion_register_rdf_turtle_qsa():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/riverregion/?_format=text/turtle',
         None,
-        r'<http:\/\/geofabricld\.net\/riverregion\/9400216> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_CatchmentAggregate> ;'
+        r'<https:\/\/geofabricld\.net\/riverregion\/9400216> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_CatchmentAggregate> ;'
     ), 'Geofabric River Region Register rdf turtle qsa failed'
 
 
@@ -323,7 +323,7 @@ def test_geofabric_riverregion_register_rdf_turtle_file_extension():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/riverregion/index.ttl',
         None,
-        r'<http:\/\/geofabricld\.net\/riverregion\/9400216> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_CatchmentAggregate> ;'
+        r'<https:\/\/geofabricld\.net\/riverregion\/9400216> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_CatchmentAggregate> ;'
     ), 'Geofabric River Region Register rdf turtle file extension failed'
 
 
@@ -331,7 +331,7 @@ def test_geofabric_riverregion_register_rdf_turtle_accept_header():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/riverregion/',
         HEADERS_TTL,
-        r'<http:\/\/geofabricld\.net\/riverregion\/9400216> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_CatchmentAggregate> ;'
+        r'<https:\/\/geofabricld\.net\/riverregion\/9400216> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_CatchmentAggregate> ;'
     ), 'Geofabric River Region Register rdf turtle accept header failed'
 
 
@@ -371,7 +371,7 @@ def test_geofabric_riverregion_register_reg_vie_rdf_turtle_qsa():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/riverregion/?_view=reg&_format=text/turtle',
         None,
-        r'<http:\/\/geofabricld\.net\/riverregion\/9400216> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_CatchmentAggregate> ;'
+        r'<https:\/\/geofabricld\.net\/riverregion\/9400216> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_CatchmentAggregate> ;'
     ), 'Geofabric River Region Register reg view rdf turtle qsa failed'
 
 
@@ -379,7 +379,7 @@ def test_geofabric_riverregion_register_reg_view_rdf_turtle_accept_header():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/riverregion/?_view=reg',
         HEADERS_TTL,
-        r'<http:\/\/geofabricld\.net\/riverregion\/9400216> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_CatchmentAggregate> ;'
+        r'<https:\/\/geofabricld\.net\/riverregion\/9400216> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_CatchmentAggregate> ;'
     ), 'Geofabric River Region Register reg view rdf turtle accept header failed'
 
 
@@ -404,7 +404,7 @@ def test_geofabric_riverregion_9400216_rdf_turtle_qsa():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/riverregion/9400216?_format=text/turtle',
         None,
-        r'<http:\/\/geofabricld\.net\/riverregion\/9400216>'
+        r'<https:\/\/geofabricld\.net\/riverregion\/9400216>'
     ), 'Geofabric River Region instance 9400216 rdf turtle qsa failed'
 
 
@@ -428,7 +428,7 @@ def test_geofabric_riverregion_9400216_alternates_view_rdf_turtle_qsa():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/riverregion/9400216?_view=alternates&_format=text/turtle',
         None,
-        r'<http:\/\/geofabricld.net\/riverregion\/9400216>'
+        r'<https:\/\/geofabricld.net\/riverregion\/9400216>'
     ), 'Geofabric River Region instance 9400216 alternates view rdf turtle qsa failed'
 
 
@@ -436,7 +436,7 @@ def test_geofabric_riverregion_9400216_alternates_view_rdf_turtle_accept_header(
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/riverregion/9400216?_view=alternates',
         HEADERS_TTL,
-        r'<http:\/\/geofabricld.net\/riverregion\/9400216>'
+        r'<https:\/\/geofabricld.net\/riverregion\/9400216>'
     ), 'Geofabric River Region instance 9400216 alternates view rdf turtle accept header failed'
 
 
@@ -452,7 +452,7 @@ def test_geofabric_riverregion_9400216_geofabric_view_rdf_turtle_qsa():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/riverregion/9400216?_view=geofabric&_format=text/turtle',
         None,
-        r'<http:\/\/geofabricld.net\/riverregion\/9400216>'
+        r'<https:\/\/geofabricld.net\/riverregion\/9400216>'
     ), 'Geofabric River Region instance 9400216 geofabric view rdf turtle qsa failed'
 
 
@@ -460,7 +460,7 @@ def test_geofabric_riverregion_9400216_geofabric_view_rdf_turtle_accept_header()
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/riverregion/9400216?_view=geofabric',
         HEADERS_TTL,
-        r'<http:\/\/geofabricld.net\/riverregion\/9400216>'
+        r'<https:\/\/geofabricld.net\/riverregion\/9400216>'
     ), 'Geofabric River Region instance 9400216 geofabric view rdf turtle accept header failed'
 
 
@@ -485,7 +485,7 @@ def test_geofabric_riverregion_9400216_hyfeatures_view_rdf_turtle_qsa():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/riverregion/9400216?_view=hyfeatures&_format=text/turtle',
         None,
-        r'<http:\/\/geofabricld.net\/riverregion\/9400216>'
+        r'<https:\/\/geofabricld.net\/riverregion\/9400216>'
     ), 'Geofabric River Region instance 9400216 hyfeatures view rdf turtle qsa failed'
 
 
@@ -493,7 +493,7 @@ def test_geofabric_riverregion_9400216_hyfeatures_view_rdf_turtle_accept_header(
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/riverregion/9400216?_view=hyfeatures',
         None,
-        r'<http:\/\/geofabricld.net\/riverregion\/9400216>'
+        r'<https:\/\/geofabricld.net\/riverregion\/9400216>'
     ), 'Geofabric River Region instance 9400216 hyfeatures view rdf turtle accept header failed'
 
 
@@ -509,7 +509,7 @@ def test_geofabric_drainagedivision_register_rdf_turtle_qsa():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/drainagedivision/?_format=text/turtle',
         None,
-        r'<http:\/\/geofabricld\.net\/drainagedivision\/9400203> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_CatchmentAggregate> ;'
+        r'<https:\/\/geofabricld\.net\/drainagedivision\/9400203> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_CatchmentAggregate> ;'
     ), 'Geofabric Drainage Division Register rdf turtle qsa failed'
 
 
@@ -518,7 +518,7 @@ def test_geofabric_drainagedivision_register_rdf_turtle_file_extension():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/drainagedivision/index.ttl',
         None,
-        r'<http:\/\/geofabricld\.net\/drainagedivision\/9400203> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_CatchmentAggregate> ;'
+        r'<https:\/\/geofabricld\.net\/drainagedivision\/9400203> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_CatchmentAggregate> ;'
     ), 'Geofabric Drainage Division Register rdf turtle file extension failed'
 
 
@@ -526,7 +526,7 @@ def test_geofabric_drainagedivision_register_rdf_turtle_accept_header():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/drainagedivision/',
         HEADERS_TTL,
-        r'<http:\/\/geofabricld\.net\/drainagedivision\/9400203> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_CatchmentAggregate> ;'
+        r'<https:\/\/geofabricld\.net\/drainagedivision\/9400203> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_CatchmentAggregate> ;'
     ), 'Geofabric Drainage Division Register rdf turtle accept header failed'
 
 
@@ -534,7 +534,7 @@ def test_geofabric_drainagedivision_register_alternates_view_html():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/drainagedivision/?_view=alternates&_format=text/html',
         None,
-        r'<td><a href="http:\/\/geofabricld\.net\/drainagedivision\/\?_view=alternates">alternates<\/a><\/td>'
+        r'<td><a href="https:\/\/geofabricld\.net\/drainagedivision\/\?_view=alternates">alternates<\/a><\/td>'
     ), 'Geofabric Drainage Division Register alternates view html failed'
 
 
@@ -566,7 +566,7 @@ def test_geofabric_drainagedivision_register_reg_view_rdf_turtle_qsa():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/drainagedivision/?_view=reg&_format=text/turtle',
         None,
-        r'<http:\/\/geofabricld\.net\/drainagedivision\/9400203> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_CatchmentAggregate> ;'
+        r'<https:\/\/geofabricld\.net\/drainagedivision\/9400203> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_CatchmentAggregate> ;'
     ), 'Geofabric Drainage Division Register reg view rdf turtle qsa failed'
 
 
@@ -574,7 +574,7 @@ def test_geofabric_drainagedivision_register_reg_view_rdf_turtle_accept_header()
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/drainagedivision/?_view=reg',
         HEADERS_TTL,
-        r'<http:\/\/geofabricld\.net\/drainagedivision\/9400203> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_CatchmentAggregate> ;'
+        r'<https:\/\/geofabricld\.net\/drainagedivision\/9400203> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_CatchmentAggregate> ;'
     ), 'Geofabric Drainage Division Register reg view rdf turtle accept header failed'
 
 
@@ -591,7 +591,7 @@ def test_geofabric_drainagedivision_9400203_rdf_turtle_file_extension():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/drainagedivision/9400203.ttl',
         None,
-        r'<http:\/\/geofabricld\.net\/drainagedivision\/9400203>'
+        r'<https:\/\/geofabricld\.net\/drainagedivision\/9400203>'
     ), 'Geofabric Drainage Division instance 9400203 rdf turtle file extension failed'
 
 
@@ -599,7 +599,7 @@ def test_geofabric_drainagedivision_9400203_rdf_turtle_qsa():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/drainagedivision/9400203?_format=text/turtle',
         None,
-        r'<http:\/\/geofabricld\.net\/drainagedivision\/9400203>'
+        r'<https:\/\/geofabricld\.net\/drainagedivision\/9400203>'
     ), 'Geofabric Drainage Division instance 9400203 rdf turtle qsa failed'
 
 
@@ -607,7 +607,7 @@ def test_geofabric_drainagedivision_9400203_rdf_turtle_accept_header():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/drainagedivision/9400203',
         HEADERS_TTL,
-        r'<http:\/\/geofabricld\.net\/drainagedivision\/9400203>'
+        r'<https:\/\/geofabricld\.net\/drainagedivision\/9400203>'
     ), 'Geofabric Drainage Division instance 9400203 rdf turtle accept header failed'
 
 
@@ -623,7 +623,7 @@ def test_geofabric_drainagedivision_9400203_geofabric_view_rdf_turtle_qsa():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/drainagedivision/9400203?_view=geofabric&_format=text/turtle',
         None,
-        r'<http:\/\/geofabricld\.net\/drainagedivision\/9400203>'
+        r'<https:\/\/geofabricld\.net\/drainagedivision\/9400203>'
     ), 'Geofabric Drainage Division instance 9400203 geofabric view rdf turtle qsa failed'
 
 
@@ -631,7 +631,7 @@ def test_geofabric_drainagedivision_9400203_geofabric_view_rdf_turtle_accept_hea
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/drainagedivision/9400203?_view=geofabric',
         HEADERS_TTL,
-        r'<http:\/\/geofabricld\.net\/drainagedivision\/9400203>'
+        r'<https:\/\/geofabricld\.net\/drainagedivision\/9400203>'
     ), 'Geofabric Drainage Division instance 9400203 geofabric view rdf turtle accept header failed'
 
 
@@ -656,7 +656,7 @@ def test_geofabric_drainagedivision_9400203_alternates_view_rdf_turtle_qsa():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/drainagedivision/9400203?_view=alternates&_format=text/turtle',
         None,
-        r'<http:\/\/geofabricld.net\/drainagedivision\/9400203>'
+        r'<https:\/\/geofabricld.net\/drainagedivision\/9400203>'
     ), 'Geofabric Drainage Division instance 9400203 alternates view rdf turtle qsa failed'
 
 
@@ -664,7 +664,7 @@ def test_geofabric_drainagedivision_9400203_alternates_view_rdf_turtle_accept_he
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/drainagedivision/9400203?_view=alternates',
         HEADERS_TTL,
-        r'<http:\/\/geofabricld.net\/drainagedivision\/9400203>'
+        r'<https:\/\/geofabricld.net\/drainagedivision\/9400203>'
     ), 'Geofabric Drainage Division instance 9400203 alternates view rdf turtle accept header failed'
 
 
@@ -680,7 +680,7 @@ def test_geofabric_drainagedivision_9400203_hyfeatures_view_rdf_turtle_qsa():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/drainagedivision/9400203?_view=hyfeatures&_format=text/turtle',
         None,
-        r'<http:\/\/geofabricld.net\/drainagedivision\/9400203>'
+        r'<https:\/\/geofabricld.net\/drainagedivision\/9400203>'
     ), 'Geofabric Drainage Division instance 9400203 hyfeatures view rdf turtle qsa failed'
 
 
@@ -688,7 +688,7 @@ def test_geofabric_drainagedivision_9400203_hyfeatures_view_rdf_turtle_accept_he
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/drainagedivision/9400203?_view=hyfeatures',
         HEADERS_TTL,
-        r'<http:\/\/geofabricld.net\/drainagedivision\/9400203>'
+        r'<https:\/\/geofabricld.net\/drainagedivision\/9400203>'
     ), 'Geofabric Drainage Division instance 9400203 hyfeatures view rdf turtle accept header failed'
 
 
