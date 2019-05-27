@@ -318,7 +318,11 @@ class ContractedCatchment(GFModel):
         return g
 
     def export_html(self, view='geofabric'):
-        bbox_string = ",".join(str(i) for i in self.get_bbox(pad=12))
+        bbox = self.get_bbox(pad=12)
+        bbox_string = ",".join(str(i) for i in bbox)
+        centrepoint = []
+        centrepoint.append(bbox[0] + ((bbox[2] - bbox[0]) / 2))
+        centrepoint.append(bbox[1] + ((bbox[3] - bbox[1]) / 2))
         hydroid = self.hydroid
         try:
             concatid = self.concatid
@@ -337,6 +341,8 @@ class ContractedCatchment(GFModel):
             view_html = render_template(
                 'class_contracted_catchment_geof.html',
                 wms_url=wms_url,
+                bbox=bbox,
+                centrepoint=centrepoint,
                 hydroid=hydroid,
                 concatid=concatid,
                 rrid=self.rrid,
@@ -349,6 +355,8 @@ class ContractedCatchment(GFModel):
             view_html = render_template(
                 'class_contracted_catchment_hyf.html',
                 wms_url=wms_url,
+                bbox=bbox,
+                centrepoint=centrepoint,
                 hydroid=hydroid,
                 concatid=concatid,
                 rrid=self.rrid,

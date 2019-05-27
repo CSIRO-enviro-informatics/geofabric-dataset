@@ -267,7 +267,11 @@ class RiverRegion(GFModel):
         return g
 
     def export_html(self, view='geofabric'):
-        bbox_string = ",".join(str(i) for i in self.get_bbox(pad=12))
+        bbox = self.get_bbox(pad=12)
+        bbox_string = ",".join(str(i) for i in bbox)
+        centrepoint = []
+        centrepoint.append(bbox[0] + ((bbox[2] - bbox[0]) / 2))
+        centrepoint.append(bbox[1] + ((bbox[3] - bbox[1]) / 2))
         hydroid = self.hydroid
         wms_url = config.GF_OWS_ENDPOINT +\
                   "?service=wms&version=2.0.0&request=GetMap" \
@@ -282,6 +286,8 @@ class RiverRegion(GFModel):
         if view == 'geofabric':
             view_html = render_template(
                 'class_riverregion_geof.html',
+                bbox=bbox,
+                centrepoint=centrepoint,
                 wms_url=wms_url,
                 hydroid=hydroid,
                 division=self.division,
@@ -293,6 +299,8 @@ class RiverRegion(GFModel):
         elif view == "hyfeatures":
             view_html = render_template(
                 'class_riverregion_hyf.html',
+                bbox=bbox,
+                centrepoint=centrepoint,
                 wms_url=wms_url,
                 hydroid=hydroid,
                 division=self.division,
