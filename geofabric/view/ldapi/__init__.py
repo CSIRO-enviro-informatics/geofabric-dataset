@@ -2,22 +2,31 @@
 
 from flask import render_template, Response
 import pyldapi
-from flask_paginate import Pagination
-
-import geofabric._config as config
 from geofabric.model import GFModel
 
-HYFView = pyldapi.View('hyfeatures',
-                       "Features modelled using the HY_Features ontology",
-                       ["text/html", "text/turtle", "application/rdf+xml", "application/ld+json", "application/n-triples"],
-                       "text/turtle", namespace="https://www.opengis.net/def/appschema/hy_features/hyf/")
-GEOFView = pyldapi.View('geofabric',
-                        "A customised geofabric view based on HY_Features",
-                        ["text/html", "text/turtle", "application/rdf+xml", "application/ld+json", "application/n-triples", "application/gml+xml"],
-                        "text/html", namespace="http://reference.data.gov.au/def/ont/geofabric/")
-SchemaOrgView = pyldapi.View('schemaorg',
-                             "An initiative by Bing, Google and Yahoo! to create and support a common set of schemas for structured data markup on web pages. It is serialised in JSON-LD",
-                             ["application/ld+json"], "application/ld+json", namespace="http://schema.org")
+HYFView = pyldapi.View(
+    'hyfeatures',
+    "Features modelled using the HY_Features ontology",
+    [
+       "text/html", "text/turtle", "application/rdf+xml", "application/ld+json", "application/n-triples"
+    ],
+    "text/turtle", namespace="https://www.opengis.net/def/appschema/hy_features/hyf/")
+
+GEOFView = pyldapi.View(
+    'geofabric',
+    "A customised geofabric view based on HY_Features",
+    [
+        "text/html", "text/turtle", "application/rdf+xml", "application/ld+json",
+        "application/n-triples", "application/gml+xml"
+    ],
+    "text/html", namespace="http://reference.data.gov.au/def/ont/geofabric/")
+
+SchemaOrgView = pyldapi.View(
+    'schemaorg',
+    "An initiative by Bing, Google and Yahoo! to create and support a common set of schemas "
+    "for structured data markup on web pages. It is serialised in JSON-LD",
+    ["application/ld+json"],
+    "application/ld+json", namespace="http://schema.org")
 
 
 def render_error(request, e):
@@ -134,7 +143,7 @@ class GEOFClassRenderer(pyldapi.Renderer):
             headers=self.headers)
 
     def _render_geof_view_rdf(self):
-        g = self.instance.to_hyfeatures_graph()
+        g = self.instance.to_geofabric_graph()
         if self.format in ['application/ld+json', 'application/json']:
             serial_format = 'json-ld'
         elif self.format in self.RDF_MIMETYPES:

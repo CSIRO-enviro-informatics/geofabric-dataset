@@ -6,16 +6,18 @@ from flask import render_template, url_for
 from lxml.etree import ParseError
 from io import BytesIO
 from rdflib import URIRef, Literal, BNode
+from rdflib.namespace import DC, XSD
 from requests import Session
 from lxml import etree
 from geofabric import _config as config
 from geofabric.helpers import gml_extract_geom_to_geojson, \
     wfs_extract_features_as_geojson, \
     wfs_extract_features_as_hyfeatures, gml_extract_geom_to_geosparql, \
-    GEO_hasGeometry, GEO_hasDefaultGeometry, RDF_a, \
+    GEO_hasGeometry, RDF_a, \
     HYF_HY_CatchmentRealization, HYF_realizedCatchment, HYF_lowerCatchment, \
     HYF_catchmentRealization, HYF_HY_Catchment, HYF_HY_HydroFeature, \
-    calculate_bbox, NotFoundError, GEO_sfWithin
+    calculate_bbox, NotFoundError, GEO_sfWithin, \
+    GEO, GEOF, QUDT
 from geofabric.model import GFModel
 from geofabric.model.awraddcontractedcatchment import AWRADrainageDivisionContractedCatchment
 from geofabric.model.rrcontractedcatchment import RiverRegionContractedCatchment
@@ -50,6 +52,7 @@ retrieve_contracted_catchment.session = None
 
 ns = {
     'x': 'http://linked.data.gov.au/dataset/geof/v2/ahgf_hrc',
+    'geof': 'http://linked.data.gov.au/def/geofabric',
     'wfs': 'http://www.opengis.net/wfs/2.0',
     'gml': "http://www.opengis.net/gml/3.2"
 }
@@ -74,6 +77,60 @@ catchment_tag_map = {
     "{{{}}}shape_area".format(ns['x']): 'shape_area',
     "{{{}}}shape".format(ns['x']): 'shape',
 }
+
+
+def contracted_catchment_geofabric_converter(wfs_features):
+    if len(wfs_features) < 1:
+        return None
+
+    if isinstance(wfs_features, (dict,)):
+        features_source = wfs_features.items()
+    elif isinstance(wfs_features, (list, set)):
+        features_source = iter(wfs_features)
+    else:
+        features_source = [wfs_features]
+
+    triples = set()
+
+    for hydroid, catchment_element in features_source:  # type: int, etree._Element
+        feature_uri = rdflib.URIRef(
+            "".join([config.URI_CATCHMENT_INSTANCE_BASE, str(hydroid)])
+        )
+        triples.add((feature_uri, RDF_a, GEOF.ContractedCatchment))
+
+        for c in catchment_element.iterchildren():  # type: etree._Element
+            var = c.tag.replace('{{{}}}'.format(ns['x']), '')
+
+            # common Geofabric properties
+            if var == 'shape_area':
+                A = BNode()
+                triples.add((
+                    A, QUDT.numericValue, Literal(c.text, datatype=XSD.float)))
+                triples.add((
+                    A, QUDT.unit, QUDT.SquareMeter))
+                triples.add((feature_uri, URIRef('http://dbpedia.org/property/area'), A))
+            elif var == 'albersarea':
+                A = BNode()
+                triples.add((
+                    A, QUDT.numericValue, Literal(c.text, datatype=XSD.float)))
+                triples.add((
+                    A, QUDT.unit, QUDT.SquareMeter))
+                triples.add((feature_uri, GEOF.albersArea, A))
+            elif var == 'shape_length':
+                L = BNode()
+                triples.add((
+                    L, QUDT.numericValue, Literal(c.text, datatype=XSD.float)))
+                triples.add((
+                    L, QUDT.unit, QUDT.Meter))
+                triples.add((feature_uri, GEOF.perimeterLength, L))  # URIRef('http://dbpedia.org/property/length')
+            elif var == 'shape':
+                geometry = BNode()
+                triples.add((feature_uri, GEO_hasGeometry, geometry))
+                triples.add((geometry, GEO.asGML, Literal('TODO')))  # TODO: reinstate asGMl asWKT
+            elif var == 'attrsource':
+                triples.add((feature_uri, DC.source, Literal(c.text)))
+
+    return triples, None
 
 
 def contracted_catchment_hyfeatures_converter(wfs_features):
@@ -145,7 +202,7 @@ def contracted_catchment_hyfeatures_converter(wfs_features):
                 dummy_prop = URIRef("{}/{}".format(ns['x'], var))
                 triples.add((feature_uri, dummy_prop, val))
         features_list.append(feature_uri)
-    return triples, feature_nodes
+    return triples, None
 
 
 def contracted_catchment_features_geojson_converter(wfs_features):
@@ -206,7 +263,27 @@ def extract_contracted_catchments_as_geojson(tree):
 
 def extract_contracted_catchments_as_hyfeatures(tree):
     g = rdflib.Graph()
-    triples, features = wfs_extract_features_as_hyfeatures(tree, ns['x'], "AHGFContractedCatchment", contracted_catchment_hyfeatures_converter)
+    triples, features = wfs_extract_features_as_hyfeatures(
+        tree,
+        ns['x'],
+        "AHGFContractedCatchment",
+        contracted_catchment_hyfeatures_converter
+    )
+    for (s, p, o) in iter(triples):
+        g.add((s, p, o))
+    return g
+
+
+def extract_contracted_catchments_as_geofabric(tree):
+    g = rdflib.Graph()
+    g.bind('geo', rdflib.Namespace('http://www.opengis.net/ont/geosparql#'))
+    g.bind('geof', rdflib.Namespace('http://linked.data.gov.au/def/geofabric#'))
+    triples, features = wfs_extract_features_as_hyfeatures(
+        tree,
+        ns['x'],
+        "AHGFContractedCatchment",
+        contracted_catchment_geofabric_converter
+    )
     for (s, p, o) in iter(triples):
         g.add((s, p, o))
     return g
@@ -264,7 +341,6 @@ class ContractedCatchment(GFModel):
         for k, v in ccatchment['properties'].items():
             setattr(self, k, v)
 
-
     def get_bbox(self, pad=0):
         coords = self.geometry['coordinates']
         json_bbox = calculate_bbox(coords, pad=pad)
@@ -313,6 +389,19 @@ class ContractedCatchment(GFModel):
 
     def to_hyfeatures_graph(self):
         g = extract_contracted_catchments_as_hyfeatures(self.xml_tree)
+        feature_uri = None
+        if self.awraddid:
+            dd_uri = rdflib.URIRef("".join([config.URI_AWRA_DRAINAGE_DIVISION_INSTANCE_BASE, str(self.awraddid)]))
+            feature_uri = feature_uri or rdflib.URIRef("".join([config.URI_CATCHMENT_INSTANCE_BASE, str(self.hydroid)]))
+            g.add((feature_uri, GEO_sfWithin, dd_uri))
+        if self.rrid:
+            rr_uri = rdflib.URIRef("".join([config.URI_RIVER_REGION_INSTANCE_BASE, str(self.rrid)]))
+            feature_uri = feature_uri or rdflib.URIRef("".join([config.URI_CATCHMENT_INSTANCE_BASE, str(self.hydroid)]))
+            g.add((feature_uri, GEO_sfWithin, rr_uri))
+        return g
+
+    def to_geofabric_graph(self):
+        g = extract_contracted_catchments_as_geofabric(self.xml_tree)
         feature_uri = None
         if self.awraddid:
             dd_uri = rdflib.URIRef("".join([config.URI_AWRA_DRAINAGE_DIVISION_INSTANCE_BASE, str(self.awraddid)]))

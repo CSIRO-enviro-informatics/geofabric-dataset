@@ -8,8 +8,10 @@ from lxml import etree
 
 HYF = Namespace("https://www.opengis.net/def/appschema/hy_features/hyf/")
 GEO = Namespace("http://www.opengis.net/ont/geosparql#")
+GEOF = Namespace("http://linked.data.gov.au/def/geofabric#")
 GML = Namespace("http://www.opengis.net/ont/gml#")
 OGC = Namespace("http://www.opengis.net/")
+QUDT = rdflib.Namespace('http://qudt.org/schema/qudt#')
 HYF_HY_HydroFeature = HYF.term('HY_HydroFeature')
 HYF_HY_Catchment = HYF.term('HY_Catchment')
 HYF_HY_CatchmentAggregate = HYF.term('HY_CatchmentAggregate')
