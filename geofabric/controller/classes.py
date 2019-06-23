@@ -16,6 +16,7 @@ from geofabric.view.ldapi.contractedcatchment import ContractedCatchmentRenderer
 from geofabric.view.ldapi.riverregion import RiverRegionRenderer
 from geofabric.model.riverregion import RiverRegion
 from geofabric.helpers import NotFoundError
+from pyldapi import RegisterOfRegistersRenderer
 
 classes = Blueprint('classes', __name__)
 
@@ -25,6 +26,17 @@ RIVER_REGION_COUNT = 218
 DRAINAGE_DIVISION_COUNT = 13
 
 USE_CONTRACTED_CATCHMENTS = True
+
+
+@classes.route('/reg/')
+def reg():
+    return RegisterOfRegistersRenderer(
+        request,
+        'http://linked.data.gov.au/dataset/geofabric/reg/',
+        'Register of Registers',
+        'The master register of this API',
+        config.APP_DIR + '/rofr.ttl'
+    ).render()
 
 
 @classes.route('/catchment/')
