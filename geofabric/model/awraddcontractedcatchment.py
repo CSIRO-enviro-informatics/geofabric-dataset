@@ -32,6 +32,8 @@ def retrieve_awraddcc_for_contracted_catchment(identifier):
         raise e
     tree = etree.parse(BytesIO(r.content))
     return tree
+
+
 retrieve_awraddcc_for_contracted_catchment.session = None
 
 ns = {
@@ -43,6 +45,7 @@ awraddcc_tag_map = {
     "{{{}}}concatid".format(ns['x']): 'concatid',
     "{{{}}}awraddid".format(ns['x']): 'awraddid'
 }
+
 
 def awraddcc_features_geojson_converter(wfs_features):
     if len(wfs_features) < 1:
@@ -95,6 +98,7 @@ def awraddcc_features_geojson_converter(wfs_features):
                 awraddcc_dict['properties'][var] = val
         features_list.append(awraddcc_dict)
     return features_list
+
 
 def extract_awraddcc_as_geojson(tree):
     geojson_features = wfs_extract_features_as_geojson(
@@ -155,6 +159,7 @@ class AWRADrainageDivisionContractedCatchment(GFModel):
 
     def export_html(self, view=None):
         raise NotImplementedError()
+
 
 if __name__ == "__main__":
     i = AWRADrainageDivisionContractedCatchment.get_index(1, 20)

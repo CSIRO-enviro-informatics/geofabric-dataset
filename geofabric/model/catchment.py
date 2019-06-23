@@ -43,6 +43,8 @@ def retrieve_catchment(identifier):
         raise e
     tree = etree.parse(BytesIO(r.content))
     return tree
+
+
 retrieve_catchment.session = None
 
 ns = {
@@ -74,6 +76,7 @@ catchment_tag_map = {
     "{{{}}}shape_area".format(ns['x']): 'shape_area',
     "{{{}}}shape".format(ns['x']): 'shape',
 }
+
 
 def catchment_hyfeatures_converter(wfs_features):
     if len(wfs_features) < 1:
@@ -148,6 +151,7 @@ def catchment_hyfeatures_converter(wfs_features):
         features_list.append(feature_uri)
     return triples, feature_nodes
 
+
 def catchment_features_geojson_converter(wfs_features):
     if len(wfs_features) < 1:
         return None
@@ -198,9 +202,11 @@ def catchment_features_geojson_converter(wfs_features):
         features_list.append(catchment_dict)
     return features_list
 
+
 def extract_catchments_as_geojson(tree):
     geojson_features = wfs_extract_features_as_geojson(tree, ns['x'], "AHGFCatchment", catchment_features_geojson_converter)
     return geojson_features
+
 
 def extract_catchments_as_hyfeatures(tree):
     g = rdflib.Graph()
@@ -222,7 +228,7 @@ class Catchment(GFModel):
 
     @classmethod
     def make_local_url(cls, instance_id):
-        return url_for('classes.catchment', catchment_id=instance_id)
+        return url_for('classes.catchment', contractedcatchment_id=instance_id)
 
     @classmethod
     def get_index(cls, page, per_page):

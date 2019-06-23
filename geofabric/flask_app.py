@@ -1,5 +1,6 @@
 import os
 import geofabric._config as config
+
 if __name__ == '__main__':
     import sys
     sys.path.insert(0, config.APP_DIR)

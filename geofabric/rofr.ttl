@@ -5,25 +5,25 @@
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<http://linked.data.gov.au/dataset/geofabric/catchment/> a ns1:Register ;
+<http://linked.data.gov.au/dataset/geofabric/contractedcatchment/> a ns1:Register ;
     rdfs:label "Catchment Register"^^xsd:string ;
-    ns1:containedItemClass <https://www.opengis.net/def/appschema/hy_features/hyf/HY_Catchment> ;
+    ns1:containedItemClass <http://linked.data.gov.au/def/geofabric#ContractedCatchment> ;
     rdfs:comment "Register of all Geofabric Contracted Catchments"^^xsd:string ;
     ns2:superregister <http://linked.data.gov.au/dataset/geofabric> .
 
 <http://linked.data.gov.au/dataset/geofabric/drainagedivision/> a ns1:Register ;
     rdfs:label "AWRA Drainage Division Register"^^xsd:string ;
-    ns1:containedItemClass <https://www.opengis.net/def/appschema/hy_features/hyf/HY_CatchmentAggregate> ;
+    ns1:containedItemClass <http://linked.data.gov.au/def/geofabric#DrainageDivision> ;
     rdfs:comment "Register of all AWRA Drainage Divisions"^^xsd:string ;
     ns2:superregister <http://linked.data.gov.au/dataset/geofabric> .
 
 <http://linked.data.gov.au/dataset/geofabric/riverregion/> a ns1:Register ;
     rdfs:label "River Region Register"^^xsd:string ;
-    ns1:containedItemClass <https://www.opengis.net/def/appschema/hy_features/hyf/HY_CatchmentAggregate> ;
+    ns1:containedItemClass <http://linked.data.gov.au/def/geofabric#RiverRegion> ;
     rdfs:comment "Register of all GeoFabric River Regions"^^xsd:string ;
     ns2:superregister <http://linked.data.gov.au/dataset/geofabric> .
 
-<http://linked.data.gov.au/dataset/geofabric> ns1:subregister <http://linked.data.gov.au/dataset/geofabric/catchment/>,
+<http://linked.data.gov.au/dataset/geofabric> ns1:subregister <http://linked.data.gov.au/dataset/geofabric/contractedcatchment/>,
         <http://linked.data.gov.au/dataset/geofabric/drainagedivision/>,
         <http://linked.data.gov.au/dataset/geofabric/riverregion/> .
 

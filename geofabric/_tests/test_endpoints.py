@@ -39,7 +39,7 @@ def test_geofabric_landing_page_rdf_turtle_qsa():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/?_format=text/turtle',
         None,
-        r'<https:\/\/geofabricld\.net\/catchment\/> a reg:Register ;'
+        r'<https:\/\/geofabricld\.net\/contractedcatchment\/> a reg:Register ;'
     ), 'Geofabric landing page rdf turtle qsa failed'
 
 
@@ -47,7 +47,7 @@ def test_geofabric_landing_page_rdf_turtle_accept_header():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/',
         HEADERS_TTL,
-        r'<https:\/\/geofabricld\.net\/catchment\/> a reg:Register ;'
+        r'<https:\/\/geofabricld\.net\/contractedcatchment\/> a reg:Register ;'
     ), 'Geofabric landing page rdf turtle accept header failed'
 
 
@@ -87,7 +87,7 @@ def test_geofabric_landing_page_reg_view_rdf_turtle_qsa():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/?_view=reg&_format=text/turtle',
         None,
-        r'<https:\/\/geofabricld\.net\/catchment\/> a reg:Register ;'
+        r'<https:\/\/geofabricld\.net\/contractedcatchment\/> a reg:Register ;'
     ), 'Geofabric reg view rdf turtle qsa failed'
 
 
@@ -95,13 +95,13 @@ def test_geofabric_landing_page_reg_view_rdf_turtle_accept_header():
     assert valid_endpoint_content(
         f'{SYSTEM_URI}/?_view=reg',
         HEADERS_TTL,
-        r'<https:\/\/geofabricld\.net\/catchment\/> a reg:Register ;'
+        r'<https:\/\/geofabricld\.net\/contractedcatchment\/> a reg:Register ;'
     ), 'Geofabric reg view rdf turtle accept header failed'
 
 
 def test_geofabric_catchment_register_html():
     assert valid_endpoint_content(
-        f'{SYSTEM_URI}/catchment/',
+        f'{SYSTEM_URI}/contractedcatchment/',
         None,
         r'<h3>Of <em><a href="https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_Catchment">https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_Catchment<\/a><\/em> class items<\/h3>'
     ), 'Geofabric Catchment Register html failed.'
@@ -110,31 +110,31 @@ def test_geofabric_catchment_register_html():
 @pytest.mark.skip('Geofabric Catchment Register text turtle file extension not yet implemented')
 def test_geofabric_catchment_register_turtle_file_extension():
     assert valid_endpoint_content(
-        f'{SYSTEM_URI}/catchment/index.ttl',
+        f'{SYSTEM_URI}/contractedcatchment/index.ttl',
         None,
-        r'<https:\/\/geofabricld\.net\/catchment\/6600519> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_Catchment> ;'
+        r'<https:\/\/geofabricld\.net\/contractedcatchment\/6600519> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_Catchment> ;'
     ), 'Geofabric Catchment Register text turtle file extension failed'
 
 
 def test_geofabric_catchment_register_rdf_turtle_qsa():
     assert valid_endpoint_content(
-        f'{SYSTEM_URI}/catchment/?_format=text/turtle',
+        f'{SYSTEM_URI}/contractedcatchment/?_format=text/turtle',
         None,
-        r'<https:\/\/geofabricld\.net\/catchment\/6600519> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_Catchment> ;'
+        r'<https:\/\/geofabricld\.net\/contractedcatchment\/6600519> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_Catchment> ;'
     ), 'Geofabric Catchment Register text turtle qsa failed'
 
 
 def test_geofabric_catchment_register_rdf_turtle_accept_header():
     assert valid_endpoint_content(
-        f'{SYSTEM_URI}/catchment/',
+        f'{SYSTEM_URI}/contractedcatchment/',
         HEADERS_TTL,
-        r'<https:\/\/geofabricld\.net\/catchment\/6600519> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_Catchment> ;'
+        r'<https:\/\/geofabricld\.net\/contractedcatchment\/6600519> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_Catchment> ;'
     ), 'Geofabric Catchment Register text turtle accept header failed'
 
 
 def test_geofabric_catchment_register_alternates_view_html():
     assert valid_endpoint_content(
-        f'{SYSTEM_URI}/catchment/?_view=alternates&_format=text/html',
+        f'{SYSTEM_URI}/contractedcatchment/?_view=alternates&_format=text/html',
         None,
         r'<h3>Alternates view of a <a href="http:\/\/purl\.org\/linked-data\/registry#Register">http:\/\/purl\.org\/linked-data\/registry#Register<\/a><\/h3>'
     ), 'Geofabric Catchment Register alternates view html failed'
@@ -142,7 +142,7 @@ def test_geofabric_catchment_register_alternates_view_html():
 
 def test_geofabric_catchment_register_alternates_view_rdf_turtle_qsa():
     assert valid_endpoint_content(
-        f'{SYSTEM_URI}/catchment/?_view=alternates&_format=text/turtle',
+        f'{SYSTEM_URI}/contractedcatchment/?_view=alternates&_format=text/turtle',
         None,
         r'rdfs:comment "A simple list-of-items view taken from the Registry Ontology"\^\^xsd:string ;'
     ), 'Geofabric Catchment Register alternates view rdf turtle qsa failed'
@@ -150,7 +150,7 @@ def test_geofabric_catchment_register_alternates_view_rdf_turtle_qsa():
 
 def test_geofabric_catchment_register_alternates_view_rdf_turtle_accept_header():
     assert valid_endpoint_content(
-        f'{SYSTEM_URI}/catchment/?_view=alternates',
+        f'{SYSTEM_URI}/contractedcatchment/?_view=alternates',
         HEADERS_TTL,
         r'rdfs:comment "A simple list-of-items view taken from the Registry Ontology"\^\^xsd:string ;'
     ), 'Geofabric Catchment Register alternates view rdf turtle accept headers failed'
@@ -158,7 +158,7 @@ def test_geofabric_catchment_register_alternates_view_rdf_turtle_accept_header()
 
 def test_geofabric_catchment_register_reg_view_html():
     assert valid_endpoint_content(
-        f'{SYSTEM_URI}/catchment/?_view=reg',
+        f'{SYSTEM_URI}/contractedcatchment/?_view=reg',
         None,
         r'<h3>Of <em><a href="https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_Catchment">https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_Catchment<\/a><\/em> class items<\/h3>'
     ), 'Geofabric Catchment Register reg view html failed.'
@@ -166,32 +166,32 @@ def test_geofabric_catchment_register_reg_view_html():
 
 def test_geofabric_catchment_register_reg_view_rdf_turtle_qsa():
     assert valid_endpoint_content(
-        f'{SYSTEM_URI}/catchment/?_view=reg&_format=text/turtle',
+        f'{SYSTEM_URI}/contractedcatchment/?_view=reg&_format=text/turtle',
         None,
-        r'<https:\/\/geofabricld\.net\/catchment\/6600519> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_Catchment> ;'
+        r'<https:\/\/geofabricld\.net\/contractedcatchment\/6600519> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_Catchment> ;'
     ), 'Geofabric Catchment Register reg view text turtle qsa failed'
 
 
 def test_geofabric_catchment_register_reg_view_rdf_turtle_accept_header():
     assert valid_endpoint_content(
-        f'{SYSTEM_URI}/catchment/?_view=reg',
+        f'{SYSTEM_URI}/contractedcatchment/?_view=reg',
         HEADERS_TTL,
-        r'<https:\/\/geofabricld\.net\/catchment\/6600519> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_Catchment> ;'
+        r'<https:\/\/geofabricld\.net\/contractedcatchment\/6600519> a <https:\/\/www\.opengis\.net\/def\/appschema\/hy_features\/hyf\/HY_Catchment> ;'
     ), 'Geofabric Catchment Register reg view text turtle accept header failed'
 
 
 def test_geofabric_catchment__6600519_html():
     assert valid_endpoint_content(
-        f'{SYSTEM_URI}/catchment/6600519',
+        f'{SYSTEM_URI}/contractedcatchment/6600519',
         None,
-        r'<tr><td>Downstream Catchment<\/td><td><code><a href="\/catchment\/6600521">6600521<\/a><\/code><\/td><\/tr>'
+        r'<tr><td>Downstream Catchment<\/td><td><code><a href="\/contractedcatchment\/6600521">6600521<\/a><\/code><\/td><\/tr>'
     ), 'Geofabric Catchment instance 6600519 html failed'
 
 
 @pytest.mark.skip('Geofabric Catchment instance 6600519 rdf turtle file extension not yet implemented')
 def test_geofabric_catcment_6600519_rdf_turtle_file_extension():
     assert valid_endpoint_content(
-        f'{SYSTEM_URI}/catchment/6600519.ttl',
+        f'{SYSTEM_URI}/contractedcatchment/6600519.ttl',
         None,
         None, #TODO
     ), 'Geofabric Catchment instance 6600519 rdf turtle file extension failed'
@@ -201,7 +201,7 @@ def test_geofabric_catcment_6600519_rdf_turtle_file_extension():
 @pytest.mark.skip('Geofabric Catchment instance 6600519 rdf turtle qsa not yet implemented')
 def test_geofabric_catchment__6600519_rdf_turtle_qsa():
     assert valid_endpoint_content(
-        f'{SYSTEM_URI}/catchment/6600519?_format=text/turtle',
+        f'{SYSTEM_URI}/contractedcatchment/6600519?_format=text/turtle',
         None,
         None #TODO
     ), 'Geofabric Catchment instance 6600519 rdf turtle qsa failed'
@@ -211,7 +211,7 @@ def test_geofabric_catchment__6600519_rdf_turtle_qsa():
 @pytest.mark.skip('Geofabric Catchment instance 6600519 rdf turtle accept header not yet implemented')
 def test_geofabric_catchment__6600519_rdf_turtle_qsa():
     assert valid_endpoint_content(
-        f'{SYSTEM_URI}/catchment/6600519',
+        f'{SYSTEM_URI}/contractedcatchment/6600519',
         HEADERS_TTL,
         None #TODO
     ), 'Geofabric Catchment instance 6600519 rdf turtle accept header failed'
@@ -219,7 +219,7 @@ def test_geofabric_catchment__6600519_rdf_turtle_qsa():
 
 def test_geofabric_catchment_660519_alternates_view_html():
     assert valid_endpoint_content(
-        f'{SYSTEM_URI}/catchment/6600519?_view=alternates&_format=text/html',
+        f'{SYSTEM_URI}/contractedcatchment/6600519?_view=alternates&_format=text/html',
         None,
         r'<h1>Geofabric Linked Data API</h1>'
     ), 'Geofabric Catchment instance 660519 alternates view html failed'
@@ -227,23 +227,23 @@ def test_geofabric_catchment_660519_alternates_view_html():
 
 def test_geofabric_catchment_660519_alternates_view_rdf_turtle_qsa():
     assert valid_endpoint_content(
-        f'{SYSTEM_URI}/catchment/6600519?_view=alternates&_format=text/turtle',
+        f'{SYSTEM_URI}/contractedcatchment/6600519?_view=alternates&_format=text/turtle',
         None,
-        r'<https:\/\/geofabricld.net\/catchment\/6600519>'
+        r'<https:\/\/geofabricld.net\/contractedcatchment\/6600519>'
     ), 'Geofabric Catchment instance 660519 alternates view rdf turtle qsa failed'
 
 
 def test_geofabric_catchment_660519_alternates_view_rdf_turtle_accept_header():
     assert valid_endpoint_content(
-        f'{SYSTEM_URI}/catchment/6600519?_view=alternates',
+        f'{SYSTEM_URI}/contractedcatchment/6600519?_view=alternates',
         HEADERS_TTL,
-        r'<https:\/\/geofabricld.net\/catchment\/6600519>'
+        r'<https:\/\/geofabricld.net\/contractedcatchment\/6600519>'
     ), 'Geofabric Catchment instance 660519 alternates view rdf turtle accept header failed'
 
 
 def test_geofabric_catchment_660519_geofabric_view_html():
     assert valid_endpoint_content(
-        f'{SYSTEM_URI}/catchment/6600519?_view=geofabric&_format=text/html',
+        f'{SYSTEM_URI}/contractedcatchment/6600519?_view=geofabric&_format=text/html',
         None,
         r'<h1>Catchment 6600519<\/h1>'
     ), 'Geofabric Catchment instance 660519 geofabric view html failed'
@@ -252,7 +252,7 @@ def test_geofabric_catchment_660519_geofabric_view_html():
 @pytest.mark.skip('Geofabric Catchment instance 660519 geofabric view rdf turtle qsa not yet implemented')
 def test_geofabric_catchment_660519_geofabric_view_rdf_turtle_qsa():
     assert valid_endpoint_content(
-        f'{SYSTEM_URI}/catchment/6600519?_view=geofabric&_format=text/turtle',
+        f'{SYSTEM_URI}/contractedcatchment/6600519?_view=geofabric&_format=text/turtle',
         None,
         None, #TODO
     ), 'Geofabric Catchment instance 660519 geofabric view rdf turtle qsa failed'
@@ -261,7 +261,7 @@ def test_geofabric_catchment_660519_geofabric_view_rdf_turtle_qsa():
 @pytest.mark.skip('Geofabric Catchment instance 660519 geofabric view rdf turtle accept header not yet implemented')
 def test_geofabric_catchment_660519_geofabric_view_rdf_turtle_accept_header():
     assert valid_endpoint_content(
-        f'{SYSTEM_URI}/catchment/6600519?_view=geofabric',
+        f'{SYSTEM_URI}/contractedcatchment/6600519?_view=geofabric',
         HEADERS_TTL,
         None, #TODO
     ), 'Geofabric Catchment instance 660519 geofabric view rdf turtle accept header failed'
@@ -270,7 +270,7 @@ def test_geofabric_catchment_660519_geofabric_view_rdf_turtle_accept_header():
 @pytest.mark.skip('Geofabric Catchment instance 660519 schemaorg view rdf application/ld+json not yet implemented')
 def test_geofabric_catchment_660519_schemaorg_view_rdf_json():
     assert valid_endpoint_content(
-        f'{SYSTEM_URI}/catchment/6600519?format=application/ld+json',
+        f'{SYSTEM_URI}/contractedcatchment/6600519?format=application/ld+json',
         None,
         None #TODO
     ), 'Geofabric Catchment instance 660519 schemaorg view rdf application/ld+json failed'
@@ -278,7 +278,7 @@ def test_geofabric_catchment_660519_schemaorg_view_rdf_json():
 
 def test_geofabric_catchment_660519_hyfeatures_html():
     assert valid_endpoint_content(
-        f'{SYSTEM_URI}/catchment/6600519?_view=hyfeatures&_format=text/html',
+        f'{SYSTEM_URI}/contractedcatchment/6600519?_view=hyfeatures&_format=text/html',
         None,
         r'<h1>Catchment 6600519<\/h1>'
     ), 'Geofabric Catchment instance 660519 hyfeatures view html failed'
@@ -287,7 +287,7 @@ def test_geofabric_catchment_660519_hyfeatures_html():
 @pytest.mark.skip('Geofabric Catchment instance 660519 hyfeatures view rdf turtle qsa not yet implemented')
 def test_geofabric_catchment_660519_hyfeatures_rdf_turtle_qsa():
     assert valid_endpoint_content(
-        f'{SYSTEM_URI}/catchment/6600519?_view=hyfeatures&_format=text/turtle',
+        f'{SYSTEM_URI}/contractedcatchment/6600519?_view=hyfeatures&_format=text/turtle',
         None,
         None #TODO
     ), 'Geofabric Catchment instance 660519 hyfeatures view rdf turtle qsa failed'
@@ -296,7 +296,7 @@ def test_geofabric_catchment_660519_hyfeatures_rdf_turtle_qsa():
 @pytest.mark.skip('Geofabric Catchment instance 660519 hyfeatures view rdf turtle accept header not yet implemented')
 def test_geofabric_catchment_660519_hyfeatures_rdf_turtle_accept_header():
     assert valid_endpoint_content(
-        f'{SYSTEM_URI}/catchment/6600519?_view=hyfeatures',
+        f'{SYSTEM_URI}/contractedcatchment/6600519?_view=hyfeatures',
         HEADERS_TTL,
         None #TODO
     ), 'Geofabric Catchment instance 660519 hyfeatures view rdf turtle accept header failed'

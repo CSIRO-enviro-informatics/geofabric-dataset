@@ -9,12 +9,12 @@
     </p>
     <h2>Starting points</h2>
     <ul>
-        <li><a href="{{ url_for('classes.catchments') }}">Catchments Register</a> - the list of all Catchments, paged</li>
+        <li><a href="{{ url_for('classes.contracted_catchments') }}">Contracted Catchments Register</a> - the list of all Catchments, paged</li>
         <li><a href="{{ url_for('classes.river_regions') }}">River Regions Register</a></li>
         <li><a href="{{ url_for('classes.drainage_divisions') }}">Drainage Divisions Register</a></li>
     </ul>
     <ul>
-        <li><a href="{{ url_for('classes.catchment', catchment_id=12101198) }}">Catchment #12101198</a> - a specific catchment</li>
+        <li><a href="{{ url_for('classes.contracted_catchment', contractedcatchment_id=12101198) }}">Contracted Catchment #12101198</a> - a specific Contracted Catchment</li>
         <li><a href="{{ url_for('classes.river_region', rr_id=9400222) }}">River Region #9400222</a></li>
         <li><a href="{{ url_for('classes.drainage_division', dd_id=9400209) }}">Drainage Division #9400209</a></li>
     </ul>

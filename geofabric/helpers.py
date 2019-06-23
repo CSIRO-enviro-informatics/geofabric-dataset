@@ -8,8 +8,10 @@ from lxml import etree
 
 HYF = Namespace("https://www.opengis.net/def/appschema/hy_features/hyf/")
 GEO = Namespace("http://www.opengis.net/ont/geosparql#")
+GEOF = Namespace("http://linked.data.gov.au/def/geofabric#")
 GML = Namespace("http://www.opengis.net/ont/gml#")
 OGC = Namespace("http://www.opengis.net/")
+QUDT = rdflib.Namespace('http://qudt.org/schema/qudt#')
 HYF_HY_HydroFeature = HYF.term('HY_HydroFeature')
 HYF_HY_Catchment = HYF.term('HY_Catchment')
 HYF_HY_CatchmentAggregate = HYF.term('HY_CatchmentAggregate')
@@ -35,7 +37,6 @@ class NotFoundError(Exception):
         super(NotFoundError, self).__init__(*args)
 
 
-
 def chunks(source, length):
     """Yield successive n-sized chunks from l."""
     for i in range(0, len(source), length):
@@ -46,6 +47,7 @@ ns = {
     'wfs': 'http://www.opengis.net/wfs/2.0',
     'gml': "http://www.opengis.net/gml/3.2"
 }
+
 
 def gml_extract_geom_to_geojson(node, recursion=0):
     """
@@ -160,6 +162,7 @@ def gml_extract_geom_to_geojson(node, recursion=0):
         raise NotImplementedError(
             "Don't know how to convert geom type: {}".format(geom.tag))
 
+
 def gml_extract_geom_to_geosparql(node, recursion=0):
     """
 
@@ -239,6 +242,7 @@ def wfs_find_features(tree, feature_ns, feature_type):
         features[key] = member_object
     return features
 
+
 def wfs_extract_features_as_geojson(tree, feature_ns, feature_type, class_converter=None):
     """
 
@@ -279,6 +283,7 @@ def wfs_extract_features_as_hyfeatures(tree, feature_ns, feature_type, class_con
     else:
         raise NotImplementedError("Need a class converter in order to get HY_Features from WFS.")
     return triples, feature_nodes
+
 
 def mymax(a, b):
     if a is None: return b
@@ -328,6 +333,7 @@ def calculate_bboxes(g, bounds=None, pad=0):
             else:
                 bounds = ([n, s, e, w], nBounds)
     return bounds
+
 
 def calculate_bbox(g, pad=0):
     twin_bounds = ([None, None, None, None], [None, None, None, None])

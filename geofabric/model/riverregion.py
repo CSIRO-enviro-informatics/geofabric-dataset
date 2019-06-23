@@ -7,16 +7,18 @@ import rdflib
 import requests
 from flask import render_template, url_for
 from rdflib import URIRef, Literal, BNode
+from rdflib.namespace import DC, DCTERMS, XSD
 from requests import Session
 from lxml import etree
 from geofabric import _config as config
 from geofabric.helpers import gml_extract_geom_to_geojson, \
     wfs_extract_features_as_geojson, \
     wfs_extract_features_as_hyfeatures, gml_extract_geom_to_geosparql, \
-    GEO_hasGeometry, GEO_hasDefaultGeometry, RDF_a, \
+    GEO_hasGeometry, RDF_a, \
     HYF_HY_CatchmentRealization, HYF_realizedCatchment, HYF_lowerCatchment, \
     HYF_catchmentRealization, HYF_HY_Catchment, HYF_HY_HydroFeature, \
-    calculate_bbox, HYF_HY_CatchmentAggregate, NotFoundError
+    calculate_bbox, HYF_HY_CatchmentAggregate, NotFoundError, \
+    GEO, GEOF, QUDT
 from geofabric.model import GFModel
 from functools import lru_cache
 from datetime import datetime
@@ -44,6 +46,8 @@ def retrieve_river_region(identifier):
         raise e
     tree = etree.parse(BytesIO(r.content))
     return tree
+
+
 retrieve_river_region.session = None
 
 ns = {
@@ -71,6 +75,90 @@ rr_tag_map = {
     "{{{}}}shape_area".format(ns['x']): 'shape_area',
     "{{{}}}shape".format(ns['x']): 'shape',
 }
+
+# used to map RRs to DDs via a name lookup using the RR WFS division property
+DRAINAGE_DIVISIONS = {
+    'Carpentaria Coast':            URIRef(config.URI_AWRA_DRAINAGE_DIVISION_INSTANCE_BASE + '9400203'),
+    'Pilbara-Gascoyne':             URIRef(config.URI_AWRA_DRAINAGE_DIVISION_INSTANCE_BASE + '9400204'),
+    'Lake Eyre Basin':              URIRef(config.URI_AWRA_DRAINAGE_DIVISION_INSTANCE_BASE + '9400205'),
+    'Murray-Darling Basin':         URIRef(config.URI_AWRA_DRAINAGE_DIVISION_INSTANCE_BASE + '9400206'),
+    'North East Coast':             URIRef(config.URI_AWRA_DRAINAGE_DIVISION_INSTANCE_BASE + '9400207'),
+    'North Western Plateau':        URIRef(config.URI_AWRA_DRAINAGE_DIVISION_INSTANCE_BASE + '9400208'),
+    'South Australian Gulf':        URIRef(config.URI_AWRA_DRAINAGE_DIVISION_INSTANCE_BASE + '9400209'),
+    'South East Coast (Victoria)':  URIRef(config.URI_AWRA_DRAINAGE_DIVISION_INSTANCE_BASE + '9400210'),
+    'South West Coast':             URIRef(config.URI_AWRA_DRAINAGE_DIVISION_INSTANCE_BASE + '9400211'),
+    'South Western Plateau':        URIRef(config.URI_AWRA_DRAINAGE_DIVISION_INSTANCE_BASE + '9400212'),
+    'Tasmania':                     URIRef(config.URI_AWRA_DRAINAGE_DIVISION_INSTANCE_BASE + '9400213'),
+    'Tanami-Timor Sea Coast':       URIRef(config.URI_AWRA_DRAINAGE_DIVISION_INSTANCE_BASE + '9400214'),
+    'South East Coast (NSW)':       URIRef(config.URI_AWRA_DRAINAGE_DIVISION_INSTANCE_BASE + '9400215'),
+}
+
+
+def river_region_geofabric_converter(wfs_features):
+    if len(wfs_features) < 1:
+        return None
+
+    if isinstance(wfs_features, (dict,)):
+        features_source = wfs_features.items()
+    elif isinstance(wfs_features, (list, set)):
+        features_source = iter(wfs_features)
+    else:
+        features_source = [wfs_features]
+
+    triples = set()
+
+    for hydroid, rr_element in features_source:  # type: int, etree._Element
+        feature_uri = rdflib.URIRef(
+            "".join([config.URI_RIVER_REGION_INSTANCE_BASE,
+            str(hydroid)])
+        )
+
+        triples.add((feature_uri, RDF_a, GEOF.RiverRegion))
+
+        for c in rr_element.iterchildren():  # type: etree._Element
+            var = c.tag.replace('{{{}}}'.format(ns['x']), '')
+
+            # common Geofabric properties
+            if var == 'shape_area':
+                A = BNode()
+                triples.add((
+                    A, QUDT.numericValue, Literal(c.text, datatype=XSD.float)))
+                triples.add((
+                    A, QUDT.unit, QUDT.SquareMeter))
+                triples.add((feature_uri, URIRef('http://dbpedia.org/property/area'), A))
+            elif var == 'albersarea':
+                A = BNode()
+                triples.add((
+                    A, QUDT.numericValue, Literal(c.text, datatype=XSD.float)))
+                triples.add((
+                    A, QUDT.unit, QUDT.SquareMeter))
+                triples.add((feature_uri, GEOF.albersArea, A))
+            elif var == 'shape_length':
+                L = BNode()
+                triples.add((
+                    L, QUDT.numericValue, Literal(c.text, datatype=XSD.float)))
+                triples.add((
+                    L, QUDT.unit, QUDT.Meter))
+                triples.add((feature_uri, GEOF.perimeterLength, L))  # URIRef('http://dbpedia.org/property/length')
+            elif var == 'shape':
+                geometry = BNode()
+                triples.add((feature_uri, GEO_hasGeometry, geometry))
+                triples.add((geometry, GEO.asGML, Literal('TODO')))  # TODO: reinstate asGMl asWKT
+            elif var == 'attrsource':
+                triples.add((feature_uri, DC.source, Literal(c.text)))
+
+            # River Region properties
+            elif var == 'fsource':
+                triples.add((feature_uri, DC.source, Literal(str(c.text).title())))
+            elif var == 'rivregname':
+                triples.add((feature_uri, DCTERMS.title, Literal(str(c.text).title(), lang='en')))
+            elif var == 'division':
+                dd = DRAINAGE_DIVISIONS.get(str(c.text))
+                if dd is not None:
+                    triples.add((feature_uri, GEO.sfWithin, dd))
+
+    return triples, None
+
 
 def river_region_hyfeatures_converter(wfs_features):
     if len(wfs_features) < 1:
@@ -144,6 +232,7 @@ def river_region_hyfeatures_converter(wfs_features):
         features_list.append(feature_uri)
     return triples, feature_nodes
 
+
 def river_region_features_geojson_converter(wfs_features):
     if len(wfs_features) < 1:
         return None
@@ -195,9 +284,26 @@ def river_region_features_geojson_converter(wfs_features):
         features_list.append(rr_dict)
     return features_list
 
+
 def extract_river_regions_as_geojson(tree):
     geojson_features = wfs_extract_features_as_geojson(tree, ns['x'], "RiverRegion", river_region_features_geojson_converter)
     return geojson_features
+
+
+def extract_river_regions_as_geofabric(tree):
+    g = rdflib.Graph()
+    g.bind('geo', rdflib.Namespace('http://www.opengis.net/ont/geosparql#'))
+    g.bind('geof', rdflib.Namespace('http://linked.data.gov.au/def/geofabric#'))
+    triples, features = wfs_extract_features_as_hyfeatures(
+        tree,
+        ns['x'],
+        "RiverRegion",
+        river_region_geofabric_converter
+    )
+    for (s, p, o) in iter(triples):
+        g.add((s, p, o))
+    return g
+
 
 def extract_river_regions_as_hyfeatures(tree):
     g = rdflib.Graph()
@@ -266,12 +372,17 @@ class RiverRegion(GFModel):
         g = extract_river_regions_as_hyfeatures(self.xml_tree)
         return g
 
+    def to_geofabric_graph(self):
+        g = extract_river_regions_as_geofabric(self.xml_tree)
+        return g
+
     def export_html(self, view='geofabric'):
         bbox = self.get_bbox(pad=12)
         bbox_string = ",".join(str(i) for i in bbox)
-        centrepoint = []
-        centrepoint.append(bbox[0] + ((bbox[2] - bbox[0]) / 2))
-        centrepoint.append(bbox[1] + ((bbox[3] - bbox[1]) / 2))
+        centrepoint = [
+            bbox[0] + ((bbox[2] - bbox[0]) / 2),
+            bbox[1] + ((bbox[3] - bbox[1]) / 2)
+        ]
         hydroid = self.hydroid
         wms_url = config.GF_OWS_ENDPOINT +\
                   "?service=wms&version=2.0.0&request=GetMap" \

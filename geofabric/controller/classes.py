@@ -39,13 +39,13 @@ def reg():
     ).render()
 
 
-@classes.route('/catchment/')
-def catchments():
+@classes.route('/contractedcatchment/')
+def contracted_catchments():
     if USE_CONTRACTED_CATCHMENTS:
         renderer = GEOFRegisterRenderer(request, config.URI_CATCHMENT_INSTANCE_BASE,
                                         "Catchment Register",
                                         "Register of all Geofabric Contracted Catchments",
-                                        [config.URI_CATCHMENT_CLASS],
+                                        ['http://linked.data.gov.au/def/geofabric#ContractedCatchment'],
                                         CONTRACTED_CATCHMENT_COUNT,
                                         ContractedCatchment,
                                         super_register=config.DATA_URI_PREFIX)
@@ -53,7 +53,7 @@ def catchments():
         renderer = GEOFRegisterRenderer(request, config.URI_CATCHMENT_INSTANCE_BASE,
                                         "Catchment Register",
                                         "Register of all Geofabric Catchments",
-                                        [config.URI_CATCHMENT_CLASS],
+                                        ['http://linked.data.gov.au/def/geofabric#ContractedCatchment'],
                                         CATCHMENT_COUNT,
                                         Catchment,
                                         super_register=config.DATA_URI_PREFIX)
@@ -66,7 +66,7 @@ def river_regions():
         request, config.URI_RIVER_REGION_INSTANCE_BASE,
         "River Region Register",
         "Register of all GeoFabric River Regions",
-        [config.URI_RIVER_REGION_CLASS],
+        ['http://linked.data.gov.au/def/geofabric#RiverRegion'],
         RIVER_REGION_COUNT,
         RiverRegion,
         super_register=config.DATA_URI_PREFIX)
@@ -79,26 +79,26 @@ def drainage_divisions():
         request, config.URI_AWRA_DRAINAGE_DIVISION_INSTANCE_BASE,
         "AWRA Drainage Division Register",
         "Register of all AWRA Drainage Divisions",
-        [config.URI_AWRA_DRAINAGE_DIVISION_CLASS],
+        ['http://linked.data.gov.au/def/geofabric#DrainageDivision'],
         DRAINAGE_DIVISION_COUNT,
         AWRADrainageDivision,
         super_register=config.DATA_URI_PREFIX)
     return renderer.render()
 
 
-@classes.route('/catchment/<string:catchment_id>')
-def catchment(catchment_id):
+@classes.route('/contractedcatchment/<string:contractedcatchment_id>')
+def contracted_catchment(contractedcatchment_id):
     """
     A single Catchment
 
-    :param catchment_id:
+    :param contractedcatchment_id:
     :return: LDAPI views of a single Catchment
     """
     try:
         if USE_CONTRACTED_CATCHMENTS:
-            r = ContractedCatchmentRenderer(request, catchment_id, None)
+            r = ContractedCatchmentRenderer(request, contractedcatchment_id, None)
         else:
-            r = CatchmentRenderer(request, catchment_id, None)
+            r = CatchmentRenderer(request, contractedcatchment_id, None)
     except NotFoundError:
         return abort(404)
     return r.render()

@@ -24,7 +24,7 @@ DEBUG_MODE = False # Does nothing for now.
 VERBOSE_MODE = True
 #TODO: Automate this, somehow.
 INSTANCE_URI_TO_LOCAL_ROUTE = {
-    "http://linked.data.gov.au/dataset/geofabric/catchment/": "/catchment/",
+    "http://linked.data.gov.au/dataset/geofabric/contractedcatchment/": "/contractedcatchment/",
     "http://linked.data.gov.au/dataset/geofabric/riverregion/": "/riverregion/",
     "http://linked.data.gov.au/dataset/geofabric/drainagedivision/": "/drainagedivision/"
 }

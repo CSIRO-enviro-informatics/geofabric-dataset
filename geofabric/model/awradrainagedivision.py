@@ -7,6 +7,7 @@ import requests
 from flask import render_template, url_for
 from lxml.etree import ParseError
 from rdflib import URIRef, Literal, BNode
+from rdflib.namespace import DC, DCTERMS, XSD
 from requests import Session
 from lxml import etree
 from geofabric import _config as config
@@ -16,7 +17,8 @@ from geofabric.helpers import gml_extract_geom_to_geojson, \
     GEO_hasGeometry, GEO_hasDefaultGeometry, RDF_a, \
     HYF_HY_CatchmentRealization, HYF_realizedCatchment, HYF_lowerCatchment, \
     HYF_catchmentRealization, HYF_HY_Catchment, HYF_HY_HydroFeature, \
-    calculate_bbox, HYF_HY_CatchmentAggregate, NotFoundError
+    calculate_bbox, HYF_HY_CatchmentAggregate, NotFoundError, \
+    GEO, GEOF, QUDT
 from geofabric.model import GFModel
 from functools import lru_cache
 from datetime import datetime
@@ -44,6 +46,8 @@ def retrieve_drainage_division(identifier):
         raise e
     tree = etree.parse(BytesIO(r.content))
     return tree
+
+
 retrieve_drainage_division.session = None
 
 ns = {
@@ -70,6 +74,70 @@ dd_tag_map = {
     "{{{}}}shape_area".format(ns['x']): 'shape_area',
     "{{{}}}shape".format(ns['x']): 'shape',
 }
+
+
+def drainage_division_geofabric_converter(wfs_features):
+    if len(wfs_features) < 1:
+        return None
+
+    if isinstance(wfs_features, (dict,)):
+        features_source = wfs_features.items()
+    elif isinstance(wfs_features, (list, set)):
+        features_source = iter(wfs_features)
+    else:
+        features_source = [wfs_features]
+
+    triples = set()
+
+    for hydroid, rr_element in features_source:  # type: int, etree._Element
+        feature_uri = rdflib.URIRef(
+            "".join([config.URI_RIVER_REGION_INSTANCE_BASE,
+            str(hydroid)])
+        )
+
+        triples.add((feature_uri, RDF_a, GEOF.RiverRegion))
+
+        for c in rr_element.iterchildren():  # type: etree._Element
+            var = c.tag.replace('{{{}}}'.format(ns['x']), '')
+
+            # common Geofabric properties
+            if var == 'shape_area':
+                A = BNode()
+                triples.add((
+                    A, QUDT.numericValue, Literal(c.text, datatype=XSD.float)))
+                triples.add((
+                    A, QUDT.unit, QUDT.SquareMeter))
+                triples.add((feature_uri, URIRef('http://dbpedia.org/property/area'), A))
+            elif var == 'albersarea':
+                A = BNode()
+                triples.add((
+                    A, QUDT.numericValue, Literal(c.text, datatype=XSD.float)))
+                triples.add((
+                    A, QUDT.unit, QUDT.SquareMeter))
+                triples.add((feature_uri, GEOF.albersArea, A))
+            elif var == 'shape_length':
+                L = BNode()
+                triples.add((
+                    L, QUDT.numericValue, Literal(c.text, datatype=XSD.float)))
+                triples.add((
+                    L, QUDT.unit, QUDT.Meter))
+                triples.add((feature_uri, GEOF.perimeterLength, L))  # URIRef('http://dbpedia.org/property/length')
+            elif var == 'shape':
+                geometry = BNode()
+                triples.add((feature_uri, GEO_hasGeometry, geometry))
+                triples.add((geometry, GEO.asGML, Literal('TODO')))  # TODO: reinstate asGMl asWKT
+            elif var == 'attrsource':
+                triples.add((feature_uri, DC.source, Literal(c.text)))
+
+            # Drainage Division properties
+            elif var == 'fsource':
+                triples.add((feature_uri, DC.source, Literal(str(c.text).title())))
+            elif var == 'sourceid':
+                triples.add((feature_uri, GEOF.sourceId, Literal(c.text, datatype=XSD.integer)))
+            elif var == 'srcfcname':
+                triples.add((feature_uri, DC.source, Literal(c.text)))
+
+    return triples, None
 
 
 def drainage_division_hyfeatures_converter(wfs_features):
@@ -149,6 +217,7 @@ def drainage_division_hyfeatures_converter(wfs_features):
         features_list.append(feature_uri)
     return triples, feature_nodes
 
+
 def drainage_division_features_geojson_converter(wfs_features):
     if len(wfs_features) < 1:
         return None
@@ -205,17 +274,37 @@ def drainage_division_features_geojson_converter(wfs_features):
         features_list.append(dd_dict)
     return features_list
 
+
 def extract_drainage_divisions_as_geojson(tree):
     geojson_features = wfs_extract_features_as_geojson(
         tree, ns['x'], "AWRADrainageDivision",
         drainage_division_features_geojson_converter)
     return geojson_features
 
+
+def extract_drainage_divisions_as_geofabric(tree):
+    g = rdflib.Graph()
+    g.bind('geo', rdflib.Namespace('http://www.opengis.net/ont/geosparql#'))
+    g.bind('geof', rdflib.Namespace('http://linked.data.gov.au/def/geofabric#'))
+    triples, features = wfs_extract_features_as_hyfeatures(
+        tree,
+        ns['x'],
+        "AWRADrainageDivision",
+        drainage_division_geofabric_converter
+    )
+    for (s, p, o) in iter(triples):
+        g.add((s, p, o))
+    return g
+
+
 def extract_drainage_divisions_as_hyfeatures(tree):
     g = rdflib.Graph()
     triples, features = wfs_extract_features_as_hyfeatures(
-        tree, ns['x'], "AWRADrainageDivision",
-        drainage_division_hyfeatures_converter)
+        tree,
+        ns['x'],
+        "AWRADrainageDivision",
+        drainage_division_hyfeatures_converter
+    )
     for (s, p, o) in iter(triples):
         g.add((s, p, o))
     return g
@@ -282,12 +371,17 @@ class AWRADrainageDivision(GFModel):
         g = extract_drainage_divisions_as_hyfeatures(self.xml_tree)
         return g
 
+    def to_geofabric_graph(self):
+        g = extract_drainage_divisions_as_geofabric(self.xml_tree)
+        return g
+
     def export_html(self, view='geofabric'):
         bbox = self.get_bbox(pad=12)
         bbox_string = ",".join(str(i) for i in bbox)
-        centrepoint = []
-        centrepoint.append(bbox[0] + ((bbox[2] - bbox[0]) / 2))
-        centrepoint.append(bbox[1] + ((bbox[3] - bbox[1]) / 2))
+        centrepoint = [
+            bbox[0] + ((bbox[2] - bbox[0]) / 2),
+            bbox[1] + ((bbox[3] - bbox[1]) / 2)
+        ]
         hydroid = self.hydroid
         wms_url = config.GF_OWS_ENDPOINT +\
                   "?service=wms&version=2.0.0&request=GetMap" \
