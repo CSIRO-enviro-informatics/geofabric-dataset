@@ -33,7 +33,7 @@ def contracted_catchments():
         renderer = GEOFRegisterRenderer(request, config.URI_CATCHMENT_INSTANCE_BASE,
                                         "Catchment Register",
                                         "Register of all Geofabric Contracted Catchments",
-                                        [config.URI_CATCHMENT_CLASS],
+                                        ['http://linked.data.gov.au/def/geofabric#ContractedCatchment'],
                                         CONTRACTED_CATCHMENT_COUNT,
                                         ContractedCatchment,
                                         super_register=config.DATA_URI_PREFIX)
@@ -41,7 +41,7 @@ def contracted_catchments():
         renderer = GEOFRegisterRenderer(request, config.URI_CATCHMENT_INSTANCE_BASE,
                                         "Catchment Register",
                                         "Register of all Geofabric Catchments",
-                                        [config.URI_CATCHMENT_CLASS],
+                                        ['http://linked.data.gov.au/def/geofabric#ContractedCatchment'],
                                         CATCHMENT_COUNT,
                                         Catchment,
                                         super_register=config.DATA_URI_PREFIX)
@@ -54,7 +54,7 @@ def river_regions():
         request, config.URI_RIVER_REGION_INSTANCE_BASE,
         "River Region Register",
         "Register of all GeoFabric River Regions",
-        [config.URI_RIVER_REGION_CLASS],
+        ['http://linked.data.gov.au/def/geofabric#RiverRegion'],
         RIVER_REGION_COUNT,
         RiverRegion,
         super_register=config.DATA_URI_PREFIX)
@@ -67,7 +67,7 @@ def drainage_divisions():
         request, config.URI_AWRA_DRAINAGE_DIVISION_INSTANCE_BASE,
         "AWRA Drainage Division Register",
         "Register of all AWRA Drainage Divisions",
-        [config.URI_AWRA_DRAINAGE_DIVISION_CLASS],
+        ['http://linked.data.gov.au/def/geofabric#DrainageDivision'],
         DRAINAGE_DIVISION_COUNT,
         AWRADrainageDivision,
         super_register=config.DATA_URI_PREFIX)
