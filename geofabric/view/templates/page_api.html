@@ -27,31 +27,31 @@
     <h3>Example endpoints</h3>
     <ul>
         <li>
-            <a href="http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.catchments') }}">
-            http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.catchments') }}</a>
-            <ul><li>register of catchments, in the default format (HTML)</li></ul>
+            <a href="http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.contracted_catchments') }}">
+            http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.contracted_catchments') }}</a>
+            <ul><li>register of Contracted Catchments, in the default format (HTML)</li></ul>
         </li>
         <li>
-            <a href="http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.catchments') }}?_format=application/ld+json">
-                http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.catchments') }}?_format=application/ld+json</a>
+            <a href="http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.contracted_catchments') }}?_format=application/ld+json">
+                http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.contracted_catchments') }}?_format=application/ld+json</a>
             <ul>
                 <li>
-                    register of catchments, in the <a href="http://json-ld.org">JSON-LD</a>
+                    register of Contracted Catchments, in the <a href="http://json-ld.org">JSON-LD</a>
                     format of <a href="https://www.w3.org/2001/sw/wiki/RDF">RDF</a>
                 </li>
             </ul>
         </li>
         <li>
-            <a href="http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.catchment', catchment_id=12101198) }}">
-            http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.catchment', catchment_id=12101198) }}</a>
-            <ul><li>a specific catchment, #12101198</li></ul>
+            <a href="http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.contracted_catchment', contractedcatchment_id=12101198) }}">
+            http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.contracted_catchment', contractedcatchment_id=12101198) }}</a>
+            <ul><li>a specific Contracted Catchment, #12101198</li></ul>
         </li>
         <li>
-            <a href="http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.catchment', catchment_id=12101198) }}?_format=text/turtle">
-            http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.catchment', catchment_id=12101198) }}?_format=text/turtle</a>
+            <a href="http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.contracted_catchment', contractedcatchment_id=12101198) }}?_format=text/turtle">
+            http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.contracted_catchment', contractedcatchment_id=12101198) }}?_format=text/turtle</a>
             <ul>
                 <li>
-                    a specific catchment, #12101198, in the <a href="https://www.w3.org/TR/turtle/">Turtle</a> format
+                    a specific Contracted Catchment, #12101198, in the <a href="https://www.w3.org/TR/turtle/">Turtle</a> format
                     of RDF
                 </li>
             </ul>
@@ -60,14 +60,14 @@
     <p><em><strong>Views</strong></em> deliver information according to specification so:</p>
     <ul>
         <li>
-            <a href="http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.catchment', catchment_id=12101198) }}?_view=hyfeatures">
-            http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.catchment', catchment_id=12101198) }}?_view=hyfeatures</a>
-            <ul><li>a specific catchment, #12101198, delivered according to the HY Features specifications</li></ul>
+            <a href="http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.contracted_catchment', contractedcatchment_id=12101198) }}?_view=hyfeatures">
+            http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.contracted_catchment', contractedcatchment_id=12101198) }}?_view=hyfeatures</a>
+            <ul><li>a specific Contracted Catchment, #12101198, delivered according to the HY Features specifications</li></ul>
         </li>
         <li>
-            <a href="http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.catchment', catchment_id=12101198) }}?_view=hyfeatures&_format=application/n-triples">
-            http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.catchment', catchment_id=12101198) }}?_view=hyfeatures&_format=application/n-triples</a>
-            <ul><li>a specific catchment, #12101198, delivered according to the HY Features specifications, in the N-Triples format</li></ul>
+            <a href="http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.contracted_catchment', contractedcatchment_id=12101198) }}?_view=hyfeatures&_format=application/n-triples">
+            http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.contracted_catchment', contractedcatchment_id=12101198) }}?_view=hyfeatures&_format=application/n-triples</a>
+            <ul><li>a specific Contracted Catchment, #12101198, delivered according to the HY Features specifications, in the N-Triples format</li></ul>
         </li>
     </ul>
     <p>
@@ -76,10 +76,10 @@
     </p>
     <ul>
         <li>
-            <a href="http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.catchment', catchment_id=12101198) }}?_view=alternates">
-                http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.catchment', catchment_id=12101198) }}?_view=alternates
+            <a href="http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.contracted_catchment', contractedcatchment_id=12101198) }}?_view=alternates">
+                http://linked.data.gov.au/dataset/geofabric{{ url_for('classes.contracted_catchment', contractedcatchment_id=12101198) }}?_view=alternates
             </a>
-            <ul><li>the listing of all the views and formats available for a a specific catchment, #12101198</li></ul>
+            <ul><li>the listing of all the views and formats available for a a specific Contracted Catchment, #12101198</li></ul>
         </li>
     </ul>
 {% endblock %}

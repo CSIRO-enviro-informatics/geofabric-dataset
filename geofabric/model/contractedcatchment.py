@@ -22,6 +22,7 @@ from geofabric.model.rrcontractedcatchment import RiverRegionContractedCatchment
 from functools import lru_cache
 from datetime import datetime
 
+
 @lru_cache(maxsize=128)
 def retrieve_contracted_catchment(identifier):
     assert isinstance(identifier, int)
@@ -43,6 +44,8 @@ def retrieve_contracted_catchment(identifier):
         raise e
     tree = etree.parse(BytesIO(r.content))
     return tree
+
+
 retrieve_contracted_catchment.session = None
 
 ns = {
@@ -71,6 +74,7 @@ catchment_tag_map = {
     "{{{}}}shape_area".format(ns['x']): 'shape_area',
     "{{{}}}shape".format(ns['x']): 'shape',
 }
+
 
 def contracted_catchment_hyfeatures_converter(wfs_features):
     if len(wfs_features) < 1:
@@ -143,6 +147,7 @@ def contracted_catchment_hyfeatures_converter(wfs_features):
         features_list.append(feature_uri)
     return triples, feature_nodes
 
+
 def contracted_catchment_features_geojson_converter(wfs_features):
     if len(wfs_features) < 1:
         return None
@@ -193,9 +198,11 @@ def contracted_catchment_features_geojson_converter(wfs_features):
         features_list.append(catchment_dict)
     return features_list
 
+
 def extract_contracted_catchments_as_geojson(tree):
     geojson_features = wfs_extract_features_as_geojson(tree, ns['x'], "AHGFContractedCatchment", contracted_catchment_features_geojson_converter)
     return geojson_features
+
 
 def extract_contracted_catchments_as_hyfeatures(tree):
     g = rdflib.Graph()
@@ -217,7 +224,7 @@ class ContractedCatchment(GFModel):
 
     @classmethod
     def make_local_url(cls, instance_id):
-        return url_for('classes.catchment', catchment_id=instance_id)
+        return url_for('classes.contracted_catchment', contractedcatchment_id=instance_id)
 
     @classmethod
     def get_index(cls, page, per_page):
@@ -369,6 +376,8 @@ class ContractedCatchment(GFModel):
             return NotImplementedError("HTML representation of View '{}' is not implemented.".format(view))
 
         return view_html
+
+
 if __name__ == "__main__":
     i = ContractedCatchment.get_index(20, 1000)
     print(i)

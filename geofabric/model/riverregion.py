@@ -44,6 +44,8 @@ def retrieve_river_region(identifier):
         raise e
     tree = etree.parse(BytesIO(r.content))
     return tree
+
+
 retrieve_river_region.session = None
 
 ns = {
@@ -71,6 +73,7 @@ rr_tag_map = {
     "{{{}}}shape_area".format(ns['x']): 'shape_area',
     "{{{}}}shape".format(ns['x']): 'shape',
 }
+
 
 def river_region_hyfeatures_converter(wfs_features):
     if len(wfs_features) < 1:
@@ -144,6 +147,7 @@ def river_region_hyfeatures_converter(wfs_features):
         features_list.append(feature_uri)
     return triples, feature_nodes
 
+
 def river_region_features_geojson_converter(wfs_features):
     if len(wfs_features) < 1:
         return None
@@ -195,9 +199,11 @@ def river_region_features_geojson_converter(wfs_features):
         features_list.append(rr_dict)
     return features_list
 
+
 def extract_river_regions_as_geojson(tree):
     geojson_features = wfs_extract_features_as_geojson(tree, ns['x'], "RiverRegion", river_region_features_geojson_converter)
     return geojson_features
+
 
 def extract_river_regions_as_hyfeatures(tree):
     g = rdflib.Graph()
@@ -269,9 +275,10 @@ class RiverRegion(GFModel):
     def export_html(self, view='geofabric'):
         bbox = self.get_bbox(pad=12)
         bbox_string = ",".join(str(i) for i in bbox)
-        centrepoint = []
-        centrepoint.append(bbox[0] + ((bbox[2] - bbox[0]) / 2))
-        centrepoint.append(bbox[1] + ((bbox[3] - bbox[1]) / 2))
+        centrepoint = [
+            bbox[0] + ((bbox[2] - bbox[0]) / 2),
+            bbox[1] + ((bbox[3] - bbox[1]) / 2)
+        ]
         hydroid = self.hydroid
         wms_url = config.GF_OWS_ENDPOINT +\
                   "?service=wms&version=2.0.0&request=GetMap" \

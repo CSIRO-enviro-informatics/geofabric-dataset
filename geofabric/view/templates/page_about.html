@@ -10,32 +10,41 @@
         (the Geofabric)</a>.
     </p>
     <p>
-        This distribution of the Geofabric doesn't add any new information to the Geofabric other than associating data
-        within it with classes and relationships within the <a href="">HY Features ontology</a>.
+        This distribution of the Geofabric doesn't add any new information to the Geofabric other than associating
+        classes of data within it with classes in the <a href="">HY Features ontology</a>.
     </p>
     <p>
-        This tool is being developed through a project involving <a href="https://www.csiro.au">CSIRO</a> &amp;
-        <a href="http://www.ga.gov.au">Geoscience Australia</a> to implement a series of national spatial
-        <a href="https://en.wikipedia.org/wiki/Linked_data">Linked Data</a> datasets for Australia. the project is
-        called LOC-I: the Location Identifiers.
+        This tool was developed for the <a href="http://locationindex.org">Location Index</a> project involving <a href="https://www.csiro.au">CSIRO</a> &amp;
+        <a href="http://www.ga.gov.au">Geoscience Australia</a> which implements a series of national spatial
+        <a href="https://en.wikipedia.org/wiki/Linked_data">Linked Data</a> datasets for Australia.
     </p>
     <p>
         This API is facilitated by the <a href="https://pypi.org/project/pyldapi/">pyLDAPI</a> tool, working on top of
-        Python's <a href="http://flask.pocoo.org/">Flask</a> web framework, which, with custom Python code, reads
-        Geofabric data from a <a href="">Web Feature Service</a> and a <a href="">Web Map Service</a> distributions of
-        the Geofabric.
+        Python's <a href="http://flask.pocoo.org/">Flask</a> web framework, which, with custom Python code, reads a
+        slightly customised data feed of the Geofabric's spatial data Geofabric data from a
+        <a href="https://www.opengeospatial.org/standards/wfs">Web Feature Service (WFS)</a> which emulated the
+        <a href="http://www.bom.gov.au">Bureau of Meteorology</a>'s Geofabric WFS (see
+        <a href="http://geofabric.bom.gov.au/documentation/">The BoM Geofabric's Web Services documetation</a>.
     </p>
-    <p>The following image overviews this Linked Data API architecture and the systems it relies on.</p>
-    <img src="" title="Overview of Geofabric system components" />
 
     <h3>Code</h3>
     <p>
         The code for this application is available in a repository at:
     </p>
     <ul>
-        <li><a href="https://github.com/CSIRO-enviro-informatics/geofabric-dataset">
-            https://github.com/CSIRO-enviro-informatics/geofabric-dataset</a></li>
+        <li>
+          <a href="https://github.com/CSIRO-enviro-informatics/geofabric-dataset">
+            https://github.com/CSIRO-enviro-informatics/geofabric-dataset</a>
+        </li>
     </ul>
+
+    <p>
+        The conversion of the Geofabric from its original WFS form into Linked Data relies on the
+        <a href="http://linked.data.gov.au/def/geofabric">Geofabric Ontology</a> which models part of the Geofabric in a
+        Semantic Web manner. That ontology, in turn, relies on the
+        <a href="https://github.com/opengeospatial/NamingAuthority/tree/master/definitions/appschema">HY_Features</a>
+        model, originally developed by the CSIRO/BoM WIRADA collaboration.
+    </p>
 
     <h3>Contacts</h3>
     <p>This API is developed by:</p>
@@ -46,7 +55,4 @@
     <p>
         Please see this tool's code repository for contact details.
     </p>
-
-
-
 {% endblock %}

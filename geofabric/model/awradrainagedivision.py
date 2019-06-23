@@ -44,6 +44,8 @@ def retrieve_drainage_division(identifier):
         raise e
     tree = etree.parse(BytesIO(r.content))
     return tree
+
+
 retrieve_drainage_division.session = None
 
 ns = {
@@ -149,6 +151,7 @@ def drainage_division_hyfeatures_converter(wfs_features):
         features_list.append(feature_uri)
     return triples, feature_nodes
 
+
 def drainage_division_features_geojson_converter(wfs_features):
     if len(wfs_features) < 1:
         return None
@@ -205,11 +208,13 @@ def drainage_division_features_geojson_converter(wfs_features):
         features_list.append(dd_dict)
     return features_list
 
+
 def extract_drainage_divisions_as_geojson(tree):
     geojson_features = wfs_extract_features_as_geojson(
         tree, ns['x'], "AWRADrainageDivision",
         drainage_division_features_geojson_converter)
     return geojson_features
+
 
 def extract_drainage_divisions_as_hyfeatures(tree):
     g = rdflib.Graph()
@@ -285,9 +290,10 @@ class AWRADrainageDivision(GFModel):
     def export_html(self, view='geofabric'):
         bbox = self.get_bbox(pad=12)
         bbox_string = ",".join(str(i) for i in bbox)
-        centrepoint = []
-        centrepoint.append(bbox[0] + ((bbox[2] - bbox[0]) / 2))
-        centrepoint.append(bbox[1] + ((bbox[3] - bbox[1]) / 2))
+        centrepoint = [
+            bbox[0] + ((bbox[2] - bbox[0]) / 2),
+            bbox[1] + ((bbox[3] - bbox[1]) / 2)
+        ]
         hydroid = self.hydroid
         wms_url = config.GF_OWS_ENDPOINT +\
                   "?service=wms&version=2.0.0&request=GetMap" \

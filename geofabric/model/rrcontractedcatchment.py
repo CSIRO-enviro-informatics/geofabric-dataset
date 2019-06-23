@@ -32,6 +32,8 @@ def retrieve_rrcc_for_contracted_catchment(identifier):
         raise e
     tree = etree.parse(BytesIO(r.content))
     return tree
+
+
 retrieve_rrcc_for_contracted_catchment.session = None
 
 ns = {
@@ -43,6 +45,7 @@ rrcc_tag_map = {
     "{{{}}}concatid".format(ns['x']): 'concatid',
     "{{{}}}rrid".format(ns['x']): 'rrid'
 }
+
 
 def rrcc_features_geojson_converter(wfs_features):
     if len(wfs_features) < 1:
@@ -95,6 +98,7 @@ def rrcc_features_geojson_converter(wfs_features):
                 rrcc_dict['properties'][var] = val
         features_list.append(rrcc_dict)
     return features_list
+
 
 def extract_rrcc_as_geojson(tree):
     geojson_features = wfs_extract_features_as_geojson(
@@ -152,6 +156,7 @@ class RiverRegionContractedCatchment(GFModel):
 
     def export_html(self, view=None):
         raise NotImplementedError()
+
 
 if __name__ == "__main__":
     i = RiverRegionContractedCatchment.get_index(1, 20)

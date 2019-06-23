@@ -27,8 +27,8 @@ DRAINAGE_DIVISION_COUNT = 13
 USE_CONTRACTED_CATCHMENTS = True
 
 
-@classes.route('/catchment/')
-def catchments():
+@classes.route('/contractedcatchment/')
+def contracted_catchments():
     if USE_CONTRACTED_CATCHMENTS:
         renderer = GEOFRegisterRenderer(request, config.URI_CATCHMENT_INSTANCE_BASE,
                                         "Catchment Register",
@@ -74,19 +74,19 @@ def drainage_divisions():
     return renderer.render()
 
 
-@classes.route('/catchment/<string:catchment_id>')
-def catchment(catchment_id):
+@classes.route('/contractedcatchment/<string:contractedcatchment_id>')
+def contracted_catchment(contractedcatchment_id):
     """
     A single Catchment
 
-    :param catchment_id:
+    :param contractedcatchment_id:
     :return: LDAPI views of a single Catchment
     """
     try:
         if USE_CONTRACTED_CATCHMENTS:
-            r = ContractedCatchmentRenderer(request, catchment_id, None)
+            r = ContractedCatchmentRenderer(request, contractedcatchment_id, None)
         else:
-            r = CatchmentRenderer(request, catchment_id, None)
+            r = CatchmentRenderer(request, contractedcatchment_id, None)
     except NotFoundError:
         return abort(404)
     return r.render()
