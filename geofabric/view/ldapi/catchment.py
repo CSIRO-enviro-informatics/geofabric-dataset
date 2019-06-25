@@ -20,6 +20,4 @@ class CatchmentRenderer(SchemaOrgRendererMixin, GEOFClassRenderer):
         if self.view == "alternates":
             self.instance = None
         else:
-            self.instance = Catchment(self.identifier)
-
-
+            self.instance = ContractedCatchment(self.identifier)

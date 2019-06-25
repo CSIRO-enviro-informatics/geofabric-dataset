@@ -22,4 +22,3 @@ class AWRADrainageDivisionRenderer(SchemaOrgRendererMixin, GEOFClassRenderer):
             self.instance = None
         else:
             self.instance = AWRADrainageDivision(self.identifier)
-

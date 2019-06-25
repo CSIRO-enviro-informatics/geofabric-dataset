@@ -21,4 +21,3 @@ class RiverRegionRenderer(SchemaOrgRendererMixin, GEOFClassRenderer):
             self.instance = None
         else:
             self.instance = RiverRegion(self.identifier)
-

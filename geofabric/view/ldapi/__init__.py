@@ -24,7 +24,7 @@ GEOFView = pyldapi.View(
 SchemaOrgView = pyldapi.View(
     'schemaorg',
     "An initiative by Bing, Google and Yahoo! to create and support a common set of schemas "
-    "for structured data markup on web pages. It is serialised in JSON-LD",
+    "for structured data markup on web pages. It is RDF serialised in JSON-LD",
     ["application/ld+json"],
     "application/ld+json", namespace="http://schema.org")
 
@@ -71,7 +71,7 @@ class GEOFClassRenderer(pyldapi.Renderer):
         _views = views or {}
         self._add_default_geof_views(_views)
         if default_view_token is None:
-            default_view_token = 'hyfeatures'
+            default_view_token = 'geofabric'
         super(GEOFClassRenderer, self).__init__(request, uri, _views, default_view_token, *args, **kwargs)
         try:
             vf_error = self.vf_error
@@ -292,6 +292,7 @@ class GEOFRegisterOfRegistersRenderer(pyldapi.RegisterOfRegistersRenderer):
 
         return super(GEOFRegisterOfRegistersRenderer, self).\
             _render_alternates_view_html(template_context=_template_context)
+
 
 class SchemaOrgRendererMixin(object):
 

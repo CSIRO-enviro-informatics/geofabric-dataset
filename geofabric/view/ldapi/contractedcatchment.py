@@ -21,5 +21,3 @@ class ContractedCatchmentRenderer(SchemaOrgRendererMixin, GEOFClassRenderer):
             self.instance = None
         else:
             self.instance = ContractedCatchment(self.identifier)
-
-
