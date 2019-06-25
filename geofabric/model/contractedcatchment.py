@@ -131,7 +131,7 @@ def contracted_catchment_geofabric_converter(wfs_features):
                 triples.add((feature_uri, DC.source, Literal(c.text)))
 
         # the CC register
-        triples.add((feature_uri, URIRef('http://purl.org/linked-data/registry#register'), config.URI_CONTRACTED_CATCHMENT_INSTANCE_BASE))
+        triples.add((feature_uri, URIRef('http://purl.org/linked-data/registry#register'), URIRef(config.URI_CONTRACTED_CATCHMENT_INSTANCE_BASE)))
 
     return triples, None
 
