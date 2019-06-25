@@ -84,7 +84,7 @@ def catchment_hyfeatures_converter(wfs_features):
     to_converter = {
         'wkb_geometry': gml_extract_geom_to_geosparql,
         'shape': gml_extract_geom_to_geosparql,
-        'nextdownid': lambda x: (set(), URIRef("".join([config.URI_CATCHMENT_INSTANCE_BASE, x.text]))),
+        'nextdownid': lambda x: (set(), URIRef("".join([config.URI_CONTRACTED_CATCHMENT_INSTANCE_BASE, x.text]))),
     }
     to_float = ('shape_length', 'shape_area', 'albersarea')
     to_int = ('hydroid', 'ahgfftype', 'netnodeid', 'ncb_id', 'segmentno', 'sourceid')
@@ -104,7 +104,7 @@ def catchment_hyfeatures_converter(wfs_features):
     feature_nodes = []
     for hydroid, catchment_element in features_source:  # type: int, etree._Element
         feature_uri = rdflib.URIRef(
-            "".join([config.URI_CATCHMENT_INSTANCE_BASE,
+            "".join([config.URI_CONTRACTED_CATCHMENT_INSTANCE_BASE,
                      str(hydroid)]))
         triples.add((feature_uri, RDF_a, HYF_HY_HydroFeature))
         triples.add((feature_uri, RDF_a, HYF_HY_Catchment))
@@ -224,7 +224,7 @@ class Catchment(GFModel):
 
     @classmethod
     def make_canonical_uri(cls, instance_id):
-        return "".join([config.URI_CATCHMENT_INSTANCE_BASE, instance_id])
+        return "".join([config.URI_CONTRACTED_CATCHMENT_INSTANCE_BASE, instance_id])
 
     @classmethod
     def make_local_url(cls, instance_id):

@@ -157,6 +157,9 @@ def river_region_geofabric_converter(wfs_features):
                 if dd is not None:
                     triples.add((feature_uri, GEO.sfWithin, dd))
 
+        # the RR register
+        triples.add((feature_uri, URIRef('http://purl.org/linked-data/registry#register'), config.URI_RIVER_REGION_INSTANCE_BASE))
+
     return triples, None
 
 

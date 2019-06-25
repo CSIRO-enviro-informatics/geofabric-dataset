@@ -42,7 +42,7 @@ def reg():
 @classes.route('/contractedcatchment/')
 def contracted_catchments():
     if USE_CONTRACTED_CATCHMENTS:
-        renderer = GEOFRegisterRenderer(request, config.URI_CATCHMENT_INSTANCE_BASE,
+        renderer = GEOFRegisterRenderer(request, config.URI_CONTRACTED_CATCHMENT_INSTANCE_BASE,
                                         "Catchment Register",
                                         "Register of all Geofabric Contracted Catchments",
                                         ['http://linked.data.gov.au/def/geofabric#ContractedCatchment'],
@@ -50,7 +50,7 @@ def contracted_catchments():
                                         ContractedCatchment,
                                         super_register=config.DATA_URI_PREFIX)
     else:
-        renderer = GEOFRegisterRenderer(request, config.URI_CATCHMENT_INSTANCE_BASE,
+        renderer = GEOFRegisterRenderer(request, config.URI_CONTRACTED_CATCHMENT_INSTANCE_BASE,
                                         "Catchment Register",
                                         "Register of all Geofabric Catchments",
                                         ['http://linked.data.gov.au/def/geofabric#ContractedCatchment'],

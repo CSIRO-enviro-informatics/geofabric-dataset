@@ -94,7 +94,7 @@ def contracted_catchment_geofabric_converter(wfs_features):
 
     for hydroid, catchment_element in features_source:  # type: int, etree._Element
         feature_uri = rdflib.URIRef(
-            "".join([config.URI_CATCHMENT_INSTANCE_BASE, str(hydroid)])
+            "".join([config.URI_CONTRACTED_CATCHMENT_INSTANCE_BASE, str(hydroid)])
         )
         triples.add((feature_uri, RDF_a, GEOF.ContractedCatchment))
 
@@ -130,6 +130,9 @@ def contracted_catchment_geofabric_converter(wfs_features):
             elif var == 'attrsource':
                 triples.add((feature_uri, DC.source, Literal(c.text)))
 
+        # the CC register
+        triples.add((feature_uri, URIRef('http://purl.org/linked-data/registry#register'), config.URI_CONTRACTED_CATCHMENT_INSTANCE_BASE))
+
     return triples, None
 
 
@@ -138,7 +141,7 @@ def contracted_catchment_hyfeatures_converter(wfs_features):
         return None
     to_converter = {
         'shape': gml_extract_geom_to_geosparql,
-        'nextdownid': lambda x: (set(), URIRef("".join([config.URI_CATCHMENT_INSTANCE_BASE, x.text]))),
+        'nextdownid': lambda x: (set(), URIRef("".join([config.URI_CONTRACTED_CATCHMENT_INSTANCE_BASE, x.text]))),
     }
     to_float = ('shape_length', 'shape_area', 'albersarea')
     to_int = ('hydroid', 'ahgfftype', 'sourceid', 'concatid', 'connodeid', 'conlevel', 'netnodeid', 'mapnodeid')
@@ -157,7 +160,7 @@ def contracted_catchment_hyfeatures_converter(wfs_features):
     feature_nodes = []
     for hydroid, catchment_element in features_source:  # type: int, etree._Element
         feature_uri = rdflib.URIRef(
-            "".join([config.URI_CATCHMENT_INSTANCE_BASE,
+            "".join([config.URI_CONTRACTED_CATCHMENT_INSTANCE_BASE,
                      str(hydroid)]))
         triples.add((feature_uri, RDF_a, HYF_HY_HydroFeature))
         triples.add((feature_uri, RDF_a, HYF_HY_Catchment))
@@ -297,7 +300,7 @@ class ContractedCatchment(GFModel):
 
     @classmethod
     def make_canonical_uri(cls, instance_id):
-        return "".join([config.URI_CATCHMENT_INSTANCE_BASE, instance_id])
+        return "".join([config.URI_CONTRACTED_CATCHMENT_INSTANCE_BASE, instance_id])
 
     @classmethod
     def make_local_url(cls, instance_id):
@@ -392,11 +395,11 @@ class ContractedCatchment(GFModel):
         feature_uri = None
         if self.awraddid:
             dd_uri = rdflib.URIRef("".join([config.URI_AWRA_DRAINAGE_DIVISION_INSTANCE_BASE, str(self.awraddid)]))
-            feature_uri = feature_uri or rdflib.URIRef("".join([config.URI_CATCHMENT_INSTANCE_BASE, str(self.hydroid)]))
+            feature_uri = feature_uri or rdflib.URIRef("".join([config.URI_CONTRACTED_CATCHMENT_INSTANCE_BASE, str(self.hydroid)]))
             g.add((feature_uri, GEO_sfWithin, dd_uri))
         if self.rrid:
             rr_uri = rdflib.URIRef("".join([config.URI_RIVER_REGION_INSTANCE_BASE, str(self.rrid)]))
-            feature_uri = feature_uri or rdflib.URIRef("".join([config.URI_CATCHMENT_INSTANCE_BASE, str(self.hydroid)]))
+            feature_uri = feature_uri or rdflib.URIRef("".join([config.URI_CONTRACTED_CATCHMENT_INSTANCE_BASE, str(self.hydroid)]))
             g.add((feature_uri, GEO_sfWithin, rr_uri))
         return g
 
@@ -405,11 +408,11 @@ class ContractedCatchment(GFModel):
         feature_uri = None
         if self.awraddid:
             dd_uri = rdflib.URIRef("".join([config.URI_AWRA_DRAINAGE_DIVISION_INSTANCE_BASE, str(self.awraddid)]))
-            feature_uri = feature_uri or rdflib.URIRef("".join([config.URI_CATCHMENT_INSTANCE_BASE, str(self.hydroid)]))
+            feature_uri = feature_uri or rdflib.URIRef("".join([config.URI_CONTRACTED_CATCHMENT_INSTANCE_BASE, str(self.hydroid)]))
             g.add((feature_uri, GEO_sfWithin, dd_uri))
         if self.rrid:
             rr_uri = rdflib.URIRef("".join([config.URI_RIVER_REGION_INSTANCE_BASE, str(self.rrid)]))
-            feature_uri = feature_uri or rdflib.URIRef("".join([config.URI_CATCHMENT_INSTANCE_BASE, str(self.hydroid)]))
+            feature_uri = feature_uri or rdflib.URIRef("".join([config.URI_CONTRACTED_CATCHMENT_INSTANCE_BASE, str(self.hydroid)]))
             g.add((feature_uri, GEO_sfWithin, rr_uri))
         return g
 

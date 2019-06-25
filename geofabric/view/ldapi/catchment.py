@@ -10,7 +10,7 @@ class CatchmentRenderer(SchemaOrgRendererMixin, GEOFClassRenderer):
     def __init__(self, request, identifier, views, *args,
                  default_view_token=None, **kwargs):
         _views = views or {}
-        _uri = ''.join([config.URI_CATCHMENT_INSTANCE_BASE, identifier])
+        _uri = ''.join([config.URI_CONTRACTED_CATCHMENT_INSTANCE_BASE, identifier])
         kwargs.setdefault('geof_template', 'class_contractedcatchment.html')
         kwargs.setdefault('hyf_template', 'class_contractedcatchment.html')
         super(CatchmentRenderer, self).__init__(
