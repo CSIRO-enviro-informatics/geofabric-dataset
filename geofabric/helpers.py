@@ -268,7 +268,8 @@ def wfs_extract_features_as_geojson(tree, feature_ns, feature_type, class_conver
     return geojson_feature_collection
 
 
-def wfs_extract_features_as_hyfeatures(tree, feature_ns, feature_type, class_converter=None):
+def wfs_extract_features_as_profile(tree, feature_ns, feature_type,
+                                    profile_converter=None, model=None):
     """
 
     :param tree:
@@ -278,11 +279,32 @@ def wfs_extract_features_as_hyfeatures(tree, feature_ns, feature_type, class_con
     :return:
     """
     features = wfs_find_features(tree, feature_ns, feature_type)
-    if class_converter:
-        triples, feature_nodes = class_converter(features)
+    if profile_converter:
+        if model:
+            triples, feature_nodes = profile_converter(model, features)
+        else:
+            triples, feature_nodes = profile_converter(features)
     else:
-        raise NotImplementedError("Need a class converter in order to get HY_Features from WFS.")
+        raise NotImplementedError("Need a class converter in order to get Ontology view from WFS.")
     return triples, feature_nodes
+
+
+def degrees_area_to_m2(deg_area, latitude):
+    # Non-trigonometric approximation for turning decimal-degrees-area to m2
+    # ratio = a + bx + cx2
+    # a = 12351325547.70975
+    # b = 5788162.00907858
+    # c = -1646345.685635445
+    a = degrees_area_to_m2.a  # 12351325547.70975
+    b = degrees_area_to_m2.b  # 5788162.00907858
+    c = degrees_area_to_m2.c  # -1646345.685635445
+    x = latitude
+    ratio = a + (b*x) + (c*(x**2))
+    return deg_area * ratio
+
+degrees_area_to_m2.a = 12351325547.70975
+degrees_area_to_m2.b = 5788162.00907858
+degrees_area_to_m2.c = -1646345.685635445
 
 
 def mymax(a, b):

@@ -11,7 +11,7 @@ from lxml import etree
 from geofabric import _config as config
 from geofabric.helpers import gml_extract_geom_to_geojson, \
     wfs_extract_features_as_geojson, \
-    wfs_extract_features_as_hyfeatures, gml_extract_geom_to_geosparql, \
+    wfs_extract_features_as_profile, gml_extract_geom_to_geosparql, \
     GEO_hasGeometry, GEO_hasDefaultGeometry, RDF_a, \
     HYF_HY_CatchmentRealization, HYF_realizedCatchment, HYF_lowerCatchment, \
     HYF_catchmentRealization, HYF_HY_Catchment, HYF_HY_HydroFeature, \
@@ -208,9 +208,9 @@ def extract_catchments_as_geojson(tree):
     return geojson_features
 
 
-def extract_catchments_as_hyfeatures(tree):
+def extract_catchments_as_hyfeatures(tree, model=None):
     g = rdflib.Graph()
-    triples, features = wfs_extract_features_as_hyfeatures(tree, ns['x'], "AHGFCatchment", catchment_hyfeatures_converter)
+    triples, features = wfs_extract_features_as_profile(tree, ns['x'], "AHGFCatchment", catchment_hyfeatures_converter, model)
     for (s, p, o) in iter(triples):
         g.add((s, p, o))
     return g

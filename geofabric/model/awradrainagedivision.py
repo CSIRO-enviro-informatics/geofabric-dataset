@@ -13,12 +13,12 @@ from lxml import etree
 from geofabric import _config as config
 from geofabric.helpers import gml_extract_geom_to_geojson, \
     wfs_extract_features_as_geojson, \
-    wfs_extract_features_as_hyfeatures, gml_extract_geom_to_geosparql, \
+    wfs_extract_features_as_profile, gml_extract_geom_to_geosparql, \
     GEO_hasGeometry, GEO_hasDefaultGeometry, RDF_a, \
     HYF_HY_CatchmentRealization, HYF_realizedCatchment, HYF_lowerCatchment, \
     HYF_catchmentRealization, HYF_HY_Catchment, HYF_HY_HydroFeature, \
     calculate_bbox, HYF_HY_CatchmentAggregate, NotFoundError, \
-    GEO, GEOF, QUDT
+    GEO, GEOF, QUDT, degrees_area_to_m2
 from geofabric.model import GFModel
 from functools import lru_cache
 from datetime import datetime
@@ -76,7 +76,7 @@ dd_tag_map = {
 }
 
 
-def drainage_division_geofabric_converter(wfs_features):
+def drainage_division_geofabric_converter(model, wfs_features):
     if len(wfs_features) < 1:
         return None
 
@@ -103,29 +103,51 @@ def drainage_division_geofabric_converter(wfs_features):
             # common Geofabric properties
             if var == 'shape_area':
                 A = BNode()
-                triples.add((
-                    A, QUDT.numericValue, Literal(c.text, datatype=XSD.float)))
-                triples.add((
-                    A, QUDT.unit, QUDT.SquareMeter))
-                triples.add((feature_uri, URIRef('http://dbpedia.org/property/area'), A))
+                triples.add((A, QUDT.numericValue,
+                             Literal(c.text, datatype=XSD.float)))
+                triples.add((A, QUDT.unit, QUDT.SquareDegree))
+                triples.add((feature_uri, GEOF.shapeArea, A))
+                A = BNode()
+                try:
+                    degree_area = float(c.text)
+                    # Add in the extra converted m2 area
+                    bbox = model.get_bbox(pad=12)
+                    centrepointX = (bbox[0] + ((bbox[2] - bbox[0]) / 2))
+                    centrepointY = (bbox[1] + ((bbox[3] - bbox[1]) / 2))
+                    m2_area = degrees_area_to_m2(degree_area, centrepointY)
+                    triples.add((A, QUDT.numericValue,
+                                 Literal(m2_area, datatype=XSD.double)))
+                    triples.add((A, QUDT.unit, QUDT.SquareMeter))
+                    triples.add((feature_uri,
+                                 URIRef('http://dbpedia.org/property/area'),
+                                 A))
+                except ValueError:
+                    pass
             elif var == 'albersarea':
                 A = BNode()
                 triples.add((
                     A, QUDT.numericValue, Literal(c.text, datatype=XSD.float)))
-                triples.add((
-                    A, QUDT.unit, QUDT.SquareMeter))
+                triples.add((A, QUDT.unit, QUDT.SquareMeter))
                 triples.add((feature_uri, GEOF.albersArea, A))
             elif var == 'shape_length':
                 L = BNode()
                 triples.add((
                     L, QUDT.numericValue, Literal(c.text, datatype=XSD.float)))
                 triples.add((
-                    L, QUDT.unit, QUDT.Meter))
-                triples.add((feature_uri, GEOF.perimeterLength, L))  # URIRef('http://dbpedia.org/property/length')
+                    L, QUDT.unit, QUDT.DegreeAngle))
+                triples.add((feature_uri, GEOF.perimeterLength,
+                             L))  # URIRef('http://dbpedia.org/property/length')
             elif var == 'shape':
-                geometry = BNode()
-                triples.add((feature_uri, GEO_hasGeometry, geometry))
-                triples.add((geometry, GEO.asGML, Literal('TODO')))  # TODO: reinstate asGMl asWKT
+                # try:
+                #    _triples, geometry = gml_extract_geom_to_geosparql(c)
+                #    for (s, p, o) in iter(_triples):
+                #        triples.add((s, p, o))
+                # except KeyError:
+                #    val = c.text
+                #    geometry = Literal(val)
+                # triples.add((feature_uri, GEO_hasGeometry, geometry))
+                # TODO: Reenable asGML or asWKT for Geofabric view
+                pass
             elif var == 'attrsource':
                 triples.add((feature_uri, DC.source, Literal(c.text)))
 
@@ -285,28 +307,32 @@ def extract_drainage_divisions_as_geojson(tree):
     return geojson_features
 
 
-def extract_drainage_divisions_as_geofabric(tree):
+def extract_drainage_divisions_as_geofabric(tree, model=None):
     g = rdflib.Graph()
     g.bind('geo', rdflib.Namespace('http://www.opengis.net/ont/geosparql#'))
     g.bind('geof', rdflib.Namespace('http://linked.data.gov.au/def/geofabric#'))
-    triples, features = wfs_extract_features_as_hyfeatures(
+    triples, features = wfs_extract_features_as_profile(
         tree,
         ns['x'],
         "AWRADrainageDivision",
-        drainage_division_geofabric_converter
+        profile_converter=drainage_division_geofabric_converter,
+        model=model
     )
     for (s, p, o) in iter(triples):
         g.add((s, p, o))
     return g
 
 
-def extract_drainage_divisions_as_hyfeatures(tree):
+def extract_drainage_divisions_as_hyfeatures(tree, model=None):
     g = rdflib.Graph()
-    triples, features = wfs_extract_features_as_hyfeatures(
+    g.bind('geo', rdflib.Namespace('http://www.opengis.net/ont/geosparql#'))
+    g.bind('hyf', rdflib.Namespace('https://www.opengis.net/def/appschema/hy_features/hyf/'))
+    triples, features = wfs_extract_features_as_profile(
         tree,
         ns['x'],
         "AWRADrainageDivision",
-        drainage_division_hyfeatures_converter
+        profile_converter=drainage_division_hyfeatures_converter,
+        model=model
     )
     for (s, p, o) in iter(triples):
         g.add((s, p, o))
@@ -375,7 +401,7 @@ class AWRADrainageDivision(GFModel):
         return g
 
     def to_geofabric_graph(self):
-        g = extract_drainage_divisions_as_geofabric(self.xml_tree)
+        g = extract_drainage_divisions_as_geofabric(self.xml_tree, model=self)
         return g
 
     def export_html(self, view='geofabric'):
@@ -395,7 +421,7 @@ class AWRADrainageDivision(GFModel):
                   "&style=ahgfcatchment" \
                   "&bbox=" + bbox_string +\
                   "&CQL_FILTER=INCLUDE;hydroid="+str(hydroid)
-
+        m2_area = degrees_area_to_m2(self.shape_area, centrepoint[1])
         if view == 'geofabric':
             view_html = render_template(
                 'class_awradrainagedivision_geof.html',
@@ -408,6 +434,7 @@ class AWRADrainageDivision(GFModel):
                 shape_length=self.shape_length,
                 shape_area=self.shape_area,
                 albers_area=self.albersarea,
+                m2_area=m2_area
             )
         elif view == "hyfeatures":
             view_html = render_template(
@@ -421,6 +448,7 @@ class AWRADrainageDivision(GFModel):
                 shape_length=self.shape_length,
                 shape_area=self.shape_area,
                 albers_area=self.albersarea,
+                m2_area=m2_area
             )
         else:
             return NotImplementedError("HTML representation of View '{}' is not implemented.".format(view))
