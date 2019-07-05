@@ -17,7 +17,7 @@ from geofabric.helpers import gml_extract_geom_to_geojson, \
     HYF_HY_CatchmentRealization, HYF_realizedCatchment, HYF_lowerCatchment, \
     HYF_catchmentRealization, HYF_HY_Catchment, HYF_HY_HydroFeature, \
     calculate_bbox, NotFoundError, GEO_sfWithin, \
-    GEO, GEOF, QUDT, degrees_area_to_m2
+    GEO, GEOX, GEOF, QUDTS, UNIT, degrees_area_to_m2, HYF
 from geofabric.model import GFModel
 from geofabric.model.awraddcontractedcatchment import AWRADrainageDivisionContractedCatchment
 from geofabric.model.rrcontractedcatchment import RiverRegionContractedCatchment
@@ -104,34 +104,31 @@ def contracted_catchment_geofabric_converter(model, wfs_features):
             # common Geofabric properties
             if var == 'shape_area':
                 A = BNode()
-                triples.add((A, QUDT.numericValue, Literal(c.text, datatype=XSD.float)))
-                triples.add((A, QUDT.unit, QUDT.SquareDegree))
+                triples.add((A, QUDTS.numericValue, Literal(c.text, datatype=XSD.float)))
+                triples.add((A, QUDTS.unit, UNIT.DEG2))
                 triples.add((feature_uri, GEOF.shapeArea, A))
-                A = BNode()
                 try:
+                    A = BNode()
                     degree_area = float(c.text)
                     # Add in the extra converted m2 area
                     bbox = model.get_bbox(pad=12)
                     centrepointX = (bbox[0] + ((bbox[2] - bbox[0]) / 2))
                     centrepointY = (bbox[1] + ((bbox[3] - bbox[1]) / 2))
                     m2_area = degrees_area_to_m2(degree_area, centrepointY)
-                    triples.add((A, QUDT.numericValue, Literal(m2_area, datatype=XSD.double)))
-                    triples.add((A, QUDT.unit, QUDT.SquareMeter))
-                    triples.add((feature_uri, URIRef('http://dbpedia.org/property/area'), A))
+                    triples.add((A, URIRef('http://dbpedia.org/property/area'),
+                                 Literal(str(m2_area), datatype=XSD.double)))
+                    triples.add((feature_uri, GEOX.hasArea, A))
                 except ValueError:
                     pass
             elif var == 'albersarea':
                 A = BNode()
-                triples.add((
-                    A, QUDT.numericValue, Literal(c.text, datatype=XSD.float)))
-                triples.add((A, QUDT.unit, QUDT.SquareMeter))
+                triples.add((A, QUDTS.numericValue, Literal(c.text, datatype=XSD.float)))
+                triples.add((A, QUDTS.unit, UNIT.M2))
                 triples.add((feature_uri, GEOF.albersArea, A))
             elif var == 'shape_length':
                 L = BNode()
-                triples.add((
-                    L, QUDT.numericValue, Literal(c.text, datatype=XSD.float)))
-                triples.add((
-                    L, QUDT.unit, QUDT.DegreeAngle))
+                triples.add((L, QUDTS.numericValue, Literal(c.text, datatype=XSD.float)))
+                triples.add((L, QUDTS.unit, UNIT.DEG))
                 triples.add((feature_uri, GEOF.perimeterLength, L))  # URIRef('http://dbpedia.org/property/length')
             elif var == 'shape':
                 #try:
@@ -283,8 +280,11 @@ def extract_contracted_catchments_as_geojson(tree):
 
 def extract_contracted_catchments_as_hyfeatures(tree, model=None):
     g = rdflib.Graph()
-    g.bind('geo', rdflib.Namespace('http://www.opengis.net/ont/geosparql#'))
-    g.bind('hyf', rdflib.Namespace('https://www.opengis.net/def/appschema/hy_features/hyf/'))
+    g.bind('geo', GEO)
+    g.bind('geox', GEOX)
+    g.bind('hyf', HYF)
+    g.bind('qudt', QUDTS)
+    g.bind('unit', UNIT)
     triples, features = wfs_extract_features_as_profile(
         tree,
         ns['x'],
@@ -299,8 +299,11 @@ def extract_contracted_catchments_as_hyfeatures(tree, model=None):
 
 def extract_contracted_catchments_as_geofabric(tree, model=None):
     g = rdflib.Graph()
-    g.bind('geo', rdflib.Namespace('http://www.opengis.net/ont/geosparql#'))
-    g.bind('geof', rdflib.Namespace('http://linked.data.gov.au/def/geofabric#'))
+    g.bind('geo', GEO)
+    g.bind('geox', GEOX)
+    g.bind('geof', GEOF)
+    g.bind('qudt', QUDTS)
+    g.bind('unit', UNIT)
     triples, features = wfs_extract_features_as_profile(
         tree,
         ns['x'],
