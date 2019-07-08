@@ -19,7 +19,7 @@ from geofabric.helpers import gml_extract_geom_to_geojson, \
     HYF_HY_CatchmentRealization, HYF_realizedCatchment, HYF_lowerCatchment, \
     HYF_catchmentRealization, HYF_HY_Catchment, HYF_HY_HydroFeature, \
     calculate_bbox, HYF_HY_CatchmentAggregate, NotFoundError, \
-    GEO, GEOX, GEOF, QUDTS, UNIT, degrees_area_to_m2, HYF, DATA
+    GEO, GEOX, GEOF, QUDTS, UNIT, degrees_area_to_m2, HYF, DATA, QB4ST, EPSG
 from geofabric.model import GFModel
 from functools import lru_cache
 from datetime import datetime
@@ -115,16 +115,16 @@ def drainage_division_geofabric_converter(model, wfs_features):
                     centrepointX = (bbox[0] + ((bbox[2] - bbox[0]) / 2))
                     centrepointY = (bbox[1] + ((bbox[3] - bbox[1]) / 2))
                     m2_area = degrees_area_to_m2(degree_area, centrepointY)
-                    triples.add((A, DATA.value,
-                                 Literal(Decimal(str(m2_area)), datatype=XSD.decimal)))
+                    triples.add((A, DATA.value, Literal(str(Decimal(str(m2_area))), datatype=XSD.decimal)))
+                    triples.add((A, QB4ST.crs, EPSG['4938']))
                     triples.add((feature_uri, GEOX.hasAreaM2, A))
                 except ValueError:
                     pass
             elif var == 'albersarea':
                 A = BNode()
-                triples.add((A, QUDTS.numericValue, Literal(c.text, datatype=XSD.float)))
-                triples.add((A, QUDTS.unit, UNIT.M2))
-                triples.add((feature_uri, GEOF.albersArea, A))
+                triples.add((A, DATA.value, Literal(str(Decimal(str(c.text))), datatype=XSD.decimal)))
+                triples.add((A, QB4ST.crs, EPSG['3577']))
+                triples.add((feature_uri, GEOX.hasAreaM2, A))
             elif var == 'shape_length':
                 L = BNode()
                 triples.add((L, QUDTS.numericValue, Literal(c.text, datatype=XSD.float)))
