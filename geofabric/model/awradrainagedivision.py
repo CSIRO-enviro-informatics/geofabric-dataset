@@ -90,15 +90,15 @@ def drainage_division_geofabric_converter(model, wfs_features):
 
     triples = set()
 
-    for hydroid, rr_element in features_source:  # type: int, etree._Element
+    for hydroid, dd_element in features_source:  # type: int, etree._Element
         feature_uri = rdflib.URIRef(
-            "".join([config.URI_RIVER_REGION_INSTANCE_BASE,
+            "".join([config.URI_AWRA_DRAINAGE_DIVISION_INSTANCE_BASE,
             str(hydroid)])
         )
 
-        triples.add((feature_uri, RDF_a, GEOF.RiverRegion))
+        triples.add((feature_uri, RDF_a, GEOF.DrainageDivision))
 
-        for c in rr_element.iterchildren():  # type: etree._Element
+        for c in dd_element.iterchildren():  # type: etree._Element
             var = c.tag.replace('{{{}}}'.format(ns['x']), '')
 
             # common Geofabric properties
