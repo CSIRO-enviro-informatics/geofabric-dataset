@@ -12,6 +12,7 @@
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
@@ -19,14 +20,14 @@
 <http://linked.data.gov.au/dataset/geofabric>
   a dcat:Dataset ;
   dc:contributor "Ashley Sommer" ;
-  dct:contributor <https://orcid.org/0000-0003-0590-0131> ;
   dc:creator "Nicholas Car"@en ;
+  dct:conformsTo <http://www.linked.data.gov.au/def/geofabric> ;
+  dct:contributor <https://orcid.org/0000-0003-0590-0131> ;
   dct:creator <https://orcid.org/0000-0002-8742-7730> ;
-  dct:description "A Linked Data API accessing all of the content of the Geofabric in RDF & HTML" ;
+  dct:description "A Linked Data representation of the content of the Geofabric in RDF & HTML" ;
   dct:license <https://www.apache.org/licenses/LICENSE-2.0> ;
   dct:publisher <http://catalogue.linked.data.gov.au/org/O-000886> ;
   dct:title "Geofabric - distributed as Linked Data" ;
-  dcat:conformsTo <http://www.linked.data.gov.au/def/geofabric> ;
   dcat:contactPoint [
       a vcard:Individual ;
       vcard:fn "Ashley Sommer" ;
@@ -65,7 +66,14 @@
       dcat:accessService <https://geofabricld.net/> ;
       dcat:mediaType <https://www.iana.org/assignments/media-types/text/turtle> ;
     ] ;
-  dcat:keyword "bom" , "catchments" , "drainage" , "geospatial information" , "groundwater" , "hydrology" , "rivers" , "water" ;
+  dcat:keyword "bom" ;
+  dcat:keyword "catchments" ;
+  dcat:keyword "drainage" ;
+  dcat:keyword "geospatial information" ;
+  dcat:keyword "groundwater" ;
+  dcat:keyword "hydrology" ;
+  dcat:keyword "rivers" ;
+  dcat:keyword "water" ;
   dcat:landingPage <https://geofabricld.net/> ;
   dcat:qualifiedRelation [
       a dcat:Relationship ;
@@ -106,7 +114,14 @@
       vcard:fn "Bureau of Meteorology" ;
       vcard:hasEmail <http://linked.data.gov.au/dataset/AHGF@bom.gov.au> ;
     ] ;
-  dcat:keyword "bom" , "catchments" , "drainage" , "geospatial information" , "groundwater" , "hydrology" , "rivers" , "water" ;
+  dcat:keyword "bom" ;
+  dcat:keyword "catchments" ;
+  dcat:keyword "drainage" ;
+  dcat:keyword "geospatial information" ;
+  dcat:keyword "groundwater" ;
+  dcat:keyword "hydrology" ;
+  dcat:keyword "rivers" ;
+  dcat:keyword "water" ;
   dcat:landingPage <https://data.gov.au/dataset/ds-dga-12937333-1f11-4167-a39b-6327794d4e83/details> ;
 .
 <https://geofabricld.net/>
