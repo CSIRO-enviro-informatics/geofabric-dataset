@@ -1,43 +1,126 @@
-@prefix : <http://linked.data.gov.au/dataset/asgs2016/> .
+# baseURI: http://linked.data.gov.au/dataset/geofabric/
+# imports: http://purl.org/pav
+# imports: http://www.w3.org/ns/dcat
+
+@prefix : <http://linked.data.gov.au/dataset/geofabric/> .
 @prefix dc: <http://purl.org/dc/elements/1.1/> .
 @prefix dcat: <http://www.w3.org/ns/dcat#> .
 @prefix dct: <http://purl.org/dc/terms/> .
 @prefix geof: <http://linked.data.gov.au/def/geof#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix pav: <http://purl.org/pav/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<http://linked.data.gov.au/dataset/geofabric> a dcat:DataDistributionService ;
-    dc:contributor "Ashley Sommer" ;
-    dc:creator "Nicholas Car"@en ;
-    dct:creator <http://orcid.org/0000-0002-8742-7730> ;
-    dct:publisher <http://catalogue.linked.data.gov.au/org/O-000886> ;
-    dct:description "A Linked Data API accessing all of the content of the Geofabric in RDF & HTML" ;
-    dct:license <https://www.apache.org/licenses/LICENSE-2.0> ;
-    dct:title "Geofabric - distributed as Linked Data" ;
-    dcat:contactPoint _:ncar ;
-    dcat:endpointDescription <http://linked.data.gov.au/dataset/geofabric.ttl> ;
-    dcat:endpointURL <http://linked.data.govl.au/dataset/geofabric> ;
-    dcat:servesDataset <https://data.gov.au/dataset/australian-hydrological-geospatial-fabric-geofabric> .
-
-# a SPARQL service distribution will be added shortly
-
-<https://data.gov.au/dataset/australian-hydrological-geospatial-fabric-geofabric> a dcat:Dataset ;
-    dct:description """The Australian Hydrological Geospatial Fabric (Geofabric) is a specialised Geographic
+<http://linked.data.gov.au/dataset/geofabric>
+  a dcat:Dataset ;
+  dc:contributor "Ashley Sommer" ;
+  dct:contributor <https://orcid.org/0000-0003-0590-0131> ;
+  dc:creator "Nicholas Car"@en ;
+  dct:creator <https://orcid.org/0000-0002-8742-7730> ;
+  dct:description "A Linked Data API accessing all of the content of the Geofabric in RDF & HTML" ;
+  dct:license <https://www.apache.org/licenses/LICENSE-2.0> ;
+  dct:publisher <http://catalogue.linked.data.gov.au/org/O-000886> ;
+  dct:title "Geofabric - distributed as Linked Data" ;
+  dcat:conformsTo <http://www.linked.data.gov.au/def/geofabric> ;
+  dcat:contactPoint [
+      a vcard:Individual ;
+      vcard:fn "Ashley Sommer" ;
+      vcard:hasEmail <mailto:ashley.sommer@csiro.au> ;
+      vcard:hasTelephone [
+          vcard:hasValue <tel:+61738335673> ;
+        ] ;
+    ] ;
+  dcat:distribution [
+      a dcat:Distribution ;
+      dcat:accessService <https://geofabricld.net/> ;
+      dcat:mediaType <https://www.iana.org/assignments/media-types/application/ld+json> ;
+    ] ;
+  dcat:distribution [
+      a dcat:Distribution ;
+      dcat:accessService <https://geofabricld.net/> ;
+      dcat:mediaType <https://www.iana.org/assignments/media-types/application/n-triples> ;
+    ] ;
+  dcat:distribution [
+      a dcat:Distribution ;
+      dcat:accessService <https://geofabricld.net/> ;
+      dcat:mediaType <https://www.iana.org/assignments/media-types/application/rdf+xml> ;
+    ] ;
+  dcat:distribution [
+      a dcat:Distribution ;
+      dcat:accessService <https://geofabricld.net/> ;
+      dcat:mediaType <https://www.iana.org/assignments/media-types/text/html> ;
+    ] ;
+  dcat:distribution [
+      a dcat:Distribution ;
+      dcat:accessService <https://geofabricld.net/> ;
+      dcat:mediaType <https://www.iana.org/assignments/media-types/text/n3> ;
+    ] ;
+  dcat:distribution [
+      a dcat:Distribution ;
+      dcat:accessService <https://geofabricld.net/> ;
+      dcat:mediaType <https://www.iana.org/assignments/media-types/text/turtle> ;
+    ] ;
+  dcat:keyword "bom" , "catchments" , "drainage" , "geospatial information" , "groundwater" , "hydrology" , "rivers" , "water" ;
+  dcat:landingPage <https://geofabricld.net/> ;
+  dcat:qualifiedRelation [
+      a dcat:Relationship ;
+      dct:relation <http://data.gov.au/dataset/australian-hydrological-geospatial-fabric-geofabric> ;
+      rdfs:comment "Derived from Geofabric; converted to a linked-data representation conforming to the Geofabric Ontology." ;
+      dcat:hadRole <http://www.iana.org/assignments/relation/original> ;
+    ] ;
+  dcat:spatialResolutionInMeters 0.1 ;
+  prov:wasDerivedFrom <http://data.gov.au/dataset/australian-hydrological-geospatial-fabric-geofabric> ;
+  prov:wasGeneratedBy [
+      a prov:Activity ;
+      prov:endedAtTime "2019-06-01T00:00:00.00"^^xsd:dateTime ;
+      prov:used <http://data.gov.au/dataset/australian-hydrological-geospatial-fabric-geofabric> ;
+      prov:used [
+          a prov:Entity ;
+          rdfs:comment "Ashley's awsome ETL system" ;
+        ] ;
+    ] ;
+.
+:
+  a owl:Ontology ;
+  owl:imports <http://purl.org/pav> ;
+  owl:imports <http://www.w3.org/ns/dcat> ;
+.
+<https://data.gov.au/dataset/australian-hydrological-geospatial-fabric-geofabric>
+  a dcat:Dataset ;
+  dct:description """The Australian Hydrological Geospatial Fabric (Geofabric) is a specialised Geographic
     Information System (GIS). It registers the spatial relationships between important hydrological features such as
     rivers, water bodies, aquifers and monitoring points.""" ;
-    dct:issued "2013-05-12"^^xsd:date ;
-    dct:landingPage <https://data.gov.au/dataset/12937333-1f11-4167-a39b-6327794d4e83> ;
-    dct:title "Australian Hydrological Geospatial Fabric (Geofabric)" ;
-    dct:updated "2015-04-08"^^xsd:date ;
-    dct:publisher <http://catalogue.linked.data.gov.au/org/O-000843> ;
-    dcat:contactPoint [ a vcard:Organization ;
-        vcard:fn "Bureau of Meteorology" ;
-        vcard:hasEmail <http://linked.data.gov.au/dataset/AHGF@bom.gov.au> ] .
-
-_:ncar a vcard:Individual ;
-    vcard:fn "Nicholas Car" ;
-    vcard:hasEmail <http://linked.data.gov.au/dataset/nicholas.car@csiro.au> ;
-    vcard:hasTelephone [ vcard:hasValue <tel:+61738335632> ] .
+  dct:issued "2013-05-12"^^xsd:date ;
+  dct:landingPage <https://data.gov.au/dataset/12937333-1f11-4167-a39b-6327794d4e83> ;
+  dct:publisher <http://catalogue.linked.data.gov.au/org/bom> ;
+  dct:publisher <https://ror.org/04dkp1p98> ;
+  dct:title "Australian Hydrological Geospatial Fabric (Geofabric)" ;
+  dct:updated "2015-04-08"^^xsd:date ;
+  dcat:contactPoint [
+      a vcard:Organization ;
+      vcard:fn "Bureau of Meteorology" ;
+      vcard:hasEmail <http://linked.data.gov.au/dataset/AHGF@bom.gov.au> ;
+    ] ;
+  dcat:keyword "bom" , "catchments" , "drainage" , "geospatial information" , "groundwater" , "hydrology" , "rivers" , "water" ;
+  dcat:landingPage <https://data.gov.au/dataset/ds-dga-12937333-1f11-4167-a39b-6327794d4e83/details> ;
+.
+<https://geofabricld.net/>
+  a dcat:DataService ;
+  dc:publisher "Australian Bureau of Meteorology" ;
+  dct:conformsTo <https://github.com/UKGovLD/linked-data-api/blob/wiki/Specification.md> ;
+  dcat:endpointDescription "Link to Swagger description here Ashley" ;
+  dcat:endpointURL <https://geofabricld.net/> ;
+  dcat:servesDataset <http://linked.data.gov.au/dataset/geofabric> ;
+  prov:qualifiedAttribution [
+      a prov:Attribution ;
+      dcat:hadRole <http://registry.it.csiro.au/def/isotc211/CI_RoleCode/originator> ;
+      prov:agent <http://catalogue.linked.data.gov.au/org/csiro> ;
+      prov:agent <https://ror.org/03qn8fb07> ;
+      prov:agent <https://www.directory.gov.au/portfolios/industry-innovation-and-science/commonwealth-scientific-and-industrial-research-organisation> ;
+    ] ;
+.
