@@ -1,0 +1,263 @@
+{
+  "@graph" : [ {
+    "@id" : "_:b0",
+    "@type" : "dcat:Distribution",
+    "accessService" : "https://geofabricld.net/",
+    "mediaType" : "https://www.iana.org/assignments/media-types/application/ld+json"
+  }, {
+    "@id" : "_:b1",
+    "@type" : "prov:Activity",
+    "endedAtTime" : "2019-06-01T00:00:00.00",
+    "used" : [ "_:b10", "http://data.gov.au/dataset/australian-hydrological-geospatial-fabric-geofabric" ]
+  }, {
+    "@id" : "_:b10",
+    "@type" : "prov:Entity",
+    "comment" : "Ashley's awsome ETL system"
+  }, {
+    "@id" : "_:b11",
+    "@type" : "prov:Attribution",
+    "hadRole" : "http://registry.it.csiro.au/def/isotc211/CI_RoleCode/originator",
+    "agent" : [ "https://www.directory.gov.au/portfolios/industry-innovation-and-science/commonwealth-scientific-and-industrial-research-organisation", "https://ror.org/03qn8fb07", "http://catalogue.linked.data.gov.au/org/csiro" ]
+  }, {
+    "@id" : "_:b12",
+    "hasValue" : "tel:+61738335673"
+  }, {
+    "@id" : "_:b2",
+    "@type" : "dcat:Relationship",
+    "relation" : "http://data.gov.au/dataset/australian-hydrological-geospatial-fabric-geofabric",
+    "comment" : "Derived from Geofabric; converted to a linked-data representation conforming to the Geofabric Ontology.",
+    "hadRole" : "http://www.iana.org/assignments/relation/original"
+  }, {
+    "@id" : "_:b3",
+    "@type" : "vcard:Individual",
+    "fn" : "Ashley Sommer",
+    "hasEmail" : "mailto:ashley.sommer@csiro.au",
+    "hasTelephone" : "_:b12"
+  }, {
+    "@id" : "_:b4",
+    "@type" : "dcat:Distribution",
+    "accessService" : "https://geofabricld.net/",
+    "mediaType" : "https://www.iana.org/assignments/media-types/application/rdf+xml"
+  }, {
+    "@id" : "_:b5",
+    "@type" : "dcat:Distribution",
+    "accessService" : "https://geofabricld.net/",
+    "mediaType" : "https://www.iana.org/assignments/media-types/text/turtle"
+  }, {
+    "@id" : "_:b6",
+    "@type" : "dcat:Distribution",
+    "accessService" : "https://geofabricld.net/",
+    "mediaType" : "https://www.iana.org/assignments/media-types/text/n3"
+  }, {
+    "@id" : "_:b7",
+    "@type" : "dcat:Distribution",
+    "accessService" : "https://geofabricld.net/",
+    "mediaType" : "https://www.iana.org/assignments/media-types/text/html"
+  }, {
+    "@id" : "_:b8",
+    "@type" : "dcat:Distribution",
+    "accessService" : "https://geofabricld.net/",
+    "mediaType" : "https://www.iana.org/assignments/media-types/application/n-triples"
+  }, {
+    "@id" : "_:b9",
+    "@type" : "vcard:Organization",
+    "fn" : "Bureau of Meteorology",
+    "hasEmail" : "http://linked.data.gov.au/dataset/AHGF@bom.gov.au"
+  }, {
+    "@id" : "http://linked.data.gov.au/dataset/geofabric",
+    "@type" : "dcat:Dataset",
+    "dc:contributor" : "Ashley Sommer",
+    "dc:creator" : {
+      "@language" : "en",
+      "@value" : "Nicholas Car"
+    },
+    "conformsTo" : "http://www.linked.data.gov.au/def/geofabric",
+    "contributor" : "https://orcid.org/0000-0003-0590-0131",
+    "creator" : "https://orcid.org/0000-0002-8742-7730",
+    "description" : "A Linked Data representation of the content of the Geofabric in RDF & HTML",
+    "license" : "https://www.apache.org/licenses/LICENSE-2.0",
+    "publisher" : "http://catalogue.linked.data.gov.au/org/O-000886",
+    "title" : "Geofabric - distributed as Linked Data",
+    "contactPoint" : "_:b3",
+    "distribution" : [ "_:b4", "_:b5", "_:b6", "_:b7", "_:b0", "_:b8" ],
+    "keyword" : [ "hydrology", "groundwater", "water", "bom", "rivers", "geospatial information", "drainage", "catchments" ],
+    "landingPage" : "https://geofabricld.net/",
+    "qualifiedRelation" : "_:b2",
+    "spatialResolutionInMeters" : "0.1",
+    "wasDerivedFrom" : "http://data.gov.au/dataset/australian-hydrological-geospatial-fabric-geofabric",
+    "wasGeneratedBy" : "_:b1"
+  }, {
+    "@id" : "http://linked.data.gov.au/dataset/geofabric/",
+    "@type" : "owl:Ontology",
+    "imports" : [ "http://www.w3.org/ns/dcat", "http://purl.org/pav" ]
+  }, {
+    "@id" : "https://data.gov.au/dataset/australian-hydrological-geospatial-fabric-geofabric",
+    "@type" : "dcat:Dataset",
+    "description" : "The Australian Hydrological Geospatial Fabric (Geofabric) is a specialised Geographic\r\n    Information System (GIS). It registers the spatial relationships between important hydrological features such as\r\n    rivers, water bodies, aquifers and monitoring points.",
+    "issued" : "2013-05-12",
+    "dct:landingPage" : {
+      "@id" : "https://data.gov.au/dataset/12937333-1f11-4167-a39b-6327794d4e83"
+    },
+    "publisher" : [ "https://ror.org/04dkp1p98", "http://catalogue.linked.data.gov.au/org/bom" ],
+    "title" : "Australian Hydrological Geospatial Fabric (Geofabric)",
+    "updated" : "2015-04-08",
+    "contactPoint" : "_:b9",
+    "keyword" : [ "rivers", "catchments", "geospatial information", "water", "hydrology", "groundwater", "drainage", "bom" ],
+    "landingPage" : "https://data.gov.au/dataset/ds-dga-12937333-1f11-4167-a39b-6327794d4e83/details"
+  }, {
+    "@id" : "https://geofabricld.net/",
+    "@type" : "dcat:DataService",
+    "dc:publisher" : "Australian Bureau of Meteorology",
+    "conformsTo" : "https://github.com/UKGovLD/linked-data-api/blob/wiki/Specification.md",
+    "endpointDescription" : "Link to Swagger description here Ashley",
+    "endpointURL" : "https://geofabricld.net/",
+    "servesDataset" : "http://linked.data.gov.au/dataset/geofabric",
+    "qualifiedAttribution" : "_:b11"
+  } ],
+  "@context" : {
+    "mediaType" : {
+      "@id" : "http://www.w3.org/ns/dcat#mediaType",
+      "@type" : "@id"
+    },
+    "accessService" : {
+      "@id" : "http://www.w3.org/ns/dcat#accessService",
+      "@type" : "@id"
+    },
+    "creator" : {
+      "@id" : "http://purl.org/dc/terms/creator",
+      "@type" : "@id"
+    },
+    "wasGeneratedBy" : {
+      "@id" : "http://www.w3.org/ns/prov#wasGeneratedBy",
+      "@type" : "@id"
+    },
+    "publisher" : {
+      "@id" : "http://purl.org/dc/terms/publisher",
+      "@type" : "@id"
+    },
+    "spatialResolutionInMeters" : {
+      "@id" : "http://www.w3.org/ns/dcat#spatialResolutionInMeters",
+      "@type" : "http://www.w3.org/2001/XMLSchema#decimal"
+    },
+    "keyword" : {
+      "@id" : "http://www.w3.org/ns/dcat#keyword"
+    },
+    "qualifiedRelation" : {
+      "@id" : "http://www.w3.org/ns/dcat#qualifiedRelation",
+      "@type" : "@id"
+    },
+    "contactPoint" : {
+      "@id" : "http://www.w3.org/ns/dcat#contactPoint",
+      "@type" : "@id"
+    },
+    "title" : {
+      "@id" : "http://purl.org/dc/terms/title"
+    },
+    "distribution" : {
+      "@id" : "http://www.w3.org/ns/dcat#distribution",
+      "@type" : "@id"
+    },
+    "description" : {
+      "@id" : "http://purl.org/dc/terms/description"
+    },
+    "contributor" : {
+      "@id" : "http://purl.org/dc/terms/contributor",
+      "@type" : "@id"
+    },
+    "license" : {
+      "@id" : "http://purl.org/dc/terms/license",
+      "@type" : "@id"
+    },
+    "conformsTo" : {
+      "@id" : "http://purl.org/dc/terms/conformsTo",
+      "@type" : "@id"
+    },
+    "wasDerivedFrom" : {
+      "@id" : "http://www.w3.org/ns/prov#wasDerivedFrom",
+      "@type" : "@id"
+    },
+    "landingPage" : {
+      "@id" : "http://www.w3.org/ns/dcat#landingPage",
+      "@type" : "@id"
+    },
+    "hasEmail" : {
+      "@id" : "http://www.w3.org/2006/vcard/ns#hasEmail",
+      "@type" : "@id"
+    },
+    "fn" : {
+      "@id" : "http://www.w3.org/2006/vcard/ns#fn"
+    },
+    "used" : {
+      "@id" : "http://www.w3.org/ns/prov#used",
+      "@type" : "@id"
+    },
+    "endedAtTime" : {
+      "@id" : "http://www.w3.org/ns/prov#endedAtTime",
+      "@type" : "http://www.w3.org/2001/XMLSchema#dateTime"
+    },
+    "issued" : {
+      "@id" : "http://purl.org/dc/terms/issued",
+      "@type" : "http://www.w3.org/2001/XMLSchema#date"
+    },
+    "updated" : {
+      "@id" : "http://purl.org/dc/terms/updated",
+      "@type" : "http://www.w3.org/2001/XMLSchema#date"
+    },
+    "agent" : {
+      "@id" : "http://www.w3.org/ns/prov#agent",
+      "@type" : "@id"
+    },
+    "hadRole" : {
+      "@id" : "http://www.w3.org/ns/dcat#hadRole",
+      "@type" : "@id"
+    },
+    "imports" : {
+      "@id" : "http://www.w3.org/2002/07/owl#imports",
+      "@type" : "@id"
+    },
+    "qualifiedAttribution" : {
+      "@id" : "http://www.w3.org/ns/prov#qualifiedAttribution",
+      "@type" : "@id"
+    },
+    "servesDataset" : {
+      "@id" : "http://www.w3.org/ns/dcat#servesDataset",
+      "@type" : "@id"
+    },
+    "endpointURL" : {
+      "@id" : "http://www.w3.org/ns/dcat#endpointURL",
+      "@type" : "@id"
+    },
+    "endpointDescription" : {
+      "@id" : "http://www.w3.org/ns/dcat#endpointDescription"
+    },
+    "hasValue" : {
+      "@id" : "http://www.w3.org/2006/vcard/ns#hasValue",
+      "@type" : "@id"
+    },
+    "comment" : {
+      "@id" : "http://www.w3.org/2000/01/rdf-schema#comment"
+    },
+    "relation" : {
+      "@id" : "http://purl.org/dc/terms/relation",
+      "@type" : "@id"
+    },
+    "hasTelephone" : {
+      "@id" : "http://www.w3.org/2006/vcard/ns#hasTelephone",
+      "@type" : "@id"
+    },
+    "@vocab" : "http://linked.data.gov.au/dataset/geofabric/",
+    "pav" : "http://purl.org/pav/",
+    "geof" : "http://linked.data.gov.au/def/geof#",
+    "owl" : "http://www.w3.org/2002/07/owl#",
+    "xsd" : "http://www.w3.org/2001/XMLSchema#",
+    "skos" : "http://www.w3.org/2004/02/skos/core#",
+    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
+    "vcard" : "http://www.w3.org/2006/vcard/ns#",
+    "dct" : "http://purl.org/dc/terms/",
+    "rdf" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "xml" : "http://www.w3.org/XML/1998/namespace",
+    "dcat" : "http://www.w3.org/ns/dcat#",
+    "prov" : "http://www.w3.org/ns/prov#",
+    "dc" : "http://purl.org/dc/elements/1.1/"
+  }
+}
