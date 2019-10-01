@@ -3,3 +3,4 @@ flask_paginate
 pyldapi>=2.1.0
 requests
 lxml
+rdflib
