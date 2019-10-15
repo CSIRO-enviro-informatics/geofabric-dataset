@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 from io import BytesIO
+import os
 import requests
 from requests import Session
 from lxml import etree
@@ -107,7 +108,7 @@ def extract_rrcc_as_geojson(tree):
     return geojson_features
 
 
-def linkset_graph_to_dictionary(linkset_path):
+def linkset_graph_to_dictionary():
     """graph 
     
     :param linkset_s3_path: [description]
@@ -115,8 +116,10 @@ def linkset_graph_to_dictionary(linkset_path):
     :return dictionary rr to cc 
     """
     cc_to_rr = {}
+    if not os.path.exists(config.RR16CC_LINKSET_PATH):
+        return cc_to_rr
     g = Graph()
-    g.parse(RR16CC_LINKSET_PATH, format='turtle')
+    g.parse(config.RR16CC_LINKSET_PATH, format='turtle')
     qres = g.query(
     """
     PREFIX s: <http://www.w3.org/1999/02/22-rdf-syntax-ns#subject> 
@@ -134,7 +137,7 @@ def linkset_graph_to_dictionary(linkset_path):
         riverregion_id = row[0].rsplit('/', 1)[-1]
         catchment_id = row[1].rsplit('/', 1)[-1]
         cc_to_rr[catchment_id] = riverregion_id 
-    return rr_to_cc
+    return cc_to_rr 
 
 class LinksetRiverRegionContractedCatchment(GFModel):
     """Builds the relationship between River Regions and Contracted Catchments from a Linkset ttl file
@@ -142,7 +145,6 @@ class LinksetRiverRegionContractedCatchment(GFModel):
     :param GFModel: [description]
     :type GFModel: [type]
     """
-    RR16CC_LINKSET_PATH = "./geofabric/data/ls_rr16cc.ttl"
     linkset_cc_rr_lookup = linkset_graph_to_dictionary()
 
 class RiverRegionContractedCatchment(GFModel):

@@ -2,6 +2,7 @@
 #
 from decimal import Decimal
 
+import os
 import rdflib
 import requests
 from flask import render_template, url_for
@@ -412,8 +413,12 @@ class ContractedCatchment(GFModel):
 
     @property
     def rrid(self):
-        if os.path.exists(LinksetRiverRegionContractedCatchment.RR16CC_LINKSET_PATH):
-            rrid = LinksetRiverRegionContractedCatchment.linkset_cc_rr_lookup(concatid)
+        if os.path.exists(config.RR16CC_LINKSET_PATH):
+            ## Some catchments don't belong to any river region (e.g small islands off shore)
+            if str(self.hydroid) in LinksetRiverRegionContractedCatchment.linkset_cc_rr_lookup.keys():
+                rrid = LinksetRiverRegionContractedCatchment.linkset_cc_rr_lookup[str(self.hydroid)]
+            else:
+                rrid = None
             return rrid 
         else:
             try:
