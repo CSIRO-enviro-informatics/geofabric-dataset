@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 from io import BytesIO
+import os
 import requests
 from requests import Session
 from lxml import etree
@@ -9,7 +10,7 @@ from geofabric.helpers import wfs_extract_features_as_geojson, NotFoundError
 from geofabric.model import GFModel
 from functools import lru_cache
 from datetime import datetime
-
+from rdflib import Graph
 
 @lru_cache(maxsize=128)
 def retrieve_rrcc_for_contracted_catchment(identifier):
@@ -106,6 +107,45 @@ def extract_rrcc_as_geojson(tree):
         rrcc_features_geojson_converter)
     return geojson_features
 
+
+def linkset_graph_to_dictionary():
+    """graph 
+    
+    :param linkset_s3_path: [description]
+    :type linkset_s3_path: [type]
+    :return dictionary rr to cc 
+    """
+    cc_to_rr = {}
+    if not os.path.exists(config.RR16CC_LINKSET_PATH):
+        return cc_to_rr
+    g = Graph()
+    g.parse(config.RR16CC_LINKSET_PATH, format='turtle')
+    qres = g.query(
+    """
+    PREFIX s: <http://www.w3.org/1999/02/22-rdf-syntax-ns#subject> 
+    PREFIX c: <http://www.opengis.net/ont/geosparql#sfContains> 
+    PREFIX p: <http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate> 
+    PREFIX o: <http://www.w3.org/1999/02/22-rdf-syntax-ns#object> 
+    SELECT ?s ?t 
+       WHERE {
+          ?stm s: ?s; 
+               p: c:;  
+               o: ?t
+       }""")
+
+    for row in qres:
+        riverregion_id = row[0].rsplit('/', 1)[-1]
+        catchment_id = row[1].rsplit('/', 1)[-1]
+        cc_to_rr[catchment_id] = riverregion_id 
+    return cc_to_rr 
+
+class LinksetRiverRegionContractedCatchment(GFModel):
+    """Builds the relationship between River Regions and Contracted Catchments from a Linkset ttl file
+    
+    :param GFModel: [description]
+    :type GFModel: [type]
+    """
+    linkset_cc_rr_lookup = linkset_graph_to_dictionary()
 
 class RiverRegionContractedCatchment(GFModel):
     @classmethod

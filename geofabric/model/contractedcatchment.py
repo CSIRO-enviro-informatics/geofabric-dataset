@@ -2,6 +2,7 @@
 #
 from decimal import Decimal
 
+import os
 import rdflib
 import requests
 from flask import render_template, url_for
@@ -23,6 +24,7 @@ from geofabric.helpers import gml_extract_geom_to_geojson, \
 from geofabric.model import GFModel
 from geofabric.model.awraddcontractedcatchment import AWRADrainageDivisionContractedCatchment
 from geofabric.model.rrcontractedcatchment import RiverRegionContractedCatchment
+from geofabric.model.rrcontractedcatchment import LinksetRiverRegionContractedCatchment
 from functools import lru_cache
 from datetime import datetime
 
@@ -411,11 +413,19 @@ class ContractedCatchment(GFModel):
 
     @property
     def rrid(self):
+        rrid = None
         try:
-            rrcc = self.get_rrcc()
-            return rrcc.rrid
+                rrcc = self.get_rrcc()
+                rrid = rrcc.rrid
         except Exception:
-            return None
+            rrid = None
+        if rrid is None and os.path.exists(config.RR16CC_LINKSET_PATH):
+            ## Some catchments don't belong to any river region (e.g small islands off shore)
+            if str(self.hydroid) in LinksetRiverRegionContractedCatchment.linkset_cc_rr_lookup.keys():
+                rrid = LinksetRiverRegionContractedCatchment.linkset_cc_rr_lookup[str(self.hydroid)]
+            else:
+                rrid = None
+        return rrid 
 
     def to_hyfeatures_graph(self):
         g = extract_contracted_catchments_as_hyfeatures(self.xml_tree)
