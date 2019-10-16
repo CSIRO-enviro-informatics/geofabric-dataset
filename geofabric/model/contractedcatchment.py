@@ -413,19 +413,19 @@ class ContractedCatchment(GFModel):
 
     @property
     def rrid(self):
-        if os.path.exists(config.RR16CC_LINKSET_PATH):
+        rrid = None
+        try:
+                rrcc = self.get_rrcc()
+                rrid = rrcc.rrid
+        except Exception:
+            rrid = None
+        if rrid is None and os.path.exists(config.RR16CC_LINKSET_PATH):
             ## Some catchments don't belong to any river region (e.g small islands off shore)
             if str(self.hydroid) in LinksetRiverRegionContractedCatchment.linkset_cc_rr_lookup.keys():
                 rrid = LinksetRiverRegionContractedCatchment.linkset_cc_rr_lookup[str(self.hydroid)]
             else:
                 rrid = None
-            return rrid 
-        else:
-            try:
-                    rrcc = self.get_rrcc()
-                    return rrcc.rrid
-            except Exception:
-                return None
+        return rrid 
 
     def to_hyfeatures_graph(self):
         g = extract_contracted_catchments_as_hyfeatures(self.xml_tree)
