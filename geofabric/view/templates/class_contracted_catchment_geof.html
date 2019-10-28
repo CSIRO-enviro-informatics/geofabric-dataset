@@ -1,96 +1,70 @@
 <h2>Geofabric View</h2>
 <!--<iframe src="{{ wms_url }}" style="width:830px;height:650px;border:none;"></iframe>-->
 <div id="national-map">
-    <iframe id="embedded-national-map" frameBorder="0" src="https://nationalmap.gov.au/" style="width: 767px; height: 600px; border: none;" allowFullScreen mozAllowFullScreen webkitAllowFullScreen></iframe>
+    <iframe id="embedded-national-map" frameBorder="0" src="https://nationalmap.gov.au/"
+        style="width: 767px; height: 600px; border: none;" allowFullScreen mozAllowFullScreen
+        webkitAllowFullScreen></iframe>
 </div>
 <div id="post-national-map">
 </div>
 <table class="content">
-    <tr><th>Property</th><th>Value</th></tr>
-    <tr><td>HydroID</td><td><code>{{ hydroid }}</code></td></tr>
+    <tr>
+        <th>Property</th>
+        <th>Value</th>
+    </tr>
+    <tr>
+        <td>HydroID</td>
+        <td><code>{{ hydroid }}</code></td>
+    </tr>
     {% if concatid %}
-        <tr><td>Contracted Catchment ID</td><td><code>{{ concatid }}</code></td></tr>
+    <tr>
+        <td>Contracted Catchment ID</td>
+        <td><code>{{ concatid }}</code></td>
+    </tr>
     {% endif %}
     {% if rrid %}
-        <tr><td>River Region</td><td><a href="{{ url_for("classes.river_region", rr_id=rrid) }}">{{ rrid }}</a></td></tr>
+    <tr>
+        <td>River Region</td>
+        <td><a href="{{ url_for("classes.river_region", rr_id=rrid) }}">{{ rrid }}</a></td>
+    </tr>
     {% endif %}
     {% if awraddid %}
-        <tr><td>AWRA Drainage Division</td><td><a href="{{ url_for("classes.drainage_division", dd_id=awraddid) }}">{{ awraddid }}</a></td></tr>
+    <tr>
+        <td>AWRA Drainage Division</td>
+        <td><a href="{{ url_for("classes.drainage_division", dd_id=awraddid) }}">{{ awraddid }}</a></td>
+    </tr>
     {% endif %}
-    <tr><td>Shape Area deg</td><td><code>{{ shape_area }}</code>&nbsp;deg<sup>2</sup></td></tr>
-    <tr><td>Shape Area m2</td><td><code>{{ m2_area }}</code>&nbsp;m<sup>2</sup></td></tr>
-    <tr><td>Shape Length</td><td><code>{{ shape_length }}</code>&nbsp;deg</td></tr>
-    <tr><td>Albers Area</td><td><code>{{ albers_area }}</code>&nbsp;m<sup>2</sup></td></tr>
+    <tr>
+        <td>Shape Area deg</td>
+        <td><code>{{ shape_area }}</code>&nbsp;deg<sup>2</sup></td>
+    </tr>
+    <tr>
+        <td>Shape Area m2</td>
+        <td><code>{{ m2_area }}</code>&nbsp;m<sup>2</sup></td>
+    </tr>
+    <tr>
+        <td>Shape Length</td>
+        <td><code>{{ shape_length }}</code>&nbsp;deg</td>
+    </tr>
+    <tr>
+        <td>Albers Area</td>
+        <td><code>{{ albers_area }}</code>&nbsp;m<sup>2</sup></td>
+    </tr>
 </table>
 
 <script>
     var initJson = {
-        "version":"0.0.05",
-        "initSources":[
-            {
-                "catalog":[
-                ]
+        "version": "0.0.05",
+        "initSources": [{
+                "catalog": []
             },
+{"sharedCatalogMembers":{"Root Group/National Data Sets":{"isOpen":true,"type":"group","parents":[]},"Root Group/National Data Sets/Water":{"isOpen":true,"type":"group","parents":["Root Group/National Data Sets"]},"Root Group/National Data Sets/Water/Surface Water":{"isOpen":true,"type":"group","parents":["Root Group/National Data Sets","Root Group/National Data Sets/Water"]},"Root Group/National Data Sets/Water/Surface Water/Bureau of Meteorology Geofabric":{"isOpen":true,"type":"wms-getCapabilities","parents":["Root Group/National Data Sets","Root Group/National Data Sets/Water","Root Group/National Data Sets/Water/Surface Water"]},"Root Group/National Data Sets/Water/Surface Water/Bureau of Meteorology Geofabric/Hydrology_Reporting_Catchments":{"isOpen":true,"type":"group","parents":["Root Group/National Data Sets","Root Group/National Data Sets/Water","Root Group/National Data Sets/Water/Surface Water","Root Group/National Data Sets/Water/Surface Water/Bureau of Meteorology Geofabric"]},"Root Group/National Data Sets/Water/Surface Water/Bureau of Meteorology Geofabric/Hydrology_Reporting_Catchments/AHGFContractedCatchment":{"nowViewingIndex":0,"isEnabled":true,"isShown":true,"isLegendVisible":true,"useOwnClock":false,"opacity":0.6,"keepOnTop":false,"splitDirection":0,"showOnChart":false,"styles":"","type":"wms","parents":["Root Group/National Data Sets","Root Group/National Data Sets/Water","Root Group/National Data Sets/Water/Surface Water","Root Group/National Data Sets/Water/Surface Water/Bureau of Meteorology Geofabric","Root Group/National Data Sets/Water/Surface Water/Bureau of Meteorology Geofabric/Hydrology_Reporting_Catchments"]},"Root Group/National Data Sets/Water/Surface Water/Bureau of Meteorology Geofabric/Surface_Catchment":{"isOpen":true,"type":"group","parents":["Root Group/National Data Sets","Root Group/National Data Sets/Water","Root Group/National Data Sets/Water/Surface Water","Root Group/National Data Sets/Water/Surface Water/Bureau of Meteorology Geofabric"]}}},
             {
-                "sharedCatalogMembers":{
-                    "Root Group/National Data Sets":{
-                        "isOpen":true,
-                        "type":"group",
-                        "parents":[
-
-                        ]
-                    },
-                    "Root Group/National Data Sets/Surface Water and Marine":{
-                        "isOpen":true,
-                        "type":"group",
-                        "parents":[
-                            "Root Group/National Data Sets"
-                        ]
-                    },
-                    "Root Group/National Data Sets/Surface Water and Marine/Bureau of Meteorology Geofabric":{
-                        "isOpen":true,
-                        "type":"wms-getCapabilities",
-                        "parents":[
-                            "Root Group/National Data Sets",
-                            "Root Group/National Data Sets/Surface Water and Marine"
-                        ]
-                    },
-                    "Root Group/National Data Sets/Surface Water and Marine/Bureau of Meteorology Geofabric/Hydrology_Reporting_Catchments":{
-                        "isOpen":true,
-                        "type":"group",
-                        "parents":[
-                            "Root Group/National Data Sets",
-                            "Root Group/National Data Sets/Surface Water and Marine",
-                            "Root Group/National Data Sets/Surface Water and Marine/Bureau of Meteorology Geofabric"
-                        ]
-                    },
-                    "Root Group/National Data Sets/Surface Water and Marine/Bureau of Meteorology Geofabric/Hydrology_Reporting_Catchments/AHGFContractedCatchment":{
-                        "nowViewingIndex":0,
-                        "isEnabled":true,
-                        "isShown":true,
-                        "isLegendVisible":false,
-                        "useOwnClock":false,
-                        "opacity":0.9,
-                        "keepOnTop":false,
-                        "splitDirection":0,
-                        "styles":"",
-                        "type":"wms",
-                        "parents":[
-                            "Root Group/National Data Sets",
-                            "Root Group/National Data Sets/Surface Water and Marine",
-                            "Root Group/National Data Sets/Surface Water and Marine/Bureau of Meteorology Geofabric",
-                            "Root Group/National Data Sets/Surface Water and Marine/Bureau of Meteorology Geofabric/Hydrology_Reporting_Catchments"
-                        ]
-                    }
-                }
-            },
-            {
-                "initialCamera":{
-                   "west": {{ bbox[0] }},
-                    "south":{{ bbox[1] }},
-                    "east":{{ bbox[2] }},
-                    "north":{{ bbox[3] }}
-
+                "initialCamera": {
+                    "west": {{ bbox[0] }},
+                    "south": {{ bbox[1] }},
+                    "east": {{ bbox[2] }},
+                    "north": {{ bbox[3] }} 
                 },
                 "baseMapName": "Positron (Light)",
                 "viewerMode": "2d"
@@ -102,16 +76,14 @@
     var iFrame = document.getElementById('embedded-national-map');
     iFrame.src = iFrame.src + '#start=' + encodeURIComponent(JSON.stringify(initJson)) + '&activeTabId=' + activeTabId;
     var message = {
-        initSources: [
-            {
-                catalog: [
-                ]
+        initSources: [{
+                catalog: []
             },
             {
                 "pickedFeatures": {
                     "pickCoords": {
-                        "lat": {{ centrepoint[1] }},//-25.34154376944165
-                        "lng": {{ centrepoint[0] }},//141.21276855468753
+                        "lat": {{ centrepoint[1] }}, //-25.34154376944165
+                        "lng": {{ centrepoint[0] }}, //141.21276855468753
                         "height": 0
                     },
                     "entities": [{
@@ -124,12 +96,11 @@
     };
     // Add our own data to the map using an iframe message.
     // See https://github.com/TerriaJS/terriajs/wiki/Controlling-TerriaJS-in-an-iframe-by-posting-it-messages for details.
-    window.addEventListener('message', function(e) {
+    window.addEventListener('message', function (e) {
         var iframeWindow = document.getElementById('embedded-national-map').contentWindow;
         if (e.source === iframeWindow && e.data === 'ready') {
             // NationalMap is ready to receive messages!
             iframeWindow.postMessage(message, 'https://nationalmap.gov.au');
         }
     });
-
 </script>
