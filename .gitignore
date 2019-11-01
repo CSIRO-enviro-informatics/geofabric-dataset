@@ -114,6 +114,3 @@ catalog-v001.xml
 # Mac
 .DS_Store
 .directory
-
-# secret config file
-geofabric/_config/__init__.py
