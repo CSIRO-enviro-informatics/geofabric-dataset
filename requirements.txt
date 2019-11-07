@@ -1,6 +1,6 @@
 Flask==1.0.2
 flask-paginate==0.5.2
-lxml==4.3.1
+lxml>=4.3.2
 pyldapi==2.1.2
 rdflib==4.2.2
 requests==2.21.0
