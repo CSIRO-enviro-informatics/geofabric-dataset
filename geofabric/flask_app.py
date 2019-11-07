@@ -1,5 +1,6 @@
 import os
 import geofabric._config as config
+import argparse
 
 if __name__ == '__main__':
     import sys
@@ -19,9 +20,15 @@ app.register_blueprint(classes.classes)
 
 # run the Flask app
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='ASGS Dataset LDAPI')
+    parser.add_argument('--init', action="store_true", default=False, help='Initialise the application then exit (rofr.ttl etc)')
+    args, unknown = parser.parse_known_args()
+
     logging.basicConfig(filename=config.LOGFILE,
                         level=logging.DEBUG,
                         datefmt='%Y-%m-%d %H:%M:%S',
                         format='%(asctime)s %(levelname)s %(filename)s:%(lineno)s %(message)s')
     pyldapi.setup(app, config.APP_DIR, str(config.DATA_URI_PREFIX))
-    app.run(debug=config.DEBUG, threaded=True, use_reloader=False)
+    
+    if not args.init:
+        app.run(debug=conf.DEBUG, threaded=True, use_reloader=False)

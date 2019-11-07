@@ -16,7 +16,7 @@ from geofabric.flask_app import app
 # --- CONFIGURABLE OPTIONS
 OUTPUT_DIRECTORY = "./instance"  # Relative path from pwd
 INSTANCES_PER_FILE = 1000
-HARVESTABLE_INSTANCE_VIEW = "hyfeatures"
+HARVESTABLE_INSTANCE_VIEW = "geofabric"
 MULTI_PROCESSING = True
 MULTI_THREADING = True
 USE_SAVED_REGISTER_INDEX = True
