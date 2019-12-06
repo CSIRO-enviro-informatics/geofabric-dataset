@@ -135,14 +135,14 @@ def contracted_catchment_geofabric_converter(model, wfs_features):
                 triples.add((L, QUDTS.unit, UNIT.DEG))
                 triples.add((feature_uri, GEOF.perimeterLength, L))  # URIRef('http://dbpedia.org/property/length')
             elif var == 'shape':
-                #try:
-                #    _triples, geometry = gml_extract_geom_to_geosparql(c)
-                #    for (s, p, o) in iter(_triples):
-                #        triples.add((s, p, o))
-                #except KeyError:
-                #    val = c.text
-                #    geometry = Literal(val)
-                #triples.add((feature_uri, GEO_hasGeometry, geometry))
+                try:
+                    _triples, geometry = gml_extract_geom_to_geosparql(c)
+                    for (s, p, o) in iter(_triples):
+                        triples.add((s, p, o))
+                except KeyError:
+                    val = c.text
+                    geometry = Literal(val)
+                triples.add((feature_uri, GEO_hasGeometry, geometry))
                 # TODO: Reenable asGML or asWKT for Geofabric view
                 pass
             elif var == 'attrsource':
