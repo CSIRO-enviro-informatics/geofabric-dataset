@@ -159,6 +159,8 @@ def drainage_division_geofabric_converter(model, wfs_features):
                 triples.add((feature_uri, GEOF.sourceId, Literal(c.text, datatype=XSD.integer)))
             elif var == 'srcfcname':
                 triples.add((feature_uri, DC.source, Literal(c.text)))
+            elif var == 'division':
+                triples.add((feature_uri, DCTERMS.title, Literal(str(c.text).title(), lang='en')))
 
         # the DD register
         #triples.add((feature_uri, URIRef('http://purl.org/linked-data/registry#register'), URIRef(config.URI_AWRA_DRAINAGE_DIVISION_INSTANCE_BASE)))
