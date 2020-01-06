@@ -22,3 +22,5 @@ URI_RIVER_REGION_INSTANCE_BASE = '/'.join([DATA_URI_PREFIX, 'riverregion/'])
 URI_AWRA_DRAINAGE_DIVISION_INSTANCE_BASE = '/'.join([DATA_URI_PREFIX, 'drainagedivision/'])
 
 GF_OWS_ENDPOINT = "https://geofabricld.net/geoserver/ows"
+GEOMETRY_SERVICE_HOST = "http://gds.loci.cat"
+GEOMETRY_SERVICE_URI = '/'.join([GEOMETRY_SERVICE_HOST, "geometry/"])
