@@ -4,6 +4,7 @@ This file contains all the HTTP routes for classes from the Geofabric model, suc
 Catchment Register
 """
 from flask import Blueprint, request, abort
+from flask_cors import CORS
 import geofabric._config as config
 from geofabric.model.awradrainagedivision import AWRADrainageDivision
 from geofabric.model.catchment import Catchment
@@ -19,7 +20,7 @@ from geofabric.helpers import NotFoundError
 from pyldapi import RegisterOfRegistersRenderer
 
 classes = Blueprint('classes', __name__)
-
+CORS(classes, automatic_options=True)
 CONTRACTED_CATCHMENT_COUNT = 30461
 CATCHMENT_COUNT = 1474286
 RIVER_REGION_COUNT = 218
@@ -29,6 +30,7 @@ USE_CONTRACTED_CATCHMENTS = True
 
 
 @classes.route('/reg/')
+
 def reg():
     return RegisterOfRegistersRenderer(
         request,
@@ -50,10 +52,10 @@ def contracted_catchments():
                                         ContractedCatchment,
                                         super_register=config.DATA_URI_PREFIX)
     else:
-        renderer = GEOFRegisterRenderer(request, config.URI_CONTRACTED_CATCHMENT_INSTANCE_BASE,
+        renderer = GEOFRegisterRenderer(request, config.URI_CATCHMENT_INSTANCE_BASE,
                                         "Catchment Register",
                                         "Register of all Geofabric Catchments",
-                                        ['http://linked.data.gov.au/def/geofabric#ContractedCatchment'],
+                                        ['http://linked.data.gov.au/def/geofabric#Catchment'],
                                         CATCHMENT_COUNT,
                                         Catchment,
                                         super_register=config.DATA_URI_PREFIX)

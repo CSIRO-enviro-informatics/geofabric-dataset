@@ -3,6 +3,7 @@
 This file contains all the HTTP routes for basic pages (usually HTML)
 """
 from flask import Blueprint, Response, request, render_template
+from flask_cors import CORS
 import pyldapi
 import json
 from rdflib import Graph, Literal
@@ -12,6 +13,7 @@ from geofabric.view.ldapi import GEOFRegisterOfRegistersRenderer
 from geofabric.controller.LOCIDatasetRenderer import LOCIDatasetRenderer
 
 pages = Blueprint('routes', __name__)
+CORS(pages, automatic_options=True)
 
 @pages.route('/', strict_slashes=True)
 def index():
