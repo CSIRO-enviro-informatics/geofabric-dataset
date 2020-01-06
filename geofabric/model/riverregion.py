@@ -2,14 +2,13 @@
 #
 from _elementtree import ParseError
 from decimal import Decimal
-from io import BytesIO
+from urllib.parse import urlencode
 
 import rdflib
-import requests
+from urllib.request import Request, urlopen
 from flask import render_template, url_for
 from rdflib import URIRef, Literal, BNode
 from rdflib.namespace import DC, DCTERMS, XSD
-from requests import Session
 from lxml import etree
 from geofabric import _config as config
 from geofabric.helpers import gml_extract_geom_to_geojson, \
@@ -29,27 +28,32 @@ from datetime import datetime
 @lru_cache(maxsize=128)
 def retrieve_river_region(identifier):
     assert isinstance(identifier, int)
-    rr_wfs_uri = config.GF_OWS_ENDPOINT + \
-                        '?request=GetFeature' \
-                        '&service=WFS' \
-                        '&version=2.0.0' \
-                        '&typeName=ahgf_hrr:RiverRegion' \
-                        '&Filter=<Filter><PropertyIsEqualTo>' \
-                        '<PropertyName>ahgf_hrr:hydroid</PropertyName>' \
-                        '<Literal>{:d}</Literal>' \
-                        '</PropertyIsEqualTo></Filter>'.format(identifier)
-    session = retrieve_river_region.session
-    if session is None:
-        session = retrieve_river_region.session = Session()
+    rr_wfs_uri = config.GF_OWS_ENDPOINT + '?' + \
+                 urlencode({
+                     'request': 'GetFeature',
+                     'service': 'WFS',
+                     'version': '2.0.0',
+                     'typeName': 'ahgf_hrr:RiverRegion',
+                     'Filter': '<Filter><PropertyIsEqualTo>' \
+                               '<PropertyName>ahgf_hrr:hydroid</PropertyName>' \
+                               '<Literal>{:d}</Literal>' \
+                               '</PropertyIsEqualTo></Filter>'.format(identifier)
+                 })
+
     try:
-        r = session.get(rr_wfs_uri)
+        r = Request(rr_wfs_uri, method="GET")
+        with urlopen(r) as response:  # type: http.client.HTTPResponse
+            if not (299 >= response.status >= 200):
+                raise RuntimeError("Cannot get River Region from WFS backend.")
+            try:
+                tree = etree.parse(response)
+            except ParseError as e:
+                print(e)
+                print(response.read())
+                return []
     except Exception as e:
         raise e
-    tree = etree.parse(BytesIO(r.content))
     return tree
-
-
-retrieve_river_region.session = None
 
 ns = {
     'x': 'http://linked.data.gov.au/dataset/geof/v2/ahgf_hrr',
@@ -374,13 +378,19 @@ class RiverRegion(GFModel):
                      '&propertyName=hydroid' \
                      '&sortBy=hydroid' \
                      '&count={}&startIndex={}'.format(per_page, offset)
-        r = requests.get(rr_wfs_uri)
         try:
-            tree = etree.parse(BytesIO(r.content))
-        except ParseError as e:
-            print(e)
-            print(r.text)
-            return []
+            r = Request(rr_wfs_uri, method="GET")
+            with urlopen(r) as response:  # type: http.client.HTTPResponse
+                if not (299 >= response.status >= 200):
+                    raise RuntimeError("Cannot get River Region index from WFS backend.")
+                try:
+                    tree = etree.parse(response)
+                except ParseError as e:
+                    print(e)
+                    print(response.read())
+                    return []
+        except Exception as e:
+            raise e
         items = tree.xpath('//x:hydroid/text()', namespaces={
             'x': 'http://linked.data.gov.au/dataset/geof/v2/ahgf_hrr'})
         return items

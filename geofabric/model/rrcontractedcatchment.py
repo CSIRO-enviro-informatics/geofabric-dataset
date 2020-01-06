@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 #
-from io import BytesIO
 import os
-import requests
-from requests import Session
+from urllib.parse import urlencode
+from urllib.request import Request, urlopen
 from lxml import etree
+from lxml.etree import ParseError
+
 from geofabric import _config as config
 from geofabric.helpers import wfs_extract_features_as_geojson, NotFoundError
 from geofabric.model import GFModel
@@ -15,27 +16,31 @@ from rdflib import Graph
 @lru_cache(maxsize=128)
 def retrieve_rrcc_for_contracted_catchment(identifier):
     assert isinstance(identifier, int)
-    rr_wfs_uri = config.GF_OWS_ENDPOINT + \
-                        '?request=GetFeature' \
-                        '&service=WFS' \
-                        '&version=2.0.0' \
-                        '&typeName=ahgf_hrr:RRContractedCatchmentLookup' \
-                        '&Filter=<Filter><PropertyIsEqualTo>' \
-                        '<PropertyName>ahgf_hrr:concatid</PropertyName>' \
-                        '<Literal>{:d}</Literal>' \
-                        '</PropertyIsEqualTo></Filter>'.format(identifier)
-    session = retrieve_rrcc_for_contracted_catchment.session
-    if session is None:
-        session = retrieve_rrcc_for_contracted_catchment.session = Session()
+    rrcc_wfs_uri = config.GF_OWS_ENDPOINT + '?' + \
+                   urlencode({
+                       'request': 'GetFeature',
+                       'service': 'WFS',
+                       'version': '2.0.0',
+                       'typeName': 'ahgf_hrr:RRContractedCatchmentLookup',
+                       'Filter': '<Filter><PropertyIsEqualTo>' \
+                                 '<PropertyName>ahgf_hrr:concatid</PropertyName>' \
+                                 '<Literal>{:d}</Literal>' \
+                                 '</PropertyIsEqualTo></Filter>'.format(identifier)
+                   })
     try:
-        r = session.get(rr_wfs_uri)
+        r = Request(rrcc_wfs_uri, method="GET")
+        with urlopen(r) as response:  # type: http.client.HTTPResponse
+            if not (299 >= response.status >= 200):
+                raise RuntimeError("Cannot get RRCC item from WFS backend.")
+            try:
+                tree = etree.parse(response)
+            except ParseError as e:
+                print(e)
+                print(response.read())
+                return []
     except Exception as e:
         raise e
-    tree = etree.parse(BytesIO(r.content))
     return tree
-
-
-retrieve_rrcc_for_contracted_catchment.session = None
 
 ns = {
     'x': 'http://linked.data.gov.au/dataset/geof/v2/ahgf_hrr',
@@ -164,7 +169,7 @@ class RiverRegionContractedCatchment(GFModel):
     def get_index(cls, page, per_page):
         per_page = max(int(per_page), 1)
         offset = (max(int(page), 1)-1)*per_page
-        dd_wfs_uri = config.GF_OWS_ENDPOINT + \
+        rrcc_wfs_uri = config.GF_OWS_ENDPOINT + \
                      '?service=wfs' \
                      '&version=2.0.0' \
                      '&request=GetFeature' \
@@ -172,8 +177,19 @@ class RiverRegionContractedCatchment(GFModel):
                      '&propertyName=concatid' \
                      '&sortBy=concatid' \
                      '&count={}&startIndex={}'.format(per_page, offset)
-        r = requests.get(dd_wfs_uri)
-        tree = etree.parse(BytesIO(r.content))
+        try:
+            r = Request(rrcc_wfs_uri, method="GET")
+            with urlopen(r) as response:  # type: http.client.HTTPResponse
+                if not (299 >= response.status >= 200):
+                    raise RuntimeError("Cannot get RRCC index from WFS backend.")
+                try:
+                    tree = etree.parse(response)
+                except ParseError as e:
+                    print(e)
+                    print(response.read())
+                    return []
+        except Exception as e:
+            raise e
         items = tree.xpath('//x:concatid/text()', namespaces={
             'x': 'http://linked.data.gov.au/dataset/geof/v2/ahgf_hrr'})
         return items

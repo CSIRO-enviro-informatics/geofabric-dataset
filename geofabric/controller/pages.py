@@ -7,7 +7,6 @@ import pyldapi
 import json
 from rdflib import Graph, Literal
 import io
-import requests
 import geofabric._config as config
 from geofabric.view.ldapi import GEOFRegisterOfRegistersRenderer
 from geofabric.controller.LOCIDatasetRenderer import LOCIDatasetRenderer
@@ -249,16 +248,4 @@ def get_sparql_service_description(mimetype):
 def sparql_query(sparql_query, format_mimetype='application/sparql-results+json'):
     """ Make a SPARQL query"""
     return "The SPARQL Query feature for Geofabric is not available."
-    auth = (config.SPARQL_AUTH_USR, config.SPARQL_AUTH_PWD)
-    data = {'query': sparql_query}
-    headers = {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Accept': format_mimetype
-    }
-    try:
-        r = requests.post(config.SPARQL_QUERY_URI, auth=auth, data=data, headers=headers, timeout=1)
-        import pprint
-        pprint.pprint(r.headers)
-        return r.content.decode('utf-8')
-    except Exception as e:
-        raise e
+

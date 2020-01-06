@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 #
 import rdflib
-import requests
+from urllib.request import Request, urlopen
 from flask import render_template, url_for
 from lxml.etree import ParseError
-from io import BytesIO
 from rdflib import URIRef, Literal, BNode
-from requests import Session
 from lxml import etree
 from geofabric import _config as config
 from geofabric.helpers import gml_extract_geom_to_geojson, \
@@ -34,18 +32,21 @@ def retrieve_catchment(identifier):
                         '<PropertyName>ahgf_shcatch:hydroid</PropertyName>' \
                         '<Literal>{:d}</Literal>' \
                         '</PropertyIsEqualTo></Filter>'.format(identifier)
-    session = retrieve_catchment.session
-    if session is None:
-        session = retrieve_catchment.session = Session()
     try:
-        r = session.get(catchment_wfs_uri)
+        r = Request(catchment_wfs_uri, method="GET")
+        with urlopen(r) as response:  # type: http.client.HTTPResponse
+            if not (299 >= response.status >= 200):
+                raise RuntimeError(
+                    "Cannot get Catchment from WFS backend.")
+            try:
+                tree = etree.parse(response)
+            except ParseError as e:
+                print(e)
+                print(response.read())
+                return []
     except Exception as e:
         raise e
-    tree = etree.parse(BytesIO(r.content))
     return tree
-
-
-retrieve_catchment.session = None
 
 ns = {
     'x': 'http://linked.data.gov.au/dataset/geof/v2/ahgf_shcatch',
@@ -242,13 +243,19 @@ class Catchment(GFModel):
                              '&propertyName=hydroid' \
                              '&sortBy=hydroid' \
                              '&count={}&startIndex={}'.format(per_page, offset)
-        r = requests.get(catchments_wfs_uri)
         try:
-            tree = etree.parse(BytesIO(r.content))
-        except ParseError as e:
-            print(e)
-            print(r.text)
-            return []
+            r = Request(catchments_wfs_uri, method="GET")
+            with urlopen(r) as response:  # type: http.client.HTTPResponse
+                if not (299 >= response.status >= 200):
+                    raise RuntimeError("Cannot get Contracted Catchments index from WFS backend.")
+                try:
+                    tree = etree.parse(response)
+                except ParseError as e:
+                    print(e)
+                    print(response.read())
+                    return []
+        except Exception as e:
+            raise e
         items = tree.xpath('//x:hydroid/text()', namespaces={
             'x': 'http://linked.data.gov.au/dataset/geof/v2/ahgf_shcatch'})
         return items

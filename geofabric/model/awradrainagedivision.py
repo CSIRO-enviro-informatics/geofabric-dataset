@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 #
 from decimal import Decimal
-from io import BytesIO
-
+from urllib.parse import urlencode
 import rdflib
-import requests
+from urllib.request import Request, urlopen
 from flask import render_template, url_for
 from lxml.etree import ParseError
 from rdflib import URIRef, Literal, BNode
 from rdflib.namespace import DC, DCTERMS, XSD
-from requests import Session
 from lxml import etree
 from geofabric import _config as config
 from geofabric.helpers import gml_extract_geom_to_geojson, \
@@ -29,27 +27,32 @@ from datetime import datetime
 @lru_cache(maxsize=128)
 def retrieve_drainage_division(identifier):
     assert isinstance(identifier, int)
-    dd_wfs_uri = config.GF_OWS_ENDPOINT + \
-                        '?request=GetFeature' \
-                        '&service=WFS' \
-                        '&version=2.0.0' \
-                        '&typeName=ahgf_hrr:AWRADrainageDivision' \
-                        '&Filter=<Filter><PropertyIsEqualTo>' \
-                        '<PropertyName>ahgf_hrr:hydroid</PropertyName>' \
-                        '<Literal>{:d}</Literal>' \
-                        '</PropertyIsEqualTo></Filter>'.format(identifier)
-    session = retrieve_drainage_division.session
-    if session is None:
-        session = retrieve_drainage_division.session = Session()
+    dd_wfs_uri = config.GF_OWS_ENDPOINT + '?' + \
+                 urlencode({
+                     'request': 'GetFeature',
+                     'service': 'WFS',
+                     'version': '2.0.0',
+                     'typeName': 'ahgf_hrr:AWRADrainageDivision',
+                     'Filter': '<Filter><PropertyIsEqualTo>' \
+                               '<PropertyName>ahgf_hrr:hydroid</PropertyName>' \
+                               '<Literal>{:d}</Literal>' \
+                               '</PropertyIsEqualTo></Filter>'.format(identifier)
+                 })
+
     try:
-        r = session.get(dd_wfs_uri)
+        r = Request(dd_wfs_uri, method="GET")
+        with urlopen(r) as response:  # type: http.client.HTTPResponse
+            if not (299 >= response.status >= 200):
+                raise RuntimeError("Cannot get Drainage Division from WFS backend.")
+            try:
+                tree = etree.parse(response)
+            except ParseError as e:
+                print(e)
+                print(response.read())
+                return []
     except Exception as e:
         raise e
-    tree = etree.parse(BytesIO(r.content))
     return tree
-
-
-retrieve_drainage_division.session = None
 
 ns = {
     'x': 'http://linked.data.gov.au/dataset/geof/v2/ahgf_hrr',
@@ -364,13 +367,18 @@ class AWRADrainageDivision(GFModel):
                      '&propertyName=hydroid' \
                      '&sortBy=hydroid' \
                      '&count={}&startIndex={}'.format(per_page, offset)
-        r = requests.get(dd_wfs_uri)
-        if r.status_code == 503:
-            raise RuntimeError("503 Service Unavailable")
         try:
-            tree = etree.parse(BytesIO(r.content))
-        except ParseError as e:
-            print("Parse error with text:\n{}".format(r.text))
+            r = Request(dd_wfs_uri, method="GET")
+            with urlopen(r) as response:  # type: http.client.HTTPResponse
+                if not (299 >= response.status >= 200):
+                    raise RuntimeError("Cannot get Drainage Div index from WFS backend.")
+                try:
+                    tree = etree.parse(response)
+                except ParseError as e:
+                    print(e)
+                    print(response.read())
+                    return []
+        except Exception as e:
             raise e
         items = tree.xpath('//x:hydroid/text()', namespaces={
             'x': 'http://linked.data.gov.au/dataset/geof/v2/ahgf_hrr'})
