@@ -20,7 +20,7 @@ app.register_blueprint(classes.classes)
 
 # run the Flask app
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='ASGS Dataset LDAPI')
+    parser = argparse.ArgumentParser(description='Geofabric Dataset LDAPI')
     parser.add_argument('--init', action="store_true", default=False, help='Initialise the application then exit (rofr.ttl etc)')
     args, unknown = parser.parse_known_args()
 
@@ -31,4 +31,4 @@ if __name__ == '__main__':
     pyldapi.setup(app, config.APP_DIR, str(config.DATA_URI_PREFIX))
     
     if not args.init:
-        app.run(debug=conf.DEBUG, threaded=True, use_reloader=False)
+        app.run(debug=config.DEBUG, threaded=True, use_reloader=False)
