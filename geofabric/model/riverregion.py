@@ -8,7 +8,7 @@ import rdflib
 from urllib.request import Request, urlopen
 from flask import render_template, url_for
 from rdflib import URIRef, Literal, BNode
-from rdflib.namespace import DC, DCTERMS, XSD
+from rdflib.namespace import DC, DCTERMS, XSD, RDFS
 from lxml import etree
 from geofabric import _config as config
 from geofabric.helpers import gml_extract_geom_to_geojson, \
@@ -18,7 +18,8 @@ from geofabric.helpers import gml_extract_geom_to_geojson, \
     HYF_HY_CatchmentRealization, HYF_realizedCatchment, HYF_lowerCatchment, \
     HYF_catchmentRealization, HYF_HY_Catchment, HYF_HY_HydroFeature, \
     calculate_bbox, HYF_HY_CatchmentAggregate, NotFoundError, \
-    GEO, GEOF, degrees_area_to_m2, QUDTS, GEOX, UNIT, HYF, DATA, QB4ST, EPSG
+    GEO, GEOF, degrees_area_to_m2, QUDTS, GEOX, UNIT, HYF, DATA, QB4ST, EPSG, \
+    GEO_hasDefaultGeometry, LOCI
 from geofabric.model import GFModel
 from functools import lru_cache
 from datetime import datetime
@@ -100,6 +101,8 @@ DRAINAGE_DIVISIONS = {
 
 
 def river_region_geofabric_converter(model, wfs_features):
+    # This is for the "geofabric" Profile. It turns a WFS feature into a valid
+    # geofabric-ont feature, according to geofabric ontology
     if len(wfs_features) < 1:
         return None
 
@@ -114,10 +117,8 @@ def river_region_geofabric_converter(model, wfs_features):
 
     for hydroid, rr_element in features_source:  # type: int, etree._Element
         feature_uri = rdflib.URIRef(
-            "".join([config.URI_RIVER_REGION_INSTANCE_BASE,
-            str(hydroid)])
+            "".join([config.URI_RIVER_REGION_INSTANCE_BASE, str(hydroid)])
         )
-
         triples.add((feature_uri, RDF_a, GEOF.RiverRegion))
 
         for c in rr_element.iterchildren():  # type: etree._Element
@@ -126,8 +127,7 @@ def river_region_geofabric_converter(model, wfs_features):
             # common Geofabric properties
             if var == 'shape_area':
                 A = BNode()
-                triples.add((A, QUDTS.numericValue,
-                             Literal(c.text, datatype=XSD.float)))
+                triples.add((A, QUDTS.numericValue, Literal(c.text, datatype=XSD.float)))
                 triples.add((A, QUDTS.unit, UNIT.DEG2))
                 triples.add((feature_uri, GEOF.shapeArea, A))
                 try:
@@ -153,19 +153,22 @@ def river_region_geofabric_converter(model, wfs_features):
                 triples.add((L, QUDTS.numericValue,
                              Literal(c.text, datatype=XSD.float)))
                 triples.add((L, QUDTS.unit, UNIT.DEG))
-                triples.add((feature_uri, GEOF.perimeterLength,
-                             L))  # URIRef('http://dbpedia.org/property/length')
+                triples.add((feature_uri, GEOF.perimeterLength, L))  # URIRef('http://dbpedia.org/property/length')
             elif var == 'shape':
-                #try:
+                geom_service_uri = URIRef("".join([config.GEOMETRY_SERVICE_URI,
+                                                   "geofabric2_1_1_riverregion/",
+                                                   str(hydroid)]))
+                triples.add((feature_uri, GEO_hasGeometry, geom_service_uri))
+                triples.add((feature_uri, GEO_hasDefaultGeometry, geom_service_uri))
+                # try:
                 #    _triples, geometry = gml_extract_geom_to_geosparql(c)
                 #    for (s, p, o) in iter(_triples):
                 #        triples.add((s, p, o))
-                #except KeyError:
+                # except KeyError:
                 #    val = c.text
                 #    geometry = Literal(val)
-                #triples.add((feature_uri, GEO_hasGeometry, geometry))
-                # TODO: Reenable asGML or asWKT for Geofabric view
-                pass
+                # triples.add((feature_uri, GEO_hasGeometry, geometry))
+                # Uncomment the above to re-enable in-line geometry
             elif var == 'attrsource':
                 triples.add((feature_uri, DC.source, Literal(c.text)))
 
@@ -180,17 +183,21 @@ def river_region_geofabric_converter(model, wfs_features):
                     triples.add((feature_uri, GEO.sfWithin, dd))
 
         # the RR register
-        triples.add((feature_uri, URIRef('http://purl.org/linked-data/registry#register'), URIRef(config.URI_RIVER_REGION_INSTANCE_BASE)))
-
+        #triples.add((feature_uri, URIRef('http://purl.org/linked-data/registry#register'), URIRef(config.URI_RIVER_REGION_INSTANCE_BASE)))
+        triples.add((feature_uri, LOCI.isMemberOf, URIRef(config.URI_RIVER_REGION_INSTANCE_BASE)))
+        triples.add((URIRef(config.URI_RIVER_REGION_INSTANCE_BASE), RDFS.member, feature_uri))
     return triples, None
 
 
 def river_region_hyfeatures_converter(wfs_features):
+    # This is for the "hyfeatures" Profile. It turns a WFS feature into a valid
+    # hyfeatures feature, according to hyfeatures ontology
     if len(wfs_features) < 1:
         return None
     to_converter = {
-        'wkb_geometry': gml_extract_geom_to_geosparql,
-        'shape': gml_extract_geom_to_geosparql
+        #'wkb_geometry': gml_extract_geom_to_geosparql,
+        #'shape': gml_extract_geom_to_geosparql,
+        'shape': lambda i, x: (set(), URIRef("".join([config.GEOMETRY_SERVICE_URI, "geofabric2_1_1_riverregion/", str(i)]))),
     }
     to_float = ('shape_length', 'shape_area', 'albersarea')
     to_int = ('hydroid', 'ahgfftype')
@@ -221,7 +228,7 @@ def river_region_hyfeatures_converter(wfs_features):
                 continue
             try:
                 conv_func = to_converter[var]
-                _triples, val = conv_func(c)
+                _triples, val = conv_func(hydroid, c)
                 for (s, p, o) in iter(_triples):
                     triples.add((s, p, o))
             except KeyError:
@@ -255,10 +262,14 @@ def river_region_hyfeatures_converter(wfs_features):
                 dummy_prop = URIRef("{}/{}".format(ns['x'], var))
                 triples.add((feature_uri, dummy_prop, val))
         features_list.append(feature_uri)
+        triples.add((feature_uri, LOCI.isMemberOf, URIRef(config.URI_RIVER_REGION_INSTANCE_BASE)))
+        triples.add((URIRef(config.URI_RIVER_REGION_INSTANCE_BASE), RDFS.member, feature_uri))
     return triples, feature_nodes
 
 
 def river_region_features_geojson_converter(wfs_features):
+    # This is for the "geojson" Profile. It turns a WFS feature into a valid
+    # geojson object, according to GeoJSON spec (no ontology)
     if len(wfs_features) < 1:
         return None
     to_converter = {
@@ -320,8 +331,12 @@ def extract_river_regions_as_geofabric(tree, model=None):
     g.bind('geo', GEO)
     g.bind('geox', GEOX)
     g.bind('geof', GEOF)
+    g.bind('data', DATA)
     g.bind('qudt', QUDTS)
     g.bind('unit', UNIT)
+    g.bind('qb4st', QB4ST)
+    g.bind('loci', LOCI)
+    g.bind('dc', DC)
     triples, features = wfs_extract_features_as_profile(
         tree,
         ns['x'],
@@ -341,6 +356,10 @@ def extract_river_regions_as_hyfeatures(tree, model=None):
     g.bind('hyf', HYF)
     g.bind('qudt', QUDTS)
     g.bind('unit', UNIT)
+    g.bind('data', DATA)
+    g.bind('qb4st', QB4ST)
+    g.bind('loci', LOCI)
+    g.bind('dc', DC)
     triples, features = wfs_extract_features_as_profile(
         tree,
         ns['x'],

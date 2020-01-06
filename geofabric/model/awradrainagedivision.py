@@ -7,7 +7,7 @@ from urllib.request import Request, urlopen
 from flask import render_template, url_for
 from lxml.etree import ParseError
 from rdflib import URIRef, Literal, BNode
-from rdflib.namespace import DC, DCTERMS, XSD
+from rdflib.namespace import DC, DCTERMS, XSD, RDFS
 from lxml import etree
 from geofabric import _config as config
 from geofabric.helpers import gml_extract_geom_to_geojson, \
@@ -17,7 +17,8 @@ from geofabric.helpers import gml_extract_geom_to_geojson, \
     HYF_HY_CatchmentRealization, HYF_realizedCatchment, HYF_lowerCatchment, \
     HYF_catchmentRealization, HYF_HY_Catchment, HYF_HY_HydroFeature, \
     calculate_bbox, HYF_HY_CatchmentAggregate, NotFoundError, \
-    GEO, GEOX, GEOF, QUDTS, UNIT, degrees_area_to_m2, HYF, DATA, QB4ST, EPSG
+    GEO, GEOX, GEOF, QUDTS, UNIT, degrees_area_to_m2, HYF, DATA, QB4ST, EPSG, \
+    LOCI
 from geofabric.model import GFModel
 from functools import lru_cache
 from datetime import datetime
@@ -81,6 +82,8 @@ dd_tag_map = {
 
 
 def drainage_division_geofabric_converter(model, wfs_features):
+    # This is for the "geofabric" Profile. It turns a WFS feature into a valid
+    # geofabric-ont feature, according to geofabric ontology
     if len(wfs_features) < 1:
         return None
 
@@ -134,16 +137,18 @@ def drainage_division_geofabric_converter(model, wfs_features):
                 triples.add((L, QUDTS.unit, UNIT.DEG))
                 triples.add((feature_uri, GEOF.perimeterLength, L))  # URIRef('http://dbpedia.org/property/length')
             elif var == 'shape':
-                # try:
+                geom_service_uri = URIRef("".join([config.GEOMETRY_SERVICE_URI, "geofabric2_1_1_drainagedivision/", str(hydroid)]))
+                triples.add((feature_uri, GEO_hasGeometry, geom_service_uri))
+                triples.add((feature_uri, GEO_hasDefaultGeometry, geom_service_uri))
+                #try:
                 #    _triples, geometry = gml_extract_geom_to_geosparql(c)
                 #    for (s, p, o) in iter(_triples):
                 #        triples.add((s, p, o))
-                # except KeyError:
+                #except KeyError:
                 #    val = c.text
                 #    geometry = Literal(val)
-                # triples.add((feature_uri, GEO_hasGeometry, geometry))
-                # TODO: Reenable asGML or asWKT for Geofabric view
-                pass
+                #triples.add((feature_uri, GEO_hasGeometry, geometry))
+                # Uncomment the above to re-enable in-line geometry
             elif var == 'attrsource':
                 triples.add((feature_uri, DC.source, Literal(c.text)))
 
@@ -156,17 +161,22 @@ def drainage_division_geofabric_converter(model, wfs_features):
                 triples.add((feature_uri, DC.source, Literal(c.text)))
 
         # the DD register
-        triples.add((feature_uri, URIRef('http://purl.org/linked-data/registry#register'), URIRef(config.URI_AWRA_DRAINAGE_DIVISION_INSTANCE_BASE)))
+        #triples.add((feature_uri, URIRef('http://purl.org/linked-data/registry#register'), URIRef(config.URI_AWRA_DRAINAGE_DIVISION_INSTANCE_BASE)))
+        triples.add((feature_uri, LOCI.isMemberOf, URIRef(config.URI_AWRA_DRAINAGE_DIVISION_INSTANCE_BASE)))
+        triples.add((URIRef(config.URI_AWRA_DRAINAGE_DIVISION_INSTANCE_BASE), RDFS.member, feature_uri))
 
     return triples, None
 
 
 def drainage_division_hyfeatures_converter(wfs_features):
+    # This is for the "hyfeatures" Profile. It turns a WFS feature into a valid
+    # hyfeatures feature, according to hyfeatures ontology
     if len(wfs_features) < 1:
         return None
     to_converter = {
-        'wkb_geometry': gml_extract_geom_to_geosparql,
-        'shape': gml_extract_geom_to_geosparql
+        #'wkb_geometry': gml_extract_geom_to_geosparql,
+        #'shape': gml_extract_geom_to_geosparql
+        'shape': lambda i, x: (set(), URIRef("".join([config.GEOMETRY_SERVICE_URI, "geofabric2_1_1_drainagedivision/", str(i)]))),
     }
     to_float = ('shape_length', 'shape_area', 'albersarea')
     to_int = ('hydroid', 'divnumber', 'ahgfftype', 'sourceid')
@@ -197,7 +207,7 @@ def drainage_division_hyfeatures_converter(wfs_features):
                 continue
             try:
                 conv_func = to_converter[var]
-                _triples, val = conv_func(c)
+                _triples, val = conv_func(hydroid, c)
                 for (s, p, o) in iter(_triples):
                     triples.add((s, p, o))
             except KeyError:
@@ -236,10 +246,14 @@ def drainage_division_hyfeatures_converter(wfs_features):
                 dummy_prop = URIRef("{}/{}".format(ns['x'], var))
                 triples.add((feature_uri, dummy_prop, val))
         features_list.append(feature_uri)
+        triples.add((feature_uri, LOCI.isMemberOf, URIRef(config.URI_AWRA_DRAINAGE_DIVISION_INSTANCE_BASE)))
+        triples.add((URIRef(config.URI_AWRA_DRAINAGE_DIVISION_INSTANCE_BASE), RDFS.member, feature_uri))
     return triples, feature_nodes
 
 
 def drainage_division_features_geojson_converter(wfs_features):
+    # This is for the "geojson" Profile. It turns a WFS feature into a valid
+    # geojson object, according to GeoJSON spec (no ontology)
     if len(wfs_features) < 1:
         return None
     to_converter = {
@@ -303,25 +317,6 @@ def extract_drainage_divisions_as_geojson(tree):
     return geojson_features
 
 
-def extract_drainage_divisions_as_geofabric(tree, model=None):
-    g = rdflib.Graph()
-    g.bind('geo', GEO)
-    g.bind('geox', GEOX)
-    g.bind('geof', GEOF)
-    g.bind('qudt', QUDTS)
-    g.bind('unit', UNIT)
-    triples, features = wfs_extract_features_as_profile(
-        tree,
-        ns['x'],
-        "AWRADrainageDivision",
-        profile_converter=drainage_division_geofabric_converter,
-        model=model
-    )
-    for (s, p, o) in iter(triples):
-        g.add((s, p, o))
-    return g
-
-
 def extract_drainage_divisions_as_hyfeatures(tree, model=None):
     g = rdflib.Graph()
     g.bind('geo', GEO)
@@ -329,11 +324,37 @@ def extract_drainage_divisions_as_hyfeatures(tree, model=None):
     g.bind('hyf', HYF)
     g.bind('qudt', QUDTS)
     g.bind('unit', UNIT)
+    g.bind('data', DATA)
+    g.bind('qb4st', QB4ST)
+    g.bind('loci', LOCI)
+    g.bind('dc', DC)
     triples, features = wfs_extract_features_as_profile(
         tree,
         ns['x'],
         "AWRADrainageDivision",
         profile_converter=drainage_division_hyfeatures_converter,
+        model=model
+    )
+    for (s, p, o) in iter(triples):
+        g.add((s, p, o))
+    return g
+
+def extract_drainage_divisions_as_geofabric(tree, model=None):
+    g = rdflib.Graph()
+    g.bind('geo', GEO)
+    g.bind('geox', GEOX)
+    g.bind('geof', GEOF)
+    g.bind('data', DATA)
+    g.bind('qudt', QUDTS)
+    g.bind('unit', UNIT)
+    g.bind('qb4st', QB4ST)
+    g.bind('loci', LOCI)
+    g.bind('dc', DC)
+    triples, features = wfs_extract_features_as_profile(
+        tree,
+        ns['x'],
+        "AWRADrainageDivision",
+        profile_converter=drainage_division_geofabric_converter,
         model=model
     )
     for (s, p, o) in iter(triples):

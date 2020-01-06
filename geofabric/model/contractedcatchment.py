@@ -11,7 +11,7 @@ from flask import render_template, url_for
 from lxml.etree import ParseError
 from urllib.parse import urlencode
 from rdflib import URIRef, Literal, BNode
-from rdflib.namespace import DC, XSD
+from rdflib.namespace import DC, XSD, RDFS
 from lxml import etree
 from geofabric import _config as config
 from geofabric.helpers import gml_extract_geom_to_geojson, \
@@ -21,7 +21,8 @@ from geofabric.helpers import gml_extract_geom_to_geojson, \
     HYF_HY_CatchmentRealization, HYF_realizedCatchment, HYF_lowerCatchment, \
     HYF_catchmentRealization, HYF_HY_Catchment, HYF_HY_HydroFeature, \
     calculate_bbox, NotFoundError, GEO_sfWithin, \
-    GEO, GEOX, GEOF, QUDTS, UNIT, degrees_area_to_m2, HYF, DATA, QB4ST, EPSG
+    GEO, GEOX, GEOF, QUDTS, UNIT, degrees_area_to_m2, HYF, DATA, QB4ST, EPSG, \
+    LOCI, GEO_hasDefaultGeometry
 from geofabric.model import GFModel
 from geofabric.model.awraddcontractedcatchment import AWRADrainageDivisionContractedCatchment
 from geofabric.model.rrcontractedcatchment import RiverRegionContractedCatchment
@@ -91,6 +92,8 @@ catchment_tag_map = {
 
 
 def contracted_catchment_geofabric_converter(model, wfs_features):
+    # This is for the "geofabric" Profile. It turns a WFS feature into a valid
+    # geofabric-ont feature, according to geofabric ontology
     if len(wfs_features) < 1:
         return None
 
@@ -142,6 +145,10 @@ def contracted_catchment_geofabric_converter(model, wfs_features):
                 triples.add((L, QUDTS.unit, UNIT.DEG))
                 triples.add((feature_uri, GEOF.perimeterLength, L))  # URIRef('http://dbpedia.org/property/length')
             elif var == 'shape':
+                geom_service_uri = URIRef("".join([config.GEOMETRY_SERVICE_URI,
+                         "geofabric2_1_1_contractedcatchment/", str(hydroid)]))
+                triples.add((feature_uri, GEO_hasGeometry, geom_service_uri))
+                triples.add((feature_uri, GEO_hasDefaultGeometry, geom_service_uri))
                 #try:
                 #    _triples, geometry = gml_extract_geom_to_geosparql(c)
                 #    for (s, p, o) in iter(_triples):
@@ -150,23 +157,27 @@ def contracted_catchment_geofabric_converter(model, wfs_features):
                 #    val = c.text
                 #    geometry = Literal(val)
                 #triples.add((feature_uri, GEO_hasGeometry, geometry))
-                # TODO: Reenable asGML or asWKT for Geofabric view
-                pass
+                # Uncomment the above to re-enable in-line geometry
             elif var == 'attrsource':
                 triples.add((feature_uri, DC.source, Literal(c.text)))
 
         # the CC register
-        triples.add((feature_uri, URIRef('http://purl.org/linked-data/registry#register'), URIRef(config.URI_CONTRACTED_CATCHMENT_INSTANCE_BASE)))
+        # triples.add((feature_uri, URIRef('http://purl.org/linked-data/registry#register'), URIRef(config.URI_CONTRACTED_CATCHMENT_INSTANCE_BASE)))
+        triples.add((feature_uri, LOCI.isMemberOf, URIRef(config.URI_CONTRACTED_CATCHMENT_INSTANCE_BASE)))
+        triples.add((URIRef(config.URI_CONTRACTED_CATCHMENT_INSTANCE_BASE), RDFS.member, feature_uri))
 
     return triples, None
 
 
 def contracted_catchment_hyfeatures_converter(wfs_features):
+    # This is for the "hyfeatures" Profile. It turns a WFS feature into a valid
+    # hyfeatures feature, according to hyfeatures ontology
     if len(wfs_features) < 1:
         return None
     to_converter = {
-        'shape': gml_extract_geom_to_geosparql,
-        'nextdownid': lambda x: (set(), URIRef("".join([config.URI_CONTRACTED_CATCHMENT_INSTANCE_BASE, x.text]))),
+        'shape': lambda i, x: (set(), URIRef("".join([config.GEOMETRY_SERVICE_URI, "geofabric2_1_1_contractedcatchment/", str(i)]))),
+        #'shape': gml_extract_geom_to_geosparql,
+        'nextdownid': lambda i, x: (set(), URIRef("".join([config.URI_CONTRACTED_CATCHMENT_INSTANCE_BASE, x.text]))),
     }
     to_float = ('shape_length', 'shape_area', 'albersarea')
     to_int = ('hydroid', 'ahgfftype', 'sourceid', 'concatid', 'connodeid', 'conlevel', 'netnodeid', 'mapnodeid')
@@ -196,7 +207,7 @@ def contracted_catchment_hyfeatures_converter(wfs_features):
                 continue
             try:
                 conv_func = to_converter[var]
-                _triples, val = conv_func(c)
+                _triples, val = conv_func(hydroid, c)
                 for (s, p, o) in iter(_triples):
                     triples.add((s, p, o))
             except KeyError:
@@ -230,10 +241,14 @@ def contracted_catchment_hyfeatures_converter(wfs_features):
                 dummy_prop = URIRef("{}/{}".format(ns['x'], var))
                 triples.add((feature_uri, dummy_prop, val))
         features_list.append(feature_uri)
+        triples.add((feature_uri, LOCI.isMemberOf, URIRef(config.URI_CONTRACTED_CATCHMENT_INSTANCE_BASE)))
+        triples.add((URIRef(config.URI_CONTRACTED_CATCHMENT_INSTANCE_BASE), RDFS.member, feature_uri))
     return triples, None
 
 
-def contracted_catchment_features_geojson_converter(wfs_features):
+def contracted_catchment_geojson_converter(wfs_features):
+    # This is for the "geojson" Profile. It turns a WFS feature into a valid
+    # geojson object, according to GeoJSON spec (no ontology)
     if len(wfs_features) < 1:
         return None
     to_converter = {
@@ -285,7 +300,7 @@ def contracted_catchment_features_geojson_converter(wfs_features):
 
 
 def extract_contracted_catchments_as_geojson(tree):
-    geojson_features = wfs_extract_features_as_geojson(tree, ns['x'], "AHGFContractedCatchment", contracted_catchment_features_geojson_converter)
+    geojson_features = wfs_extract_features_as_geojson(tree, ns['x'], "AHGFContractedCatchment", contracted_catchment_geojson_converter)
     return geojson_features
 
 
@@ -296,6 +311,10 @@ def extract_contracted_catchments_as_hyfeatures(tree, model=None):
     g.bind('hyf', HYF)
     g.bind('qudt', QUDTS)
     g.bind('unit', UNIT)
+    g.bind('data', DATA)
+    g.bind('qb4st', QB4ST)
+    g.bind('loci', LOCI)
+    g.bind('dc', DC)
     triples, features = wfs_extract_features_as_profile(
         tree,
         ns['x'],
@@ -316,6 +335,9 @@ def extract_contracted_catchments_as_geofabric(tree, model=None):
     g.bind('data', DATA)
     g.bind('qudt', QUDTS)
     g.bind('unit', UNIT)
+    g.bind('qb4st', QB4ST)
+    g.bind('loci', LOCI)
+    g.bind('dc', DC)
     triples, features = wfs_extract_features_as_profile(
         tree,
         ns['x'],
