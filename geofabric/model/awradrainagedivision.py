@@ -137,7 +137,7 @@ def drainage_division_geofabric_converter(model, wfs_features):
                 triples.add((L, QUDTS.unit, UNIT.DEG))
                 triples.add((feature_uri, GEOF.perimeterLength, L))  # URIRef('http://dbpedia.org/property/length')
             elif var == 'shape':
-                geom_service_uri = URIRef("".join([config.GEOMETRY_SERVICE_URI, "geofabric2_1_1_drainagedivision/", str(hydroid)]))
+                geom_service_uri = URIRef("".join([config.GEOMETRY_SERVICE_URI, "geofabric2_1_1_awradrainagedivision/", str(hydroid)]))
                 triples.add((feature_uri, GEO_hasGeometry, geom_service_uri))
                 triples.add((feature_uri, GEO_hasDefaultGeometry, geom_service_uri))
                 #try:
@@ -178,7 +178,7 @@ def drainage_division_hyfeatures_converter(wfs_features):
     to_converter = {
         #'wkb_geometry': gml_extract_geom_to_geosparql,
         #'shape': gml_extract_geom_to_geosparql
-        'shape': lambda i, x: (set(), URIRef("".join([config.GEOMETRY_SERVICE_URI, "geofabric2_1_1_drainagedivision/", str(i)]))),
+        'shape': lambda i, x: (set(), URIRef("".join([config.GEOMETRY_SERVICE_URI, "geofabric2_1_1_awradrainagedivision/", str(i)]))),
     }
     to_float = ('shape_length', 'shape_area', 'albersarea')
     to_int = ('hydroid', 'divnumber', 'ahgfftype', 'sourceid')
