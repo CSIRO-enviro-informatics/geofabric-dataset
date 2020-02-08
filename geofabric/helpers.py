@@ -17,7 +17,6 @@ UNIT = Namespace('http://qudt.org/vocab/unit/') #QUDT 2.0 Instances
 DATA = Namespace("http://linked.data.gov.au/def/datatype/")
 CRS_OGC = Namespace("http://www.opengis.net/def/crs/OGC/1.3/")
 EPSG = Namespace("http://www.opengis.net/def/crs/EPSG/0/")
-QB4ST = Namespace("http://www.w3.org/ns/qb4st/")
 LOCI = Namespace("http://linked.data.gov.au/def/loci#")
 HYF_HY_HydroFeature = HYF.term('HY_HydroFeature')
 HYF_HY_Catchment = HYF.term('HY_Catchment')

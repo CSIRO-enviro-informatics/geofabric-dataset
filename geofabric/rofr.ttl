@@ -1,5 +1,4 @@
 @prefix ns1: <http://purl.org/linked-data/registry#> .
-@prefix ns2: <https://promsns.org/def/eregistry#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
@@ -8,20 +7,20 @@
 <http://linked.data.gov.au/dataset/geofabric/contractedcatchment/> a ns1:Register ;
     rdfs:label "Catchment Register"^^xsd:string ;
     ns1:containedItemClass <http://linked.data.gov.au/def/geofabric#ContractedCatchment> ;
-    rdfs:comment "Register of all Geofabric Contracted Catchments"^^xsd:string ;
-    ns2:superregister <http://linked.data.gov.au/dataset/geofabric> .
+    ns1:register <http://linked.data.gov.au/dataset/geofabric> ;
+    rdfs:comment "Register of all Geofabric Contracted Catchments"^^xsd:string .
 
 <http://linked.data.gov.au/dataset/geofabric/drainagedivision/> a ns1:Register ;
     rdfs:label "AWRA Drainage Division Register"^^xsd:string ;
     ns1:containedItemClass <http://linked.data.gov.au/def/geofabric#DrainageDivision> ;
-    rdfs:comment "Register of all AWRA Drainage Divisions"^^xsd:string ;
-    ns2:superregister <http://linked.data.gov.au/dataset/geofabric> .
+    ns1:register <http://linked.data.gov.au/dataset/geofabric> ;
+    rdfs:comment "Register of all AWRA Drainage Divisions"^^xsd:string .
 
 <http://linked.data.gov.au/dataset/geofabric/riverregion/> a ns1:Register ;
     rdfs:label "River Region Register"^^xsd:string ;
     ns1:containedItemClass <http://linked.data.gov.au/def/geofabric#RiverRegion> ;
-    rdfs:comment "Register of all GeoFabric River Regions"^^xsd:string ;
-    ns2:superregister <http://linked.data.gov.au/dataset/geofabric> .
+    ns1:register <http://linked.data.gov.au/dataset/geofabric> ;
+    rdfs:comment "Register of all GeoFabric River Regions"^^xsd:string .
 
 <http://linked.data.gov.au/dataset/geofabric> ns1:subregister <http://linked.data.gov.au/dataset/geofabric/contractedcatchment/>,
         <http://linked.data.gov.au/dataset/geofabric/drainagedivision/>,

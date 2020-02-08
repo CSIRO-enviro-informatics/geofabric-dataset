@@ -21,7 +21,7 @@ from geofabric.helpers import gml_extract_geom_to_geojson, \
     HYF_HY_CatchmentRealization, HYF_realizedCatchment, HYF_lowerCatchment, \
     HYF_catchmentRealization, HYF_HY_Catchment, HYF_HY_HydroFeature, \
     calculate_bbox, NotFoundError, GEO_sfWithin, \
-    GEO, GEOX, GEOF, QUDTS, UNIT, degrees_area_to_m2, HYF, DATA, QB4ST, EPSG, \
+    GEO, GEOX, GEOF, QUDTS, UNIT, degrees_area_to_m2, HYF, DATA, EPSG, \
     LOCI, GEO_hasDefaultGeometry
 from geofabric.model import GFModel
 from geofabric.model.awraddcontractedcatchment import AWRADrainageDivisionContractedCatchment
@@ -130,14 +130,14 @@ def contracted_catchment_geofabric_converter(model, wfs_features):
                     centrepointY = (bbox[1] + ((bbox[3] - bbox[1]) / 2))
                     m2_area = degrees_area_to_m2(degree_area, centrepointY)
                     triples.add((A, DATA.value, Literal(str(Decimal(str(m2_area))), datatype=XSD.decimal)))
-                    triples.add((A, QB4ST.crs, EPSG['4938']))
+                    triples.add((A, GEOX.inCRS, EPSG['4938']))
                     triples.add((feature_uri, GEOX.hasAreaM2, A))
                 except ValueError:
                     pass
             elif var == 'albersarea':
                 A = BNode()
                 triples.add((A, DATA.value, Literal(str(Decimal(str(c.text))), datatype=XSD.decimal)))
-                triples.add((A, QB4ST.crs, EPSG['3577']))
+                triples.add((A, GEOX.inCRS, EPSG['3577']))
                 triples.add((feature_uri, GEOX.hasAreaM2, A))
             elif var == 'shape_length':
                 L = BNode()
@@ -312,7 +312,6 @@ def extract_contracted_catchments_as_hyfeatures(tree, model=None):
     g.bind('qudt', QUDTS)
     g.bind('unit', UNIT)
     g.bind('data', DATA)
-    g.bind('qb4st', QB4ST)
     g.bind('loci', LOCI)
     g.bind('dc', DC)
     triples, features = wfs_extract_features_as_profile(
@@ -335,7 +334,6 @@ def extract_contracted_catchments_as_geofabric(tree, model=None):
     g.bind('data', DATA)
     g.bind('qudt', QUDTS)
     g.bind('unit', UNIT)
-    g.bind('qb4st', QB4ST)
     g.bind('loci', LOCI)
     g.bind('dc', DC)
     triples, features = wfs_extract_features_as_profile(
