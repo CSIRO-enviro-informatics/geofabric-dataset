@@ -49,7 +49,10 @@ def retrieve_contracted_catchment(identifier):
         r = Request(ccatchment_wfs_uri, method="GET")
         with urlopen(r) as response:  # type: http.client.HTTPResponse
             if not (299 >= response.status >= 200):
-                raise RuntimeError("Cannot get Contracted Catchment from WFS backend.")
+                if response.status == 404:
+                    raise NotFoundError()
+                else:
+                    raise RuntimeError("Cannot get Contracted Catchment from WFS backend.")
             try:
                 tree = etree.parse(response)
             except ParseError as e:
@@ -57,9 +60,14 @@ def retrieve_contracted_catchment(identifier):
                 print(response.read())
                 return []
     except HTTPError as he:
-        raise he
+        if he.code == 404:
+            raise NotFoundError()
+        print("URL:{}\nHTTP Error: {}".format(ccatchment_wfs_uri, he.code))
+        print(he)
+        raise
     except Exception as e:
-        raise e
+        print(e)
+        raise
     return tree
 
 ns = {
