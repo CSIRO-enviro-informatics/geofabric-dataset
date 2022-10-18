@@ -1,3 +1,5 @@
+## This project is now archived. See the Geofabric, Linked Data, dataset in production at <https://linked.data.gov.au/dataset/geofabric>.
+
 # Geofabric-LD
 A 2nd generation Linked Data API for the Geofabric.
 
